@@ -85,6 +85,7 @@ def convert(dataset_name, task, image_dir, label_dir, output_path=None, path_mod
             root_dir = "/".join(label_dir.split("/")[:-1])
             dir_name = os.path.basename(image_dir)
             output_path = os.path.join(root_dir, f"{dir_name}_{task}_gt.txt")
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
         assert path_mode in ["relative", "abs"], f"Invalid mode: {path_mode}"
 
         class_name = dataset_name.upper() + "_Converter"
@@ -141,6 +142,7 @@ if __name__ == "__main__":
         type=str,
         help="Specify the set split for datasets with multiple sets in a single file (e.g. train, val, test).",
     )
+    parser.add_argument("--mindrecord", action="store_true", help="Cache the dataset into MindRecord.")
 
     args = vars(parser.parse_args())
     convert(**args)

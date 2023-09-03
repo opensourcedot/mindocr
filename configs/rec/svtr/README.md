@@ -38,7 +38,7 @@ According to our experiments, the evaluation results on public benchmark dataset
 
 | **Model** | **Context** | **Avg Accuracy** | **Train T.** | **FPS** | **Recipe** | **Download** |
 | :-----: | :-----------: | :--------------: | :----------: | :--------: | :--------: |:----------: |
-| SVTR-Tiny      | D910x4-MS1.10-G | 90.23%    | 3638 s/epoch       | 4560 | [yaml](https://github.com/mindspore-lab/mindocr/blob/main/configs/rec/svtr/svtr_tiny.yaml) | [ckpt](https://download.mindspore.cn/toolkits/mindocr/svtr/svtr_tiny-950be1c3.ckpt) \| [mindir](https://download.mindspore.cn/toolkits/mindocr/svtr/svtr_tiny-950be1c3-86ece8c8.mindir) |
+| SVTR-Tiny      | D910x4-MS1.10-G | 90.23%    | 2575 s/epoch       | 6272 | [yaml](https://github.com/mindspore-lab/mindocr/blob/main/configs/rec/svtr/svtr_tiny.yaml) | [ckpt](https://download.mindspore.cn/toolkits/mindocr/svtr/svtr_tiny-950be1c3.ckpt) \| [mindir](https://download.mindspore.cn/toolkits/mindocr/svtr/svtr_tiny-950be1c3-86ece8c8.mindir) |
 </div>
 
 <details open markdown>
@@ -340,7 +340,7 @@ To use a specific dictionary, set the parameter `character_dict_path` to the pat
 
 **Notes:**
 - You can include the space character by setting the parameter `use_space_char` in configuration yaml to True.
-- Remember to check the value of `dataset->transform_pipeline->RecAttnLabelEncode->lower` in the configuration yaml. Set it to False if you prefer case-sensitive encoding.
+- Remember to check the value of `dataset->transform_pipeline->RecCTCLabelEncode->lower` in the configuration yaml. Set it to False if you prefer case-sensitive encoding.
 
 
 ## 5. Chinese Text Recognition Model Training

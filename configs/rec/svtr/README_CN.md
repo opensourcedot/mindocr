@@ -38,7 +38,7 @@ Table Format:
 
 | **模型** | **环境配置** | **平均准确率** | **训练时间** | **FPS** | **配置文件** | **模型权重下载** |
 | :-----: | :-----:  | :-----: | :-----: | :-----: |:--------: | :-----: |
-| SVTR-Tiny      | D910x4-MS1.10-G | 90.23%    | 3638 s/epoch        | 4560 | [yaml](https://github.com/mindspore-lab/mindocr/blob/main/configs/rec/svtr/svtr_tiny.yaml) | [ckpt](https://download.mindspore.cn/toolkits/mindocr/svtr/svtr_tiny-950be1c3.ckpt) \| [mindir](https://download.mindspore.cn/toolkits/mindocr/svtr/svtr_tiny-950be1c3-86ece8c8.mindir) |
+| SVTR-Tiny      | D910x4-MS1.10-G | 90.23%    | 2575 s/epoch        | 6272 | [yaml](https://github.com/mindspore-lab/mindocr/blob/main/configs/rec/svtr/svtr_tiny.yaml) | [ckpt](https://download.mindspore.cn/toolkits/mindocr/svtr/svtr_tiny-950be1c3.ckpt) \| [mindir](https://download.mindspore.cn/toolkits/mindocr/svtr/svtr_tiny-950be1c3-86ece8c8.mindir) |
 </div>
 
 <details open markdown>
@@ -339,7 +339,7 @@ Mindocr内置了一部分字典，均放在了 `mindocr/utils/dict/` 位置，�
 
 **注意：**
 - 您可以通过将配置文件中的参数 `use_space_char` 设置为 True 来包含空格字符。
-- 请记住检查配置文件中的 `dataset->transform_pipeline->RecAttnLabelEncode->lower` 参数的值。如果词典中有大小写字母而且想区分大小写的话，请将其设置为 False。
+- 请记住检查配置文件中的 `dataset->transform_pipeline->RecCTCLabelEncode->lower` 参数的值。如果词典中有大小写字母而且想区分大小写的话，请将其设置为 False。
 
 ## 5. 中文识别模型训练
 

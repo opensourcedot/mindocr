@@ -1,14 +1,14 @@
 import math
 import numbers
 import random
+from typing import Any, Dict
 
 import cv2
 import numpy as np
 
-from mindspore.dataset.transforms import Compose
 from mindspore.dataset.vision import RandomColorAdjust
 
-__all__ = ["SVTRRecAug"]
+__all__ = ["SVTRGeometry", "SVTRDeterioration", "CVColorJitter"]
 
 
 def sample_asym(magnitude, size=None):
@@ -161,6 +161,10 @@ class CVRandomAffine(object):
 
         return angle, translations, scale, shear
 
+    @staticmethod
+    def project(x, y, a, b, c):
+        return int(a * x + b * y + c)
+
     def __call__(self, img):
         src_h, src_w = img.shape[:2]
         angle, translate, scale, shear = self.get_params(self.degrees, self.translate, self.scale, self.shear, src_h)
@@ -170,10 +174,7 @@ class CVRandomAffine(object):
 
         startpoints = [(0, 0), (src_w - 1, 0), (src_w - 1, src_h - 1), (0, src_h - 1)]
 
-        def project(x, y, a, b, c):
-            return int(a * x + b * y + c)
-
-        endpoints = [(project(x, y, *M[0]), project(x, y, *M[1])) for x, y in startpoints]
+        endpoints = [(self.project(x, y, *M[0]), self.project(x, y, *M[1])) for x, y in startpoints]
 
         rect = cv2.minAreaRect(np.array(endpoints))
         bbox = cv2.boxPoints(rect).astype(dtype=np.int32)
@@ -239,20 +240,20 @@ class CVRescale(object):
             factor: the decayed factor from base size, factor=4 keeps target scale by default.
             base_size: base size the build the bottom layer of pyramid
         """
-        # assert factor is valid
-        self.factor = factor
+        if isinstance(factor, numbers.Number):
+            self.factor = (0, factor)
+        elif isinstance(factor, (tuple, list)) and len(factor) == 2:
+            self.factor = (factor[0], factor[1])
+        else:
+            raise Exception("factor must be number or list with length 2")
+
         self.base_h, self.base_w = base_size[:2]
 
     def __call__(self, img):
-        if isinstance(self.factor, numbers.Number):
-            factor = round(sample_uniform(0, self.factor))
-        elif isinstance(self.factor, (tuple, list)) and len(self.factor) == 2:
-            factor = round(sample_uniform(self.factor[0], self.factor[1]))
-        else:
-            raise RuntimeError("factor must be number or list with length 2")
-
+        factor = round(sample_uniform(self.factor[0], self.factor[1]))
         if factor == 0:
             return img
+
         src_h, src_w = img.shape[:2]
         cur_w, cur_h = self.base_w, self.base_h
         scale_img = cv2.resize(img, (cur_w, cur_h), interpolation=get_interpolation())
@@ -265,15 +266,16 @@ class CVRescale(object):
 class CVGaussianNoise(object):
     def __init__(self, mean=0, variance=20):
         self.mean = mean
-        self.variance = variance
+
+        if isinstance(variance, numbers.Number):
+            self.variance = lambda: max(int(sample_asym(variance)), 1)
+        elif isinstance(variance, (tuple, list)) and len(variance) == 2:
+            self.variance = lambda: int(sample_uniform(variance[0], variance[1]))
+        else:
+            raise Exception("degree must be number or list with length 2")
 
     def __call__(self, img):
-        if isinstance(self.variance, numbers.Number):
-            variance = max(int(sample_asym(self.variance)), 1)
-        elif isinstance(self.variance, (tuple, list)) and len(self.variance) == 2:
-            variance = int(sample_uniform(self.variance[0], self.variance[1]))
-        else:
-            raise RuntimeError("degree must be number or list with length 2")
+        variance = self.variance()
 
         noise = np.random.normal(self.mean, variance**0.5, img.shape)
         img = np.clip(img + noise, 0, 255).astype(np.uint8)
@@ -282,18 +284,19 @@ class CVGaussianNoise(object):
 
 class CVMotionBlur(object):
     def __init__(self, degrees=12, angle=90):
-        self.degrees = degrees
         self.angle = angle
 
-    def __call__(self, img):
-        if isinstance(self.degrees, numbers.Number):
-            degree = max(int(sample_asym(self.degrees)), 1)
-        elif isinstance(self.degrees, (tuple, list)) and len(self.degrees) == 2:
-            degree = int(sample_uniform(self.degrees[0], self.degrees[1]))
+        if isinstance(degrees, numbers.Number):
+            self.degrees = lambda: max(int(sample_asym(degrees)), 1)
+        elif isinstance(degrees, (tuple, list)) and len(degrees) == 2:
+            self.degrees = lambda: int(sample_uniform(degrees[0], degrees[1]))
         else:
-            raise RuntimeError("degree must be number or list with length 2")
-        angle = sample_uniform(-self.angle, self.angle)
+            raise Exception("degree must be number or list with length 2")
 
+    def __call__(self, img):
+        degree = self.degrees()
+
+        angle = sample_uniform(-self.angle, self.angle)
         M = cv2.getRotationMatrix2D((degree // 2, degree // 2), angle, 1)
         motion_blur_kernel = np.zeros((degree, degree))
         motion_blur_kernel[degree // 2, :] = 1
@@ -309,11 +312,12 @@ class CVColorJitter(object):
         self.p = p
         self.transforms = RandomColorAdjust(brightness=brightness, contrast=contrast, saturation=saturation, hue=hue)
 
-    def __call__(self, img):
+        self.output_columns = ["image"]
+
+    def __call__(self, data: Dict[str, Any]) -> Dict[str, Any]:
         if random.random() < self.p:
-            return self.transforms(img)
-        else:
-            return img
+            data["image"] = self.transforms(data["image"])
+        return data
 
 
 class SVTRDeterioration(object):
@@ -328,13 +332,15 @@ class SVTRDeterioration(object):
             transforms.append(CVRescale(factor=factor))
         self.transforms = transforms
 
-    def __call__(self, img):
+        self.output_columns = ["image"]
+
+    def __call__(self, data: Dict[str, Any]) -> Dict[str, Any]:
         if random.random() < self.p:
-            random.shuffle(self.transforms)
-            transforms = Compose(self.transforms)
-            return transforms(img)
-        else:
-            return img
+            img = data["image"]
+            for func in random.sample(self.transforms, k=len(self.transforms)):
+                img = func(img)
+            data["image"] = img
+        return data
 
 
 class SVTRGeometry(object):
@@ -355,47 +361,15 @@ class SVTRGeometry(object):
         self.transforms.append(CVRandomAffine(degrees=degrees, translate=translate, scale=scale, shear=shear))
         self.transforms.append(CVRandomPerspective(distortion=distortion))
 
-    def __call__(self, img):
+        self.output_columns = ["image"]
+
+    def __call__(self, data: Dict[str, Any]) -> Dict[str, Any]:
         if random.random() < self.p:
+            img = data["image"]
             if self.aug_type:
-                random.shuffle(self.transforms)
-                transforms = Compose(self.transforms[: random.randint(1, 3)])
-                img = transforms(img)
+                for func in random.sample(self.transforms, k=random.randint(1, 3)):
+                    img = func(img)
             else:
                 img = self.transforms[random.randint(0, 2)](img)
-            return img
-        else:
-            return img
-
-
-class SVTRRecAug(object):
-    def __init__(
-        self, aug_type=0, geometry_p=0.5, deterioration_p=0.25, deterioration_factor=4, colorjitter_p=0.25, **kwargs
-    ):
-        self.transforms = Compose(
-            [
-                SVTRGeometry(
-                    aug_type=aug_type,
-                    degrees=45,
-                    translate=(0.0, 0.0),
-                    scale=(0.5, 2.0),
-                    shear=(45, 15),
-                    distortion=0.5,
-                    p=geometry_p,
-                ),
-                SVTRDeterioration(variance=20, degrees=6, factor=deterioration_factor, p=deterioration_p),
-                CVColorJitter(
-                    brightness=0.5,
-                    contrast=0.5,
-                    saturation=0.5,
-                    hue=0.1,
-                    p=colorjitter_p,
-                ),
-            ]
-        )
-
-    def __call__(self, data):
-        img = data["image"]
-        img = self.transforms(img)
-        data["image"] = img
+            data["image"] = img
         return data

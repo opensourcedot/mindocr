@@ -1,13 +1,12 @@
 import logging
 import os
 import unicodedata
-from typing import Any, List, Optional
+from typing import Any, Optional
 
 import lmdb
 import numpy as np
 
 from .base_dataset import BaseDataset
-from .transforms.transforms_factory import create_transforms, run_transforms
 
 __all__ = ["LMDBDataset"]
 _logger = logging.getLogger(__name__)
@@ -18,15 +17,10 @@ class LMDBDataset(BaseDataset):
     The annotaiton format is required to aligned to paddle, which can be done using the `converter.py` script.
 
     Args:
-        is_train: whether the dataset is for training
-        data_dir: data root directory for lmdb dataset(s)
-        shuffle: Optional, if not given, shuffle = is_train
-        transform_pipeline: list of dict, key - transform class name, value - a dict of param config.
-                    e.g., [{'DecodeImage': {'img_mode': 'BGR', 'channel_first': False}}]
-            -       if None, default transform pipeline for text detection will be taken.
-        output_columns (list): optional, indicates the keys in data dict that are expected to output for dataloader.
-            if None, all data keys will be used for return.
-        filter_max_len (bool): Filter the records where the label is longer than the `max_text_len`.
+        data_dir: data root directory for lmdb dataset(s). Default: ".".
+        sample_ratio: Sampling ratio from current dataset. Default: 1.0.
+        shuffle(bool): shuffle samples within dataset. Useful only when `sample_ratio` is set below 1. Default: False.
+        filter_max_len (bool): Filter the records where the label is longer than the `max_text_len`. Default: False.
         extra_count_if_repeat (bool): Count extra length if there is a consectutive pair of same characters,
             e.g., length of "aa" = 3, length of "aab" = 4. It is usually used in CTC alignment, prevent the situation
             if the input has not enough space for the target during alignment.
@@ -36,13 +30,13 @@ class LMDBDataset(BaseDataset):
         character_dict_path (str): The path of the character dictionary. It is used to determine if there is any valid
             character in the label. If it is not provided, then `0123456789abcdefghijklmnopqrstuvwxyz` will be used.
             Default: None.
-        label_standandize (bool): Apply label standardization (NFKD). default: False.
+        label_standardize (bool): Apply label standardization (NFKD). default: False.
         random_choice_if_none (bool): Random choose another data if the result returned from data transform is none.
             Default: False.
+        **kwargs: Dummy arguments for compatibilities only.
 
     Returns:
-        data (tuple): Depending on the transform pipeline, __get_item__ returns a tuple for the specified data item.
-        You can specify the `output_columns` arg to order the output data for dataloader.
+        data (tuple): Return the tuple of the encoded image array and the corresponding label
 
     Notes:
         1. Dataset file structure should follow:
@@ -58,33 +52,30 @@ class LMDBDataset(BaseDataset):
 
     def __init__(
         self,
-        is_train: bool = True,
-        data_dir: str = "",
+        data_dir: str = ".",
         sample_ratio: float = 1.0,
-        shuffle: Optional[bool] = None,
-        transform_pipeline: Optional[List[dict]] = None,
-        output_columns: Optional[List[str]] = None,
+        shuffle: bool = False,
         filter_max_len: bool = False,
         extra_count_if_repeat: bool = False,
         max_text_len: Optional[int] = None,
         filter_zero_text_image: bool = False,
         character_dict_path: Optional[str] = None,
-        label_standandize: bool = False,
+        label_standardize: bool = False,
         random_choice_if_none: bool = False,
         **kwargs: Any,
     ):
         self.data_dir = data_dir
         self.filter_max_len = filter_max_len
         self.max_text_len = max_text_len
-        self.label_standandize = label_standandize
+        self.label_standardize = label_standardize
         self.extra_count_if_repeat = extra_count_if_repeat
         self.random_choice_if_none = random_choice_if_none
 
-        shuffle = shuffle if shuffle is not None else is_train
-
         self.lmdb_sets = self.load_list_of_hierarchical_lmdb_dataset(data_dir)
+
         if len(self.lmdb_sets) == 0:
             raise ValueError(f"Cannot find any lmdb dataset under `{data_dir}`. Please check the data path is correct.")
+
         self.data_idx_order_list = self.get_dataset_idx_orders(sample_ratio, shuffle)
 
         # filter the max length
@@ -99,37 +90,7 @@ class LMDBDataset(BaseDataset):
                 self.data_idx_order_list, character_dict_path
             )
 
-        # create transform
-        if transform_pipeline is not None:
-            self.transforms = create_transforms(transform_pipeline)
-        else:
-            raise ValueError("No transform pipeline is specified!")
-
-        self.prefetch(output_columns)
-
-    def prefetch(self, output_columns):
-        # prefetch the data keys, to fit GeneratorDataset
-        _data = self.data_idx_order_list[0]
-        lmdb_idx, file_idx = self.data_idx_order_list[0]
-        lmdb_idx = int(lmdb_idx)
-        file_idx = int(file_idx)
-        sample_info = self.get_lmdb_sample_info(self.lmdb_sets[lmdb_idx]["txn"], file_idx)
-        _data = {"img_lmdb": sample_info[0], "label": sample_info[1]}
-        _data = run_transforms(_data, transforms=self.transforms)
-        _available_keys = list(_data.keys())
-
-        if output_columns is None:
-            self.output_columns = _available_keys
-        else:
-            self.output_columns = []
-            for k in output_columns:
-                if k in _data:
-                    self.output_columns.append(k)
-                else:
-                    raise ValueError(
-                        f"Key {k} does not exist in data (available keys: {_data.keys()}). "
-                        "Please check the name or the completeness transformation pipeline."
-                    )
+        self.output_columns = ["image", "label"]
 
     @staticmethod
     def count_extra_len_if_repeated(label: str) -> int:
@@ -219,7 +180,7 @@ class LMDBDataset(BaseDataset):
                     env = lmdb.Environment(
                         rootdir, max_readers=32, readonly=True, lock=False, readahead=False, meminit=False
                     )
-                except lmdb.Error as e:
+                except lmdb.Error as e:  # handle the empty folder
                     _logger.warning(str(e))
                     continue
                 txn = env.begin(write=False)
@@ -257,7 +218,7 @@ class LMDBDataset(BaseDataset):
             raise ValueError(f"Cannot find key {label_key}")
         label = label.decode("utf-8")
 
-        if self.label_standandize:
+        if self.label_standardize:
             label = unicodedata.normalize("NFKD", label)
 
         if label_only:
@@ -265,34 +226,13 @@ class LMDBDataset(BaseDataset):
 
         img_key = "image-%09d".encode() % idx
         imgbuf = txn.get(img_key)
-        return imgbuf, label
+        image = np.frombuffer(imgbuf, np.uint8)
+        return image, label
 
     def __getitem__(self, idx):
         lmdb_idx, file_idx = self.data_idx_order_list[idx]
         sample_info = self.get_lmdb_sample_info(self.lmdb_sets[int(lmdb_idx)]["txn"], int(file_idx))
-
-        if sample_info is None and self.random_choice_if_none:
-            _logger.warning("sample_info is None, randomly choose another data.")
-            random_idx = np.random.randint(self.__len__())
-            return self.__getitem__(random_idx)
-
-        data = {"img_lmdb": sample_info[0], "label": sample_info[1]}
-
-        # perform transformation on data
-        try:
-            data = run_transforms(data, transforms=self.transforms)
-        except Exception as e:
-            if self.random_choice_if_none:
-                _logger.warning("data is None after transforms, randomly choose another data.")
-                random_idx = np.random.randint(self.__len__())
-                return self.__getitem__(random_idx)
-            else:
-                _logger.warning(f"Error occurred during preprocess.\n {e}")
-                raise e
-
-        output_tuple = tuple(data[k] for k in self.output_columns)
-
-        return output_tuple
+        return sample_info
 
     def __len__(self):
         return self.data_idx_order_list.shape[0]

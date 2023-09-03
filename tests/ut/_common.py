@@ -63,38 +63,44 @@ def update_config_for_CI(
         if task == "rec":
             config["train"]["dataset"]["type"] = "RecDataset"
 
+        config["train"]["dataset"]["mindrecord"] = False
         config["train"]["dataset"]["dataset_root"] = "data/Canidae/"
         config["train"]["dataset"]["data_dir"] = "train/dogs"
         config["train"]["dataset"]["label_file"] = f"train/{task}_gt.txt"
         config["train"]["dataset"][
             "sample_ratio"
         ] = 0.1  # TODO: 120 training samples in total, don't be larger than batchsize after sampling
-        config["train"]["loader"]["num_workers"] = 1  # github server only support 2 workers at most
+        config["train"]["loader"]["num_workers"] = 1  # GitHub server only support 2 workers at most
+        config["train"]["loader"]["num_workers_dataset"] = 1
+        config["train"]["loader"]["num_workers_batch"] = 1
         # if config['train']['loader']['batch_size'] > 120:
         config["train"]["loader"]["batch_size"] = 1  # to save memory
-        config["train"]["loader"]["max_rowsize"] = 16  # to save memory
-        config["train"]["loader"]["prefetch_size"] = 2  # to save memory
+        config["train"]["loader"]["max_rowsize"] = 1  # to save memory
+        config["train"]["loader"]["prefetch_size"] = 1  # to save memory
         if "common" in config:
-            config["common"]["batch_size"] = 1
+            config["common"]["batch_size"] = config["train"]["loader"]["batch_size"]
         if "batch_size" in config["loss"]:
-            config["loss"]["batch_size"] = 1
+            config["loss"]["batch_size"] = config["train"]["loader"]["batch_size"]
 
         if task == "rec":
             config["eval"]["dataset"]["type"] = "RecDataset"
+        config["eval"]["dataset"]["mindrecord"] = False
         config["eval"]["dataset"]["dataset_root"] = "data/Canidae/"
         config["eval"]["dataset"]["data_dir"] = "val/dogs"
         config["eval"]["dataset"]["label_file"] = f"val/{task}_gt.txt"
         config["eval"]["dataset"]["sample_ratio"] = 0.1
-        config["eval"]["loader"]["num_workers"] = 1  # github server only support 2 workers at most
+        config["eval"]["loader"]["num_workers"] = 1  # GitHub server only support 2 workers at most
+        config["eval"]["loader"]["num_workers_dataset"] = 1
+        config["eval"]["loader"]["num_workers_batch"] = 1
         config["eval"]["loader"]["batch_size"] = 1
-        config["eval"]["loader"]["max_rowsize"] = 4  # to save memory
+        config["eval"]["loader"]["max_rowsize"] = 1  # to save memory
         config["eval"]["loader"]["prefetch_size"] = 1  # to save memory
 
         config["eval"]["ckpt_load_path"] = os.path.join(config["train"]["ckpt_save_dir"], "best.ckpt")
 
-        config["scheduler"]["num_epochs"] = 2
+        config["scheduler"]["num_epochs"] = 1
         config["scheduler"]["warmup_epochs"] = 1
-        config["scheduler"]["decay_epochs"] = 1
+        config["scheduler"]["decay_epochs"] = 0
 
         dummpy_config_fp = os.path.join("tests/st", os.path.basename(config_fp.replace(".yaml", "_dummpy.yaml")))
         with open(dummpy_config_fp, "w") as f:

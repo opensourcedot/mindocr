@@ -9,7 +9,7 @@ class DecodeImage:
     real DecodeImage has been moved to decode_node in parallel mode
     """
 
-    def __init__(self, img_mode="BGR", channel_first=False, to_float32=False, **kwargs):
+    def __init__(self, img_mode="RGB", channel_first=False, to_float32=False, **kwargs):
         self.img_mode = img_mode
         self.to_float32 = to_float32
         self.channel_first = channel_first
