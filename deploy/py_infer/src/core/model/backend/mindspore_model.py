@@ -24,8 +24,10 @@ class MindSporeModel(ModelBase):
     def _init_model(self):
         global ms
         global nn
+        global ModelProto
         import mindspore as ms
         from mindspore import nn
+        from mindspore.train.mind_ir_pb2 import ModelProto
 
         # set device
         ms.set_context(device_target=device_target_mapper[self.device.lower()])
@@ -42,7 +44,6 @@ class MindSporeModel(ModelBase):
         self._input_num = len(inputs)
         self._input_shape = [x.shape for x in inputs]
         self._input_dtype = [self.__dtype_to_nptype(x.dtype) for x in inputs]
-
 
     def infer(self, inputs: List[np.ndarray]) -> List[np.ndarray]:
         model_inputs = self.net.get_inputs()
@@ -103,10 +104,22 @@ class MindSporeModel(ModelBase):
             ms.int32: np.int32,
             ms.int64: np.int64,
             ms.uint8: np.uint8,
-            ms.unit16: np.uint16,
+            ms.uint16: np.uint16,
             ms.uint32: np.uint32,
             ms.uint64: np.uint64,
             ms.float16: np.float16,
             ms.float32: np.float32,
             ms.float64: np.float64,
         }[type_]
+
+    def _read_mindir_input_info(self):
+        model = ModelProto()
+        with open(self.model_path, "rb") as f:
+            pb_content = f.read()
+            model.ParseFromString(pb_content)
+        for item in model.input:
+            tensor = item.tensor
+            for elem in tensor:
+                print(elem.dims)
+
+
