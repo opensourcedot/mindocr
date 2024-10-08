@@ -552,7 +552,7 @@ use_pretrained_mindir: false
 yaml_file_name: db_r50_totaltext.yaml
 ---
 ckpt_link: https://download.mindspore.cn/toolkits/mindocr/east/east_mobilenetv3_ic15-4288dba1.ckpt
-mindir_link: https://download.mindspore.cn/toolkits/mindocr/east/east_mobilenetv3_ic15-4288dba1-5bf242c5.mindir
+mindir_link: ''
 postprocess:
   name: EASTPostprocess
   nms_thresh: 0.2
