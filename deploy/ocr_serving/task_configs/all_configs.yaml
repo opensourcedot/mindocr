@@ -1,0 +1,1460 @@
+ckpt_link: https://download.mindspore.cn/toolkits/mindocr/cls/cls_mobilenetv3-92db9c58.ckpt
+mindir_link: ''
+postprocess:
+  label_list: &id001
+  - '0'
+  - '180'
+  name: ClsPostprocess
+preprocess:
+- DecodeImage:
+    img_mode: BGR
+    to_float32: false
+- Rotate90IfVertical:
+    direction: counterclockwise
+    threshold: 2.0
+- ClsLabelEncode:
+    label_list: *id001
+- RecResizeImg:
+    image_shape:
+    - 48
+    - 192
+    padding: false
+- NormalizeImage:
+    bgr_to_rgb: true
+    is_hwc: true
+    mean:
+    - 127.0
+    - 127.0
+    - 127.0
+    std:
+    - 127.0
+    - 127.0
+    - 127.0
+- ToCHWImage: null
+use_pretrained_mindir: false
+yaml_file_name: cls_mv3.yaml
+---
+ckpt_link: ''
+mindir_link: ''
+postprocess:
+  binary_thresh: 0.3
+  box_thresh: 0.6
+  box_type: quad
+  expand_ratio: 1.5
+  max_candidates: 1000
+  name: DBPostprocess
+preprocess:
+- DecodeImage:
+    img_mode: RGB
+    to_float32: false
+- DetLabelEncode: null
+- DetResize:
+    keep_ratio: true
+    padding: true
+    target_size:
+    - 1152
+    - 2048
+- NormalizeImage:
+    bgr_to_rgb: false
+    is_hwc: true
+    mean: imagenet
+    std: imagenet
+- ToCHWImage: null
+use_pretrained_mindir: false
+yaml_file_name: dbpp_r50_icdar15.yaml
+---
+ckpt_link: ''
+mindir_link: ''
+postprocess:
+  binary_thresh: 0.3
+  box_thresh: 0.7
+  box_type: quad
+  expand_ratio: 1.5
+  max_candidates: 1000
+  name: DBPostprocess
+preprocess:
+- DecodeImage:
+    img_mode: RGB
+    to_float32: false
+- DetLabelEncode: null
+- DetResize:
+    keep_ratio: true
+    padding: true
+    target_size:
+    - 1152
+    - 2048
+- NormalizeImage:
+    bgr_to_rgb: false
+    is_hwc: true
+    mean: imagenet
+    std: imagenet
+- ToCHWImage: null
+use_pretrained_mindir: false
+yaml_file_name: dbpp_r50_icdar15_8p.yaml
+---
+ckpt_link: ''
+mindir_link: ''
+postprocess:
+  binary_thresh: 0.3
+  box_thresh: 0.6
+  box_type: quad
+  expand_ratio: 1.5
+  max_candidates: 1000
+  name: DBPostprocess
+preprocess:
+- DecodeImage:
+    img_mode: RGB
+    to_float32: false
+- DetLabelEncode: null
+- DetResize:
+    keep_ratio: true
+    padding: true
+    target_size:
+    - 1152
+    - 2048
+- NormalizeImage:
+    bgr_to_rgb: false
+    is_hwc: true
+    mean: imagenet
+    std: imagenet
+- ToCHWImage: null
+use_pretrained_mindir: false
+yaml_file_name: dbpp_r50_icdar15_910.yaml
+---
+ckpt_link: ''
+mindir_link: ''
+postprocess:
+  binary_thresh: 0.3
+  box_thresh: 0.6
+  box_type: quad
+  expand_ratio: 1.5
+  max_candidates: 1000
+  name: DBPostprocess
+preprocess:
+- DecodeImage:
+    img_mode: RGB
+    to_float32: false
+- DetLabelEncode: null
+- DetResize:
+    divisor: 32
+    keep_ratio: false
+    limit_type: none
+    target_size:
+    - 736
+    - 1280
+- NormalizeImage:
+    bgr_to_rgb: false
+    is_hwc: true
+    mean: imagenet
+    std: imagenet
+- ToCHWImage: null
+use_pretrained_mindir: false
+yaml_file_name: db_mobilenetv3_icdar15.yaml
+---
+ckpt_link: ''
+mindir_link: ''
+postprocess:
+  binary_thresh: 0.3
+  box_thresh: 0.6
+  box_type: quad
+  expand_ratio: 1.5
+  max_candidates: 1000
+  name: DBPostprocess
+preprocess:
+- DecodeImage:
+    img_mode: RGB
+    to_float32: false
+- DetLabelEncode: null
+- DetResize:
+    divisor: 32
+    keep_ratio: false
+    limit_type: none
+    target_size:
+    - 736
+    - 1280
+- NormalizeImage:
+    bgr_to_rgb: false
+    is_hwc: true
+    mean: imagenet
+    std: imagenet
+- ToCHWImage: null
+use_pretrained_mindir: false
+yaml_file_name: db_mobilenetv3_icdar15_8p.yaml
+---
+ckpt_link: ''
+mindir_link: ''
+postprocess:
+  binary_thresh: 0.3
+  box_thresh: 0.9
+  box_type: quad
+  expand_ratio: 1.5
+  max_candidates: 1000
+  name: DBPostprocess
+preprocess:
+- DecodeImage:
+    img_mode: RGB
+    to_float32: false
+- DetLabelEncode: null
+- DetResize:
+    limit_side_len: 736
+    limit_type: min
+- NormalizeImage:
+    bgr_to_rgb: true
+    is_hwc: true
+    mean: imagenet
+    std: imagenet
+- ToCHWImage: null
+use_pretrained_mindir: false
+yaml_file_name: db_mobilenetv3_ppocrv3.yaml
+---
+ckpt_link: ''
+mindir_link: ''
+postprocess:
+  binary_thresh: 0.3
+  box_thresh: 0.6
+  box_type: poly
+  expand_ratio: 1.5
+  max_candidates: 1000
+  name: DBPostprocess
+preprocess:
+- DecodeImage:
+    img_mode: RGB
+    to_float32: false
+- DetLabelEncode: null
+- DetResize:
+    keep_ratio: true
+    padding: true
+    target_size:
+    - 1024
+    - 1024
+- NormalizeImage:
+    bgr_to_rgb: false
+    is_hwc: true
+    mean: imagenet
+    std: imagenet
+- ToCHWImage: null
+use_pretrained_mindir: false
+yaml_file_name: db_r18_ctw1500.yaml
+---
+ckpt_link: ''
+mindir_link: ''
+postprocess:
+  binary_thresh: 0.3
+  box_thresh: 0.6
+  box_type: quad
+  expand_ratio: 1.5
+  max_candidates: 1000
+  name: DBPostprocess
+preprocess:
+- DecodeImage:
+    img_mode: RGB
+    to_float32: false
+- DetLabelEncode: null
+- DetResize:
+    keep_ratio: false
+    target_size:
+    - 736
+    - 1280
+- NormalizeImage:
+    bgr_to_rgb: false
+    is_hwc: true
+    mean: imagenet
+    std: imagenet
+- ToCHWImage: null
+use_pretrained_mindir: false
+yaml_file_name: db_r18_icdar15.yaml
+---
+ckpt_link: ''
+mindir_link: ''
+postprocess:
+  binary_thresh: 0.3
+  box_thresh: 0.6
+  box_type: quad
+  expand_ratio: 1.5
+  max_candidates: 1000
+  name: DBPostprocess
+preprocess:
+- DecodeImage:
+    ignore_orientation: true
+    img_mode: RGB
+    to_float32: false
+- DetLabelEncode: null
+- DetResize:
+    keep_ratio: true
+    padding: true
+    target_size:
+    - 1152
+    - 2048
+- NormalizeImage:
+    bgr_to_rgb: false
+    is_hwc: true
+    mean: imagenet
+    std: imagenet
+- ToCHWImage: null
+use_pretrained_mindir: false
+yaml_file_name: db_r18_mlt2017.yaml
+---
+ckpt_link: ''
+mindir_link: ''
+postprocess: null
+preprocess: null
+use_pretrained_mindir: false
+yaml_file_name: db_r18_synthtext.yaml
+---
+ckpt_link: ''
+mindir_link: ''
+postprocess:
+  binary_thresh: 0.3
+  box_thresh: 0.6
+  box_type: quad
+  expand_ratio: 1.5
+  max_candidates: 1000
+  name: DBPostprocess
+preprocess:
+- DecodeImage:
+    ignore_orientation: true
+    img_mode: RGB
+    to_float32: false
+- DetLabelEncode: null
+- DetResize:
+    force_divisable: false
+    keep_ratio: true
+    limit_type: none
+    padding: true
+    target_size:
+    - 800
+    - 800
+- NormalizeImage:
+    bgr_to_rgb: false
+    is_hwc: true
+    mean: imagenet
+    std: imagenet
+- ToCHWImage: null
+use_pretrained_mindir: false
+yaml_file_name: db_r18_td500.yaml
+---
+ckpt_link: ''
+mindir_link: ''
+postprocess:
+  binary_thresh: 0.3
+  box_thresh: 0.7
+  box_type: poly
+  expand_ratio: 1.5
+  max_candidates: 1000
+  name: DBPostprocess
+preprocess:
+- DecodeImage:
+    ignore_orientation: true
+    img_mode: RGB
+    to_float32: false
+- DetLabelEncode: null
+- DetResize:
+    keep_ratio: true
+    padding: true
+    target_size:
+    - 1152
+    - 2048
+- NormalizeImage:
+    bgr_to_rgb: false
+    is_hwc: true
+    mean: imagenet
+    std: imagenet
+- ToCHWImage: null
+use_pretrained_mindir: false
+yaml_file_name: db_r18_totaltext.yaml
+---
+ckpt_link: ''
+mindir_link: ''
+postprocess:
+  binary_thresh: 0.3
+  box_thresh: 0.6
+  box_type: poly
+  expand_ratio: 1.5
+  max_candidates: 1000
+  name: DBPostprocess
+preprocess:
+- DecodeImage:
+    img_mode: RGB
+    to_float32: false
+- DetLabelEncode: null
+- DetResize:
+    keep_ratio: true
+    padding: true
+    target_size:
+    - 1024
+    - 1024
+- NormalizeImage:
+    bgr_to_rgb: false
+    is_hwc: true
+    mean: imagenet
+    std: imagenet
+- ToCHWImage: null
+use_pretrained_mindir: false
+yaml_file_name: db_r50_ctw1500.yaml
+---
+ckpt_link: ''
+mindir_link: ''
+postprocess:
+  binary_thresh: 0.3
+  box_thresh: 0.6
+  box_type: quad
+  expand_ratio: 1.5
+  max_candidates: 1000
+  name: DBPostprocess
+preprocess:
+- DecodeImage:
+    img_mode: RGB
+    to_float32: false
+- DetLabelEncode: null
+- DetResize:
+    divisor: 32
+    keep_ratio: false
+    limit_type: none
+    target_size:
+    - 736
+    - 1280
+- NormalizeImage:
+    bgr_to_rgb: false
+    is_hwc: true
+    mean: imagenet
+    std: imagenet
+- ToCHWImage: null
+use_pretrained_mindir: false
+yaml_file_name: db_r50_icdar15.yaml
+---
+ckpt_link: ''
+mindir_link: ''
+postprocess:
+  binary_thresh: 0.3
+  box_thresh: 0.7
+  box_type: quad
+  expand_ratio: 1.5
+  max_candidates: 1000
+  name: DBPostprocess
+preprocess:
+- DecodeImage:
+    img_mode: RGB
+    to_float32: false
+- DetLabelEncode: null
+- DetResize:
+    divisor: 32
+    keep_ratio: false
+    limit_type: none
+    target_size:
+    - 736
+    - 1280
+- NormalizeImage:
+    bgr_to_rgb: false
+    is_hwc: true
+    mean: imagenet
+    std: imagenet
+- ToCHWImage: null
+use_pretrained_mindir: false
+yaml_file_name: db_r50_icdar15_8p.yaml
+---
+ckpt_link: ''
+mindir_link: ''
+postprocess:
+  binary_thresh: 0.3
+  box_thresh: 0.6
+  box_type: quad
+  expand_ratio: 1.5
+  max_candidates: 1000
+  name: DBPostprocess
+preprocess:
+- DecodeImage:
+    ignore_orientation: true
+    img_mode: RGB
+    to_float32: false
+- DetLabelEncode: null
+- DetResize:
+    keep_ratio: true
+    padding: true
+    target_size:
+    - 1152
+    - 2048
+- NormalizeImage:
+    bgr_to_rgb: false
+    is_hwc: true
+    mean: imagenet
+    std: imagenet
+- ToCHWImage: null
+use_pretrained_mindir: false
+yaml_file_name: db_r50_mlt2017.yaml
+---
+ckpt_link: ''
+mindir_link: ''
+postprocess: null
+preprocess: null
+use_pretrained_mindir: false
+yaml_file_name: db_r50_synthtext.yaml
+---
+ckpt_link: ''
+mindir_link: ''
+postprocess:
+  binary_thresh: 0.3
+  box_thresh: 0.6
+  box_type: quad
+  expand_ratio: 1.5
+  max_candidates: 1000
+  name: DBPostprocess
+preprocess:
+- DecodeImage:
+    ignore_orientation: true
+    img_mode: RGB
+    to_float32: false
+- DetLabelEncode: null
+- DetResize:
+    force_divisable: false
+    keep_ratio: true
+    limit_type: none
+    padding: true
+    target_size:
+    - 800
+    - 800
+- NormalizeImage:
+    bgr_to_rgb: false
+    is_hwc: true
+    mean: imagenet
+    std: imagenet
+- ToCHWImage: null
+use_pretrained_mindir: false
+yaml_file_name: db_r50_td500.yaml
+---
+ckpt_link: ''
+mindir_link: ''
+postprocess:
+  binary_thresh: 0.3
+  box_thresh: 0.7
+  box_type: poly
+  expand_ratio: 1.5
+  max_candidates: 1000
+  name: DBPostprocess
+preprocess:
+- DecodeImage:
+    ignore_orientation: true
+    img_mode: RGB
+    to_float32: false
+- DetLabelEncode: null
+- DetResize:
+    keep_ratio: true
+    padding: true
+    target_size:
+    - 1152
+    - 2048
+- NormalizeImage:
+    bgr_to_rgb: false
+    is_hwc: true
+    mean: imagenet
+    std: imagenet
+- ToCHWImage: null
+use_pretrained_mindir: false
+yaml_file_name: db_r50_totaltext.yaml
+---
+ckpt_link: https://download.mindspore.cn/toolkits/mindocr/east/east_mobilenetv3_ic15-4288dba1.ckpt
+mindir_link: https://download.mindspore.cn/toolkits/mindocr/east/east_mobilenetv3_ic15-4288dba1-5bf242c5.mindir
+postprocess:
+  name: EASTPostprocess
+  nms_thresh: 0.2
+  score_thresh: 0.8
+preprocess:
+- DecodeImage:
+    img_mode: RGB
+    to_float32: false
+- DetLabelEncode: null
+- DetResize:
+    force_divisable: false
+    target_size:
+    - 720
+    - 1280
+- NormalizeImage:
+    bgr_to_rgb: false
+    is_hwc: true
+    mean: imagenet
+    std: imagenet
+- ToCHWImage: null
+use_pretrained_mindir: true
+yaml_file_name: east_mobilenetv3_icdar15.yaml
+---
+ckpt_link: https://download.mindspore.cn/toolkits/mindocr/east/east_resnet50_ic15-7262e359.ckpt
+mindir_link: https://download.mindspore.cn/toolkits/mindocr/east/east_resnet50_ic15-7262e359-5f05cd42.mindir
+postprocess:
+  name: EASTPostprocess
+  nms_thresh: 0.2
+  score_thresh: 0.8
+preprocess:
+- DecodeImage:
+    img_mode: RGB
+    to_float32: false
+- DetLabelEncode: null
+- DetResize:
+    force_divisable: false
+    target_size:
+    - 720
+    - 1280
+- NormalizeImage:
+    bgr_to_rgb: false
+    is_hwc: true
+    mean: imagenet
+    std: imagenet
+- ToCHWImage: null
+use_pretrained_mindir: true
+yaml_file_name: east_r50_icdar15.yaml
+---
+ckpt_link: https://download.mindspore.cn/toolkits/mindocr/fcenet/fcenet_resnet50-43857f7f.ckpt
+mindir_link: https://download.mindspore.cn/toolkits/mindocr/fcenet/fcenet_resnet50-43857f7f-dad7dfcc.mindir
+postprocess:
+  alpha: 1.2
+  beta: 1.0
+  box_type: quad
+  name: FCEPostprocess
+  scales:
+  - 8
+  - 16
+  - 32
+preprocess:
+- DecodeImage:
+    img_mode: RGB
+    to_float32: false
+- DetLabelEncode: null
+- DetResize:
+    keep_ratio: true
+    padding: true
+    target_size:
+    - 800
+    - 800
+- NormalizeImage:
+    bgr_to_rgb: false
+    is_hwc: true
+    mean: imagenet
+    std: imagenet
+- ToCHWImage: null
+use_pretrained_mindir: true
+yaml_file_name: fce_icdar15.yaml
+---
+ckpt_link: https://download.mindspore.cn/toolkits/mindocr/psenet/psenet_mobilenetv3_ic15-bf2c1907.ckpt
+mindir_link: https://download.mindspore.cn/toolkits/mindocr/psenet/psenet_mobilenetv3_ic15-bf2c1907-da7cfe09.mindir
+postprocess:
+  binary_thresh: 0.3
+  box_thresh: 0.6
+  box_type: quad
+  min_area: 16
+  name: PSEPostprocess
+  scale: 1
+preprocess:
+- DecodeImage:
+    img_mode: RGB
+    to_float32: false
+- DetLabelEncode: null
+- DetResize:
+    limit_side_len: 736
+    limit_type: min
+- NormalizeImage:
+    bgr_to_rgb: false
+    is_hwc: true
+    mean: imagenet
+    std: imagenet
+- ToCHWImage: null
+use_pretrained_mindir: true
+yaml_file_name: pse_mv3_icdar15.yaml
+---
+ckpt_link: https://download.mindspore.cn/toolkits/mindocr/psenet/psenet_resnet152_ctw1500-58b1b1ff.ckpt
+mindir_link: https://download.mindspore.cn/toolkits/mindocr/psenet/psenet_resnet152_ctw1500-58b1b1ff-b95c7f85.mindir
+postprocess:
+  binary_thresh: 0.3
+  box_thresh: 0.6
+  box_type: poly
+  min_area: 16
+  name: PSEPostprocess
+  scale: 1
+preprocess:
+- DecodeImage:
+    img_mode: RGB
+    to_float32: false
+- DetLabelEncode: null
+- DetResize:
+    keep_ratio: true
+    padding: true
+    target_size:
+    - 1024
+    - 1024
+- NormalizeImage:
+    bgr_to_rgb: false
+    is_hwc: true
+    mean: imagenet
+    std: imagenet
+- ToCHWImage: null
+use_pretrained_mindir: true
+yaml_file_name: pse_r152_ctw1500.yaml
+---
+ckpt_link: https://download.mindspore.cn/toolkits/mindocr/psenet/psenet_resnet152_ic15-6058a798.ckpt
+mindir_link: https://download.mindspore.cn/toolkits/mindocr/psenet/psenet_resnet152_ic15-6058a798-0d755205.mindir
+postprocess:
+  binary_thresh: 0
+  box_thresh: 0.85
+  box_type: quad
+  min_area: 16
+  name: PSEPostprocess
+  scale: 1
+preprocess:
+- DecodeImage:
+    img_mode: RGB
+    to_float32: false
+- DetLabelEncode: null
+- DetResize:
+    limit_side_len: 1472
+    limit_type: min
+- NormalizeImage:
+    bgr_to_rgb: false
+    is_hwc: true
+    mean: imagenet
+    std: imagenet
+- ToCHWImage: null
+use_pretrained_mindir: true
+yaml_file_name: pse_r152_icdar15.yaml
+---
+ckpt_link: https://download.mindspore.cn/toolkits/mindocr/psenet/psenet_resnet50_ic15-7e36cab9.ckpt
+mindir_link: https://download.mindspore.cn/toolkits/mindocr/psenet/psenet_resnet50_ic15-7e36cab9-cfd2ee6c.mindir
+postprocess:
+  binary_thresh: 0
+  box_thresh: 0.85
+  box_type: quad
+  min_area: 16
+  name: PSEPostprocess
+  scale: 1
+preprocess:
+- DecodeImage:
+    img_mode: RGB
+    to_float32: false
+- DetLabelEncode: null
+- DetResize:
+    limit_side_len: 736
+    limit_type: min
+- NormalizeImage:
+    bgr_to_rgb: false
+    is_hwc: true
+    mean: imagenet
+    std: imagenet
+- ToCHWImage: null
+use_pretrained_mindir: true
+yaml_file_name: pse_r50_icdar15.yaml
+---
+ckpt_link: ''
+mindir_link: ''
+postprocess:
+  class_path: null
+  name: VQASerTokenLayoutLMPostProcess
+preprocess:
+- DecodeImage:
+    img_mode: RGB
+    to_float32: false
+- VQATokenLabelEncode:
+    algorithm: LayoutLMv3
+    class_path: null
+    contains_re: false
+- VQATokenPad:
+    max_seq_len: 512
+    return_attention_mask: true
+- VQASerTokenChunk:
+    max_seq_len: 512
+- LayoutResize:
+    size:
+    - 224
+    - 224
+- NormalizeImage:
+    bgr_to_rgb: false
+    is_hwc: true
+    mean: imagenet
+    std: imagenet
+- ToCHWImage: null
+use_pretrained_mindir: false
+yaml_file_name: ser_layoutlmv3_xfund_zh.yaml
+---
+ckpt_link: ''
+mindir_link: ''
+postprocess:
+  class_path: path/to/class_list_xfun.txt
+  name: VQAReTokenLayoutLMPostProcess
+preprocess:
+- DecodeImage:
+    img_mode: RGB
+    to_float32: false
+- VQATokenLabelEncode:
+    algorithm: LayoutXLM
+    class_path: path/to/class_list_xfun.txt
+    contains_re: true
+    order_method: tb-yx
+- VQATokenPad:
+    max_seq_len: 512
+    return_attention_mask: true
+- VQAReTokenRelation: null
+- VQAReTokenChunk:
+    max_seq_len: 512
+- TensorizeEntitiesRelations:
+    max_relation_len: 5000
+- LayoutResize:
+    size:
+    - 224
+    - 224
+- NormalizeImage:
+    bgr_to_rgb: false
+    is_hwc: true
+    mean: imagenet
+    std: imagenet
+- ToCHWImage: null
+use_pretrained_mindir: false
+yaml_file_name: re_layoutxlm_xfund_zh.yaml
+---
+ckpt_link: https://download.mindspore.cn/toolkits/mindocr/layoutxlm/ser_layoutxlm_base-a4ea148e.ckpt
+mindir_link: ''
+postprocess:
+  class_path: path/to/class_list_xfun.txt
+  name: VQASerTokenLayoutLMPostProcess
+preprocess:
+- DecodeImage:
+    img_mode: RGB
+    to_float32: false
+- VQATokenLabelEncode:
+    algorithm: LayoutXLM
+    class_path: path/to/class_list_xfun.txt
+    contains_re: false
+- VQATokenPad:
+    max_seq_len: 512
+    return_attention_mask: true
+- VQASerTokenChunk:
+    max_seq_len: 512
+- LayoutResize:
+    size:
+    - 224
+    - 224
+- NormalizeImage:
+    bgr_to_rgb: false
+    is_hwc: true
+    mean: imagenet
+    std: imagenet
+- ToCHWImage: null
+use_pretrained_mindir: false
+yaml_file_name: ser_layoutxlm_xfund_zh.yaml
+---
+ckpt_link: ''
+mindir_link: ''
+postprocess:
+  class_path: path/to/class_list_xfun.txt
+  name: VQAReTokenLayoutLMPostProcess
+preprocess:
+- DecodeImage:
+    img_mode: RGB
+    to_float32: false
+- VQATokenLabelEncode:
+    algorithm: LayoutXLM
+    class_path: path/to/class_list_xfun.txt
+    contains_re: true
+    order_method: tb-yx
+- VQATokenPad:
+    max_seq_len: 512
+    return_attention_mask: true
+- VQAReTokenRelation: null
+- VQAReTokenChunk:
+    max_seq_len: 512
+- TensorizeEntitiesRelations:
+    max_relation_len: 5000
+- LayoutResize:
+    size:
+    - 224
+    - 224
+- NormalizeImage:
+    bgr_to_rgb: false
+    is_hwc: true
+    mean: imagenet
+    std: imagenet
+- ToCHWImage: null
+use_pretrained_mindir: false
+yaml_file_name: re_vi_layoutxlm_xfund_zh.yaml
+---
+ckpt_link: https://download.mindspore.cn/toolkits/mindocr/vi-layoutxlm/ser_vi_layoutxlm-f3c83585.ckpt
+mindir_link: ''
+postprocess:
+  class_path: path/to/class_list_xfun.txt
+  name: VQASerTokenLayoutLMPostProcess
+preprocess:
+- DecodeImage:
+    img_mode: RGB
+    to_float32: false
+- VQATokenLabelEncode:
+    algorithm: LayoutXLM
+    class_path: path/to/class_list_xfun.txt
+    contains_re: false
+    order_method: tb-yx
+- VQATokenPad:
+    max_seq_len: 512
+    return_attention_mask: true
+- VQASerTokenChunk:
+    max_seq_len: 512
+- LayoutResize:
+    size:
+    - 224
+    - 224
+- NormalizeImage:
+    bgr_to_rgb: false
+    is_hwc: true
+    mean: imagenet
+    std: imagenet
+- ToCHWImage: null
+use_pretrained_mindir: false
+yaml_file_name: ser_vi_layoutxlm_xfund_zh.yaml
+---
+ckpt_link: ''
+mindir_link: ''
+postprocess:
+  conf_free: true
+  conf_thres: 0.001
+  iou_thres: 0.7
+  multi_label: true
+  name: YOLOv8Postprocess
+  time_limit: 60.0
+preprocess:
+- func_name: letterbox
+  scaleup: false
+- func_name: label_norm
+  xyxy2xywh_: true
+- func_name: label_pad
+  padding_size: 160
+  padding_value: -1
+- func_name: image_norm
+  scale: 255.0
+- bgr2rgb: true
+  func_name: image_transpose
+  hwc2chw: true
+use_pretrained_mindir: false
+yaml_file_name: yolov8n.yaml
+---
+ckpt_link: https://download-mindspore.osinfra.cn/toolkits/mindocr/vary/vary_toy-e62a3564.ckpt
+mindir_link: ''
+postprocess: null
+preprocess: null
+use_pretrained_mindir: false
+yaml_file_name: vary_toy.yaml
+---
+ckpt_link: https://download.mindspore.cn/toolkits/mindocr/abinet/abinet_resnet45_en-7efa1184.ckpt
+mindir_link: ''
+postprocess:
+  name: ABINetLabelDecode
+preprocess:
+- ABINetEvalTransforms: null
+- ABINetEval: null
+use_pretrained_mindir: false
+yaml_file_name: abinet_resnet45_en.yaml
+---
+ckpt_link: ''
+mindir_link: ''
+postprocess:
+  character_dict_path: null
+  name: RecCTCLabelDecode
+  use_space_char: false
+preprocess:
+- DecodeImage:
+    img_mode: RGB
+    to_float32: false
+- RecCTCLabelEncode:
+    character_dict_path: null
+    lower: true
+    max_text_len: 23
+    use_space_char: false
+- RecResizeNormForInfer:
+    keep_ratio: false
+    norm_before_pad: false
+    padding: false
+    target_height: 32
+    target_width: 100
+- ToCHWImage: null
+use_pretrained_mindir: false
+yaml_file_name: crnn_icdar15.yaml
+---
+ckpt_link: ''
+mindir_link: ''
+postprocess:
+  character_dict_path: null
+  name: RecCTCLabelDecode
+  use_space_char: false
+preprocess:
+- DecodeImage:
+    img_mode: RGB
+    to_float32: false
+- RecCTCLabelEncode:
+    character_dict_path: null
+    lower: true
+    max_text_len: 24
+    use_space_char: false
+- RecResizeNormForInfer:
+    keep_ratio: false
+    norm_before_pad: false
+    padding: false
+    target_height: 32
+    target_width: 100
+- ToCHWImage: null
+use_pretrained_mindir: false
+yaml_file_name: crnn_resnet34.yaml
+---
+ckpt_link: https://download.mindspore.cn/toolkits/mindocr/crnn/crnn_resnet34_ch-7a342e3c.ckpt
+mindir_link: https://download.mindspore.cn/toolkits/mindocr/crnn/crnn_resnet34_ch-7a342e3c-105bccb2.mindir
+postprocess:
+  character_dict_path: mindocr/utils/dict/ch_dict.txt
+  name: RecCTCLabelDecode
+  use_space_char: false
+preprocess:
+- DecodeImage:
+    img_mode: RGB
+    to_float32: false
+- RecCTCLabelEncode:
+    character_dict_path: mindocr/utils/dict/ch_dict.txt
+    lower: false
+    max_text_len: 40
+    use_space_char: false
+- Rotate90IfVertical:
+    direction: counterclockwise
+    threshold: 2.0
+- RecResizeNormForInfer:
+    keep_ratio: true
+    norm_before_pad: false
+    padding: true
+    target_height: 32
+    target_width: 320
+- ToCHWImage: null
+use_pretrained_mindir: true
+yaml_file_name: crnn_resnet34_ch.yaml
+---
+ckpt_link: ''
+mindir_link: ''
+postprocess:
+  character_dict_path: null
+  name: RecCTCLabelDecode
+  use_space_char: false
+preprocess:
+- DecodeImage:
+    img_mode: RGB
+    to_float32: false
+- RecCTCLabelEncode:
+    character_dict_path: null
+    lower: true
+    max_text_len: 23
+    use_space_char: false
+- RecResizeNormForInfer:
+    keep_ratio: false
+    norm_before_pad: false
+    padding: false
+    target_height: 32
+    target_width: 100
+- ToCHWImage: null
+use_pretrained_mindir: false
+yaml_file_name: crnn_vgg7.yaml
+---
+ckpt_link: https://download.mindspore.cn/toolkits/mindocr/master/master_resnet31-e7bfbc97.ckpt
+mindir_link: https://download.mindspore.cn/toolkits/mindocr/master/master_resnet31_ascend-e7bfbc97-b724ed55.mindir
+postprocess:
+  character_dict_path: mindocr/utils/dict/en_dict90.txt
+  lower: false
+  name: RecMasterLabelDecode
+  use_space_char: false
+  use_unknown_char: true
+preprocess:
+- DecodeImage:
+    img_mode: RGB
+    to_float32: true
+- RecMasterLabelEncode:
+    character_dict_path: mindocr/utils/dict/en_dict90.txt
+    lower: false
+    max_text_len: 30
+    use_space_char: false
+    use_unknown_char: true
+- NormalizeImage:
+    is_hwc: true
+    mean:
+    - 127.0
+    - 127.0
+    - 127.0
+    std:
+    - 127.0
+    - 127.0
+    - 127.0
+- RecResizeImg:
+    character_dict_path: mindocr/utils/dict/en_dict90.txt
+    image_shape:
+    - 48
+    - 160
+    infer_mode: false
+    padding: true
+- ToCHWImage: null
+use_pretrained_mindir: true
+yaml_file_name: master_resnet31.yaml
+---
+ckpt_link: https://download.mindspore.cn/toolkits/mindocr/rare/rare_resnet34-309dc63e.ckpt
+mindir_link: https://download.mindspore.cn/toolkits/mindocr/rare/rare_resnet34_ascend-309dc63e-b96c2a4b.mindir
+postprocess:
+  character_dict_path: null
+  name: RecAttnLabelDecode
+  use_space_char: false
+preprocess:
+- DecodeImage:
+    img_mode: RGB
+    to_float32: false
+- RecAttnLabelEncode:
+    character_dict_path: null
+    lower: true
+    max_text_len: 25
+    use_space_char: false
+- RecResizeNormForInfer:
+    keep_ratio: false
+    norm_before_pad: false
+    padding: false
+    target_height: 32
+    target_width: 100
+- ToCHWImage: null
+use_pretrained_mindir: true
+yaml_file_name: rare_resnet34.yaml
+---
+ckpt_link: https://download.mindspore.cn/toolkits/mindocr/rare/rare_resnet34_ch-5f3023e2.ckpt
+mindir_link: https://download.mindspore.cn/toolkits/mindocr/rare/rare_resnet34_ch_ascend-5f3023e2-11f0d554.mindir
+postprocess:
+  character_dict_path: mindocr/utils/dict/ch_dict.txt
+  name: RecAttnLabelDecode
+  use_space_char: false
+preprocess:
+- DecodeImage:
+    img_mode: RGB
+    to_float32: false
+- RecAttnLabelEncode:
+    character_dict_path: mindocr/utils/dict/ch_dict.txt
+    lower: false
+    max_text_len: 40
+    use_space_char: false
+- Rotate90IfVertical:
+    direction: counterclockwise
+    threshold: 2.0
+- RecResizeNormForInfer:
+    keep_ratio: true
+    norm_before_pad: false
+    padding: true
+    target_height: 32
+    target_width: 320
+- ToCHWImage: null
+use_pretrained_mindir: true
+yaml_file_name: rare_resnet34_ch.yaml
+---
+ckpt_link: https://download.mindspore.cn/toolkits/mindocr/robustscanner/robustscanner_resnet31-f27eab37.ckpt
+mindir_link: https://download.mindspore.cn/toolkits/mindocr/robustscanner/robustscanner_resnet31-f27eab37-158bde10.mindir
+postprocess:
+  character_dict_path: mindocr/utils/dict/en_dict90.txt
+  name: SARLabelDecode
+  rm_symbol: true
+  use_space_char: false
+preprocess:
+- DecodeImage:
+    img_mode: BGR
+    to_float32: false
+- SARLabelEncode:
+    character_dict_path: mindocr/utils/dict/en_dict90.txt
+    is_training: false
+    lower: true
+    max_text_len: 40
+    use_space_char: false
+- RobustScannerRecResizeImg:
+    image_shape:
+    - 3
+    - 48
+    - 48
+    - 160
+    max_text_len: 40
+    width_downsample_ratio: 0.25
+use_pretrained_mindir: true
+yaml_file_name: robustscanner_resnet31.yaml
+---
+ckpt_link: ''
+mindir_link: ''
+postprocess:
+  character_dict_path: mindocr/utils/dict/ch_dict.txt
+  name: CTCLabelDecode
+  use_space_char: true
+preprocess:
+- DecodeImage:
+    img_mode: BGR
+    to_float32: false
+- MultiLabelEncode:
+    character_dict_path: mindocr/utils/dict/ch_dict.txt
+    max_text_length: 25
+    use_space_char: true
+- RecResizeImgForSVTR:
+    image_shape:
+    - 3
+    - 48
+    - 320
+    width_downsample_ratio: 0.125
+use_pretrained_mindir: false
+yaml_file_name: svtr_ppocrv3_ch.yaml
+---
+ckpt_link: https://download.mindspore.cn/toolkits/mindocr/svtr/svtr_tiny-950be1c3.ckpt
+mindir_link: https://download.mindspore.cn/toolkits/mindocr/svtr/svtr_tiny-950be1c3-86ece8c8.mindir
+postprocess:
+  character_dict_path: null
+  name: RecCTCLabelDecode
+  use_space_char: false
+preprocess:
+- DecodeImage:
+    img_mode: BGR
+    to_float32: false
+- RecCTCLabelEncode:
+    character_dict_path: null
+    lower: true
+    max_text_len: 24
+    use_space_char: false
+- SVTRRecResizeImg:
+    image_shape:
+    - 64
+    - 256
+    padding: false
+- NormalizeImage:
+    bgr_to_rgb: true
+    is_hwc: true
+    mean:
+    - 127.0
+    - 127.0
+    - 127.0
+    std:
+    - 127.0
+    - 127.0
+    - 127.0
+- ToCHWImage: null
+use_pretrained_mindir: true
+yaml_file_name: svtr_tiny.yaml
+---
+ckpt_link: https://download-mindspore.osinfra.cn/toolkits/mindocr/svtr/svtr_tiny_8p-0afc75d6.ckpt
+mindir_link: https://download-mindspore.osinfra.cn/toolkits/mindocr/svtr/svtr_tiny_8p-0afc75d6-255191ef.mindir
+postprocess:
+  character_dict_path: null
+  name: RecCTCLabelDecode
+  use_space_char: false
+preprocess:
+- DecodeImage:
+    img_mode: BGR
+    to_float32: false
+- RecCTCLabelEncode:
+    character_dict_path: null
+    lower: true
+    max_text_len: 24
+    use_space_char: false
+- SVTRRecResizeImg:
+    image_shape:
+    - 64
+    - 256
+    padding: false
+- NormalizeImage:
+    bgr_to_rgb: true
+    is_hwc: true
+    mean:
+    - 127.0
+    - 127.0
+    - 127.0
+    std:
+    - 127.0
+    - 127.0
+    - 127.0
+- ToCHWImage: null
+use_pretrained_mindir: true
+yaml_file_name: svtr_tiny_8p.yaml
+---
+ckpt_link: https://download.mindspore.cn/toolkits/mindocr/svtr/svtr_tiny_ch-2ee6ade4.ckpt
+mindir_link: https://github.com/mindspore-lab/mindocr/blob/main/configs/rec/svtr
+postprocess:
+  character_dict_path: mindocr/utils/dict/ch_dict.txt
+  name: RecCTCLabelDecode
+  use_space_char: false
+preprocess:
+- DecodeImage:
+    img_mode: BGR
+    to_float32: false
+- RecCTCLabelEncode:
+    character_dict_path: mindocr/utils/dict/ch_dict.txt
+    lower: false
+    max_text_len: 40
+    use_space_char: false
+- Rotate90IfVertical:
+    direction: counterclockwise
+    threshold: 2.0
+- SVTRRecResizeImg:
+    image_shape:
+    - 32
+    - 320
+    padding: true
+- NormalizeImage:
+    bgr_to_rgb: true
+    is_hwc: true
+    mean:
+    - 127.0
+    - 127.0
+    - 127.0
+    std:
+    - 127.0
+    - 127.0
+    - 127.0
+- ToCHWImage: null
+use_pretrained_mindir: true
+yaml_file_name: svtr_tiny_ch.yaml
+---
+ckpt_link: ''
+mindir_link: https://download.mindspore.cn/toolkits/mindocr/visionlan/visionlan_resnet45_LA-e9720d9e-71b38d2d.mindir
+postprocess:
+  blank_at_last: false
+  character_dict_path: null
+  lower: true
+  max_text_length: 25
+  name: VisionLANPostProcess
+  use_space_char: false
+preprocess:
+- DecodeImage:
+    img_mode: BGR
+    to_float32: false
+- VisionLANLabelEncode:
+    blank_at_last: false
+    character_dict_path: null
+    lower: true
+    max_text_len: 25
+    use_space_char: false
+- SVTRRecResizeImg:
+    image_shape:
+    - 64
+    - 256
+    padding: false
+- NormalizeImage:
+    bgr_to_rgb: true
+    is_hwc: true
+    mean:
+    - 127.0
+    - 127.0
+    - 127.0
+    std:
+    - 127.0
+    - 127.0
+    - 127.0
+- ToCHWImage: null
+use_pretrained_mindir: true
+yaml_file_name: visionlan_resnet45_LA.yaml
+---
+ckpt_link: ''
+mindir_link: ''
+postprocess:
+  blank_at_last: false
+  character_dict_path: null
+  lower: true
+  max_text_length: 25
+  name: VisionLANPostProcess
+  use_space_char: false
+preprocess:
+- DecodeImage:
+    img_mode: BGR
+    to_float32: false
+- VisionLANLabelEncode:
+    blank_at_last: false
+    character_dict_path: null
+    lower: true
+    max_text_len: 25
+    use_space_char: false
+- SVTRRecResizeImg:
+    image_shape:
+    - 64
+    - 256
+    padding: false
+- NormalizeImage:
+    bgr_to_rgb: true
+    is_hwc: true
+    mean:
+    - 127.0
+    - 127.0
+    - 127.0
+    std:
+    - 127.0
+    - 127.0
+    - 127.0
+- ToCHWImage: null
+use_pretrained_mindir: false
+yaml_file_name: visionlan_resnet45_LF_1.yaml
+---
+ckpt_link: ''
+mindir_link: ''
+postprocess:
+  blank_at_last: false
+  character_dict_path: null
+  lower: true
+  max_text_length: 25
+  name: VisionLANPostProcess
+  use_space_char: false
+preprocess:
+- DecodeImage:
+    img_mode: BGR
+    to_float32: false
+- VisionLANLabelEncode:
+    blank_at_last: false
+    character_dict_path: null
+    lower: true
+    max_text_len: 25
+    use_space_char: false
+- SVTRRecResizeImg:
+    image_shape:
+    - 64
+    - 256
+    padding: false
+- NormalizeImage:
+    bgr_to_rgb: true
+    is_hwc: true
+    mean:
+    - 127.0
+    - 127.0
+    - 127.0
+    std:
+    - 127.0
+    - 127.0
+    - 127.0
+- ToCHWImage: null
+use_pretrained_mindir: false
+yaml_file_name: visionlan_resnet45_LF_2.yaml
+---
+ckpt_link: ''
+mindir_link: ''
+postprocess:
+  box_shape: pad
+  character_dict_path: mindocr/utils/dict/table_master_structure_dict.txt
+  merge_no_span_structure: true
+  name: TableMasterLabelDecode
+preprocess:
+- DecodeImage:
+    img_mode: BGR
+    to_float32: true
+- TableMasterLabelEncode:
+    character_dict_path: mindocr/utils/dict/table_master_structure_dict.txt
+    learn_empty_box: false
+    loc_reg_num: 4
+    max_text_length: 500
+    merge_no_span_structure: true
+    replace_empty_cell_token: true
+- ResizeTableImage:
+    max_len: 480
+    resize_bboxes: true
+- PaddingTableImage:
+    size:
+    - 480
+    - 480
+- TableBoxEncode:
+    in_box_format: xywh
+    out_box_format: xywh
+- TableImageNorm:
+    mean:
+    - 0.5
+    - 0.5
+    - 0.5
+    order: hwc
+    scale: 1./255.
+    std:
+    - 0.5
+    - 0.5
+    - 0.5
+- ToCHWImage: null
+use_pretrained_mindir: false
+yaml_file_name: table_master.yaml

@@ -58,6 +58,8 @@ class TaskConfigGenerator:
                     model_config["ckpt_link"] = model_link["ckpt_link"]
                     model_config["mindir_link"] = model_link["mindir_link"]
                     break
+            if not model_config["mindir_link"]:
+                model_config["use_pretrained_mindir"] = False
             processed_model_configs.append(model_config)
         self.__model_configs = processed_model_configs
 
@@ -82,7 +84,7 @@ class TaskConfigGenerator:
         # 5. add model ckpt/ mindir link to model_configs
         self.__add_model_link_to_model_configs()
 
-        # 4. combine these configs into one config.yaml
+        # 6. combine these configs into one config.yaml
         with open("all_configs.yaml", "w+", encoding="utf-8") as f:
             yaml.dump_all(documents=self.__model_configs, stream=f, allow_unicode=True)
 
