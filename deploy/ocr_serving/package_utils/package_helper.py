@@ -144,6 +144,18 @@ class PackageHelper:
         """
         shutil.copy(self.mindir_file_link, os.path.join(self.target_mindir_folder, "model.mindir"))
 
+    def copy_model_process_helper(self):
+        """
+        copy model_process_helper.py to target folder
+        Returns:
+        """
+        src_path = os.path.join(self.base_path, "deploy/ocr_serving/server_helper/model_process_helper.py")
+        dst_path = os.path.join(self.target_server_infer_folder, "/model_process_helper.py")
+        if os.path.exists(dst_path):
+            shutil.rmtree(dst_path)
+        shutil.copy(os.path.join(self.base_path, "deploy/ocr_serving/server_helper/model_process_helper.py"),
+                    self.target_server_infer_folder)
+
     def do_package(self):
         """
         main function
@@ -157,6 +169,9 @@ class PackageHelper:
 
         # 3. get target mindir file
         self.get_mindir_file()
+
+        # 4. copy model_process_helper.py to folder
+        self.copy_model_process_helper()
 
 
 if __name__ == "__main__":
