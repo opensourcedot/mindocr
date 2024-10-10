@@ -28,8 +28,10 @@ class PackageHelper:
         self.input_check()
         # mindocr base path
         self.base_path = get_base_path()
-        # target model server folder
-        self.target_server_infer_folder = None
+        # target mofrl folder
+        self.target_model_folder = None
+        # target server folder
+        self.target_server_folder = "deploy/ocr_serving/server_folders"
         # mindir file link
         self.mindir_file_link = None
         # target mindir file folder
@@ -57,17 +59,18 @@ class PackageHelper:
         Returns:
         """
         base_server_folder = os.path.join(self.base_path, "deploy/ocr_serving/server_folders")
-        self.target_server_infer_folder = os.path.join(self.base_path, "deploy/ocr_serving/server_folders", self.package_name)
+
+        self.target_model_folder = os.path.join(self.base_path, self.target_server_folder, self.package_name)
         # build the base folder if not exists
         if os.path.exists(base_server_folder):
             pass
         else:
             os.mkdir(base_server_folder)
         # build the target inference server folder
-        if os.path.exists(self.target_server_infer_folder):
+        if os.path.exists(self.target_model_folder):
             pass
         else:
-            os.mkdir(self.target_server_infer_folder)
+            os.mkdir(self.target_model_folder)
 
     def get_target_config_yaml(self):
         """
@@ -75,7 +78,7 @@ class PackageHelper:
         Returns:
         """
         base_config_yaml_path = os.path.join(self.base_path, "deploy/ocr_serving/task_configs/all_configs.yaml")
-        target_config_yaml_path = os.path.join(self.target_server_infer_folder, self.package_name + ".yaml")
+        target_config_yaml_path = os.path.join(self.target_model_folder, self.package_name + ".yaml")
 
         matched = False
         # read configs
@@ -106,16 +109,16 @@ class PackageHelper:
         if use custom mindir file, we need to copy the mindir file to target folder
         Returns:
         """
-        dirs = os.listdir(self.target_server_infer_folder)
+        dirs = os.listdir(self.target_model_folder)
         dir_list = [0]
         for dir in dirs:
-            if os.path.isdir(os.path.join(self.target_server_infer_folder, dir)):
+            if os.path.isdir(os.path.join(self.target_model_folder, dir)):
                 try:
                     dir_list.append(int(dir))
                 except:
                     pass
         max_index = max(dir_list)
-        self.target_mindir_folder = os.path.join(self.target_server_infer_folder, "{}".format(max_index + 1))
+        self.target_mindir_folder = os.path.join(self.target_model_folder, "{}".format(max_index + 1))
 
         os.mkdir(self.target_mindir_folder)
         # use official mindir file
@@ -150,11 +153,21 @@ class PackageHelper:
         Returns:
         """
         src_path = os.path.join(self.base_path, "deploy/ocr_serving/server_helper/model_process_helper.py")
-        dst_path = os.path.join(self.target_server_infer_folder, "/model_process_helper.py")
+        dst_path = os.path.join(self.target_model_folder, "model_process_helper.py")
         if os.path.exists(dst_path):
-            shutil.rmtree(dst_path)
-        shutil.copy(os.path.join(self.base_path, "deploy/ocr_serving/server_helper/model_process_helper.py"),
-                    self.target_server_infer_folder)
+            os.remove(dst_path)
+        shutil.copy(src_path, dst_path)
+
+    def copy_servable_config(self):
+        """
+        copy target xxx_servable_config.py to target folder
+        Returns:
+        """
+        src_path = os.path.join(self.base_path, "deploy/ocr_serving/server_helper/det_servable_config.py")
+        dst_path = os.path.join(self.target_model_folder, "servable_config.py")
+        if os.path.exists(dst_path):
+            os.remove(dst_path)
+        shutil.copy(src_path, dst_path)
 
     def do_package(self):
         """
@@ -172,6 +185,9 @@ class PackageHelper:
 
         # 4. copy model_process_helper.py to folder
         self.copy_model_process_helper()
+
+        # 5. copy servable config to folder
+        self.copy_servable_config()
 
 
 if __name__ == "__main__":
