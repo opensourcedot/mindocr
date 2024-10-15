@@ -5,6 +5,7 @@
 """
 import os
 import shutil
+import argparse
 
 import yaml
 import requests
@@ -78,7 +79,7 @@ class PackageHelper:
         Returns:
         """
         base_config_yaml_path = os.path.join(self.base_path, "deploy/ocr_serving/task_configs/all_configs.yaml")
-        target_config_yaml_path = os.path.join(self.target_model_folder, self.package_name + ".yaml")
+        target_config_yaml_path = os.path.join(self.target_model_folder, "config.yaml")
 
         matched = False
         # read configs
@@ -191,6 +192,11 @@ class PackageHelper:
 
 
 if __name__ == "__main__":
-    package_helper = PackageHelper("east_mobilenetv3_icdar15", r"D:\model.mindir")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("package_name",
+                        help="for example: [east_mobilenetv3_icdar15].", required=True)
+    parser.add_argument("--mindir_file_path",
+                        help="if you need to use your local mindir file, please specify this parameter.")
+    args = parser.parse_args()
+    package_helper = PackageHelper(args.package_name, args.mindir_file_path)
     package_helper.do_package()
-
