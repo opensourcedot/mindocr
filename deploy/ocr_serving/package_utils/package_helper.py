@@ -194,7 +194,7 @@ class PackageHelper:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("package_name",
-                        help="for example: [east_mobilenetv3_icdar15].", required=True)
+                        help="for example: [east_mobilenetv3_icdar15].")
     parser.add_argument("--mindir_file_path",
                         help="if you need to use your local mindir file, please specify this parameter.")
     args = parser.parse_args()
