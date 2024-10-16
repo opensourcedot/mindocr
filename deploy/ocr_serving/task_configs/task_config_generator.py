@@ -1,4 +1,3 @@
-import copy
 import os
 import re
 
@@ -40,9 +39,7 @@ class TaskConfigGenerator:
         """
         from markdown file to get models links
         Returns:
-
         """
-
         path = os.path.join(self.__mindocr_base_path, MODELS_LINK_PATH)
 
         with open(path, "r", encoding="utf-8") as f:
@@ -109,4 +106,4 @@ class TaskConfigGenerator:
 
 if __name__ == "__main__":
     task_config_generator = TaskConfigGenerator()
-    task_config_generator.get_info_from_extend_file()
+    task_config_generator.generate_config_file()

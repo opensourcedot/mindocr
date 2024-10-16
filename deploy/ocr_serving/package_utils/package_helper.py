@@ -6,6 +6,7 @@
 import os
 import shutil
 import argparse
+import subprocess
 
 import yaml
 import requests
@@ -91,11 +92,16 @@ class PackageHelper:
         for yaml_config in all_configs:
             if yaml_config["yaml_file_name"].replace(".yaml", "").lower() == self.package_name.lower():
                 matched = True
+                # case 1: use custom mindir file
                 if self.use_custom_mindir:
                     yaml_config["use_pretrained_mindir"] = False
                     yaml_config["mindir_link"] = self.mindir_path
-                if not yaml_config["mindir_link"]:
-                    raise Exception("No valid mindir file")
+                # case 2: use official mindir file
+                if not yaml_config["ckpt_link"]:
+                    raise Exception("No valid ckpt file to convert")
+                else:
+                    # download ckpt file
+                    self.__
                 self.mindir_file_link = yaml_config["mindir_link"]
                 with open(target_config_yaml_path, "w+", encoding="utf-8") as g:
                     yaml.dump(yaml_config, stream=g)
@@ -106,7 +112,7 @@ class PackageHelper:
 
     def get_mindir_file(self):
         """
-        if use official mindir file, we need to download mindir file.
+        if use official mindir file, we need to download ckpt file and convert it to mindir file
         if use custom mindir file, we need to copy the mindir file to target folder
         Returns:
         """
@@ -124,13 +130,13 @@ class PackageHelper:
         os.mkdir(self.target_mindir_folder)
         # use official mindir file
         if not self.use_custom_mindir:
-            self.download_official_mindir_file()
+            self.get_official_mindir_file()
         else:
             self.copy_custom_mindir_file()
 
-    def download_official_mindir_file(self):
+    def get_official_mindir_file(self):
         """
-        download official mindir file
+        download official ckpt file and convert it to mindir file
         Returns:
         """
         response = requests.get(self.mindir_file_link)
@@ -138,8 +144,12 @@ class PackageHelper:
             raise Exception(
                 "download mindir official mindir file failed. with status code = {}".format(response.status_code))
         else:
-            with open(os.path.join(self.target_mindir_folder, "model.mindir"), "wb") as f:
+            target_ckpt_path = os.path.join(self.target_mindir_folder, "model.ckpt")
+            with open(target_ckpt_path, "wb") as f:
                 f.write(response.content)
+            # convert ckpt to mindir
+            args = []
+            subprocess.run()
 
     def copy_custom_mindir_file(self):
         """
