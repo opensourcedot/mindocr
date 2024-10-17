@@ -1,10 +1,12 @@
+import os
+
 import numpy as np
 
 from .model_process_helper import ModelProcessor
 from mindspore_serving.server import register
 from mindocr.data.transforms import run_transforms
 
-model_processor = ModelProcessor("./config.yaml")
+model_processor = ModelProcessor(os.path.join(os.getcwd(), "config.yaml"))
 
 
 # define preprocess and postprocess

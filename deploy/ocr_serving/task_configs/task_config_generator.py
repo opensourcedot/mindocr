@@ -67,13 +67,13 @@ class TaskConfigGenerator:
         processed_model_configs = []
         for model_config in self.__model_configs:
             model_config["ckpt_link"] = ""
-            model_config["mindir_link"] = ""
+            model_config["custom_mindir_link"] = ""
             for model_link in self.__models_link:
                 if model_config["yaml_file_name"] == model_link["yaml_file_name"]:
                     model_config["ckpt_link"] = model_link["ckpt_link"]
                     model_config["data_shape_nchw"] = model_link["data_shape_nchw"]
                     break
-            if not model_config["mindir_link"]:
+            if not model_config["ckpt_link"]:
                 model_config["use_pretrained_mindir"] = False
             processed_model_configs.append(model_config)
         self.__model_configs = processed_model_configs

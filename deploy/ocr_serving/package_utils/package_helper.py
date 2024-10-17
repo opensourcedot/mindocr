@@ -3,6 +3,7 @@
 （1）使用自己的 mindir 文件
 （2）使用我们提供的 mindir 文件
 """
+import math
 import os
 import shutil
 import argparse
@@ -24,7 +25,7 @@ class PackageHelper:
             mindir_file_path: custom mindir file path. default None
         """
         self.package_name = package_name
-        self.mindir_path = mindir_file_path
+        self.custom_mindir_path = mindir_file_path
         self.use_custom_mindir = False
         # input check
         self.input_check()
@@ -38,22 +39,27 @@ class PackageHelper:
         self.mindir_file_link = None
         # target mindir file folder
         self.target_mindir_folder = None
+        # target config yaml
+        self.target_config_yaml = None
 
     def input_check(self):
         """
         check weather the input mindir_file_path is valid
         Returns:
         """
-        if self.mindir_path is None:
+        # if we not provide custom mindir path
+        if self.custom_mindir_path is None:
             pass
         else:
+            # use custom provided custom mindir path
             self.use_custom_mindir = True
-            model_type = self.mindir_path.split(".")[-1]
+            # check model type
+            model_type = self.custom_mindir_path.split(".")[-1]
             if model_type not in SUPPORT_INFER_TYPE:
                 raise Exception("unsupport mindir file type :{}".format(model_type))
             # if chose to use custom mindir file
-            if not os.path.exists(self.mindir_path):
-                raise Exception("mindir file not exist at : {}".format(self.mindir_path))
+            if not os.path.exists(self.custom_mindir_path):
+                raise Exception("mindir file not exist at : {}".format(self.custom_mindir_path))
 
     def build_infer_server_folder(self):
         """
@@ -83,10 +89,9 @@ class PackageHelper:
         target_config_yaml_path = os.path.join(self.target_model_folder, "config.yaml")
 
         matched = False
-        # read configs
+        # read all configs
         with open(base_config_yaml_path, "r", encoding="utf-8") as f:
-            yaml_configs = yaml.load_all(f.read(), Loader=yaml.FullLoader)
-            all_configs = [yaml_config for yaml_config in yaml_configs]
+            all_configs = [yaml_config for yaml_config in yaml.load_all(f.read(), Loader=yaml.FullLoader)]
 
         # match and get target config
         for yaml_config in all_configs:
@@ -95,16 +100,14 @@ class PackageHelper:
                 # case 1: use custom mindir file
                 if self.use_custom_mindir:
                     yaml_config["use_pretrained_mindir"] = False
-                    yaml_config["mindir_link"] = self.mindir_path
+                    yaml_config["custom_mindir_link"] = self.custom_mindir_path
                 # case 2: use official mindir file
-                if not yaml_config["ckpt_link"]:
-                    raise Exception("No valid ckpt file to convert")
                 else:
-                    # download ckpt file
-                    self.__
-                self.mindir_file_link = yaml_config["mindir_link"]
+                    if not yaml_config["ckpt_link"]:
+                        raise Exception("No valid ckpt file to convert")
                 with open(target_config_yaml_path, "w+", encoding="utf-8") as g:
                     yaml.dump(yaml_config, stream=g)
+                self.target_config_yaml = yaml_config
                 break
 
         if not matched:
@@ -116,6 +119,7 @@ class PackageHelper:
         if use custom mindir file, we need to copy the mindir file to target folder
         Returns:
         """
+        # 1. model version auto increase
         dirs = os.listdir(self.target_model_folder)
         dir_list = [0]
         for dir in dirs:
@@ -126,9 +130,9 @@ class PackageHelper:
                     pass
         max_index = max(dir_list)
         self.target_mindir_folder = os.path.join(self.target_model_folder, "{}".format(max_index + 1))
-
         os.mkdir(self.target_mindir_folder)
-        # use official mindir file
+
+        # 2. get mindir file
         if not self.use_custom_mindir:
             self.get_official_mindir_file()
         else:
@@ -139,17 +143,28 @@ class PackageHelper:
         download official ckpt file and convert it to mindir file
         Returns:
         """
-        response = requests.get(self.mindir_file_link)
-        if response.status_code % 100 == 2:
+        # 1. get ckpt file from official link
+        response = requests.get(self.target_config_yaml["ckpt_link"])
+        if math.floor(response.status_code / 100) != 2:
             raise Exception(
                 "download mindir official mindir file failed. with status code = {}".format(response.status_code))
         else:
             target_ckpt_path = os.path.join(self.target_mindir_folder, "model.ckpt")
             with open(target_ckpt_path, "wb") as f:
                 f.write(response.content)
-            # convert ckpt to mindir
-            args = []
-            subprocess.run()
+
+        # 2. convert ckpt to mindir
+        args = ["python", os.path.join(get_base_path(), "tools/export.py"), "--model_name_or_config",
+                "_".join(self.target_config_yaml["yaml_file_name"].split("_")[:-1]), "--data_shape"]
+        args.extend([str(elem) for elem in self.target_config_yaml["data_shape_nchw"][2:]])
+        args.append("--local_ckpt_path")
+        args.append(os.path.join(self.target_mindir_folder, "model.ckpt"))
+        args.append("--save_dir")
+        args.append(self.target_mindir_folder)
+        args.append("--custom_exported_name")
+        args.append("model")
+        subprocess.run(args, env=os.environ.copy(), shell=True)
+        os.remove(os.path.join(self.target_mindir_folder, "model.ckpt"))
 
     def copy_custom_mindir_file(self):
         """
@@ -202,11 +217,13 @@ class PackageHelper:
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("package_name",
-                        help="for example: [east_mobilenetv3_icdar15].")
-    parser.add_argument("--mindir_file_path",
-                        help="if you need to use your local mindir file, please specify this parameter.")
-    args = parser.parse_args()
-    package_helper = PackageHelper(args.package_name, args.mindir_file_path)
+    # parser = argparse.ArgumentParser()
+    # parser.add_argument("package_name",
+    #                     help="for example: [east_mobilenetv3_icdar15].")
+    # parser.add_argument("--mindir_file_path",
+    #                     help="if you need to use your local mindir file, please specify this parameter.")
+    # args = parser.parse_args()
+    # package_helper = PackageHelper(args.package_name, args.mindir_file_path)
+    # package_helper.do_package()
+    package_helper = PackageHelper("east_mobilenetv3_icdar15")
     package_helper.do_package()

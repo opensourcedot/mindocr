@@ -121,7 +121,7 @@ def kie_exporter(save_dir, name, net, data_shape):
     )
 
 
-def export(model_name_or_config, data_shape, local_ckpt_path, save_dir, is_dynamic_shape, model_type, **kwargs):
+def export(model_name_or_config, data_shape, local_ckpt_path, save_dir, is_dynamic_shape, model_type,  **kwargs):
     ms.set_context(mode=ms.GRAPH_MODE)  # , device_target="Ascend")
     set_logger(name="mindocr")
 
@@ -148,17 +148,25 @@ def export(model_name_or_config, data_shape, local_ckpt_path, save_dir, is_dynam
     net.set_train(False)
 
     if name == "abinet":
+        if "custom_exported_name" in kwargs:
+            name = kwargs["custom_exported_name"]
         abinet_exporter(save_dir, name, net, data_shape, is_dynamic_shape)
         return
 
     if name == "robustscanner_resnet31":
+        if "custom_exported_name" in kwargs:
+            name = kwargs["custom_exported_name"]
         robustscanner_resnet31_exporter(save_dir, name, net, data_shape, is_dynamic_shape)
         return
 
     if model_type == "kie":
+        if "custom_exported_name" in kwargs:
+            name = kwargs["custom_exported_name"]
         kie_exporter(save_dir, name, net, data_shape)
         return
 
+    if "custom_exported_name" in kwargs:
+        name = kwargs["custom_exported_name"]
     common_exporter(save_dir, name, net, data_shape, is_dynamic_shape, model_type)
 
 
@@ -233,7 +241,18 @@ if __name__ == "__main__":
         help="Path to a local checkpoint. If set, export mindir by loading local ckpt. \
             Otherwise, export mindir by downloading online ckpt.",
     )
-    parser.add_argument("--save_dir", type=str, default="", help="Directory to save the exported mindir file.")
+    parser.add_argument(
+        "--save_dir",
+        type=str,
+        default="",
+        help="Directory to save the exported mindir file."
+    )
+    parser.add_argument(
+        "--custom_exported_name",
+        type=str,
+        default="",
+        help="mindir name to save the exported mindir file"
+    )
 
     args = parser.parse_args()
     check_args(args)
