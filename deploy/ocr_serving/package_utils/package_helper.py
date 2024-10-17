@@ -3,16 +3,23 @@
 （1）使用自己的 mindir 文件
 （2）使用我们提供的 mindir 文件
 """
+import argparse
 import math
 import os
 import shutil
-import argparse
 import subprocess
+import sys
 
 import yaml
 import requests
 
-from deploy.ocr_serving.package_utils.path_utils import get_base_path
+current_file_path = os.path.abspath(__file__)
+mindocr_path = os.path.dirname(os.path.dirname(current_file_path))
+
+if mindocr_path not in sys.path:
+    sys.path.append(mindocr_path)
+
+from package_utils.path_utils import get_base_path
 
 SUPPORT_INFER_TYPE = ["mindir", "ms"]
 
@@ -217,13 +224,11 @@ class PackageHelper:
 
 
 if __name__ == "__main__":
-    # parser = argparse.ArgumentParser()
-    # parser.add_argument("package_name",
-    #                     help="for example: [east_mobilenetv3_icdar15].")
-    # parser.add_argument("--mindir_file_path",
-    #                     help="if you need to use your local mindir file, please specify this parameter.")
-    # args = parser.parse_args()
-    # package_helper = PackageHelper(args.package_name, args.mindir_file_path)
-    # package_helper.do_package()
-    package_helper = PackageHelper("east_mobilenetv3_icdar15")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("package_name",
+                        help="for example: [east_mobilenetv3_icdar15].")
+    parser.add_argument("--mindir_file_path",
+                        help="if you need to use your local mindir file, please specify this parameter.")
+    args = parser.parse_args()
+    package_helper = PackageHelper(args.package_name, args.mindir_file_path)
     package_helper.do_package()

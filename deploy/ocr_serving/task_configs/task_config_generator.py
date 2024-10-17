@@ -1,9 +1,16 @@
 import os
 import re
+import sys
 
 import yaml
 
-from deploy.ocr_serving.package_utils.path_utils import get_base_path, bfs_search_specific_type_file
+current_file_path = os.path.abspath(__file__)
+mindocr_path = os.path.dirname(os.path.dirname(current_file_path))
+
+if mindocr_path not in sys.path:
+    sys.path.append(mindocr_path)
+
+from package_utils.path_utils import get_base_path, bfs_search_specific_type_file
 
 COMBINED_CONFIG_YAML_FILE_NAME = "combined_configs.yaml"
 MODELS_LINK_PATH = "docs/zh/inference/inference_quickstart.md"
