@@ -62,7 +62,7 @@ class TaskConfigGenerator:
 
                 # 打印结果
                 for match in matches:
-                    info_dict = {"data_shape_nchw": [int(elem) for elem in match[0].split(",")],
+                    info_dict = {"data_shape_nchw": [str(elem) for elem in match[0].split(",")],
                                  "yaml_file_name": match[1].split(r"/")[-1], "ckpt_link": match[2]}
                     self.__models_link.append(info_dict)
 
