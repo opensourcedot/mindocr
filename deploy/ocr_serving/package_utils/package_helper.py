@@ -7,11 +7,10 @@ import argparse
 import math
 import os
 import shutil
-import subprocess
 import sys
 
-import yaml
 import requests
+import yaml
 
 current_file_path = os.path.abspath(__file__)
 mindocr_path = os.path.dirname(os.path.dirname(current_file_path))
@@ -172,16 +171,6 @@ class PackageHelper:
             save_dir=self.target_mindir_folder,
             exported_name="model")
         os.system(shell_command)
-        # args = ["python", os.path.join(get_base_path(), "tools/export.py"), "--model_name_or_config",
-        #         "_".join(self.target_config_yaml["yaml_file_name"].split("_")[:-1]), "--data_shape"]
-        # args.extend([str(elem) for elem in self.target_config_yaml["data_shape_nchw"][2:]])
-        # args.append("--local_ckpt_path")
-        # args.append(os.path.join(self.target_mindir_folder, "model.ckpt"))
-        # args.append("--save_dir")
-        # args.append(self.target_mindir_folder)
-        # args.append("--custom_exported_name")
-        # args.append("model")
-        # subprocess.run(args, env=os.environ.copy(), shell=True)
         os.remove(os.path.join(self.target_mindir_folder, "model.ckpt"))
 
     def copy_custom_mindir_file(self):

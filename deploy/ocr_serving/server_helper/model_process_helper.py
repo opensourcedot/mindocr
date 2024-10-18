@@ -1,6 +1,14 @@
 import copy
+import os
+import sys
+from os.path import dirname
 
 import yaml
+
+current_file_path = os.path.abspath(__file__)
+mindocr_path = dirname(dirname(dirname(dirname(current_file_path))))
+if mindocr_path not in sys.path:
+    sys.path.append(mindocr_path)
 
 from mindocr.data.transforms import create_transforms
 from mindocr.postprocess import build_postprocess

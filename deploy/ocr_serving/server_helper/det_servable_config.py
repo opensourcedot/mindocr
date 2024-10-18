@@ -1,12 +1,20 @@
 import os
+import sys
+from os.path import dirname
 
 import numpy as np
 
 from .model_process_helper import ModelProcessor
 from mindspore_serving.server import register
+
+current_file_path = os.path.abspath(__file__)
+mindocr_path = dirname(dirname(dirname(dirname(current_file_path))))
+if mindocr_path not in sys.path:
+    sys.path.append(mindocr_path)
+
 from mindocr.data.transforms import run_transforms
 
-model_processor = ModelProcessor(os.path.join(os.getcwd(), "config.yaml"))
+model_processor = ModelProcessor(os.path.join(dirname(current_file_path), "config.yaml"))
 
 
 # define preprocess and postprocess
@@ -38,7 +46,7 @@ model = register.declare_model(model_file="model.mindir", model_format="MindIR",
 # register url
 @register.register_method(output_names=["result"])
 def det_infer(image):
-    x = register.add_stage(preprocess, image)
-    x = register.add_stage(model, x)
-    x = register.add_stage(postprocess, x)
+    x = register.add_stage(preprocess, image, outputs_count=1)
+    x = register.add_stage(model, x, outputs_count=1)
+    x = register.add_stage(postprocess, x, outputs_count=1)
     return x
