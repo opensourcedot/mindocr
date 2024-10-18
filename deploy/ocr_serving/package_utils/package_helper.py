@@ -163,13 +163,14 @@ class PackageHelper:
         # 2. convert ckpt to mindir
         shell_command = ("python {export_tool_path} --model_name_or_config {model_name} "
                          "--data_shape {data_shape} --local_ckpt_path {local_ckpt_path} "
+                         "--save_dir {save_dir} "
                          "--custom_exported_name {exported_name}").format(
             export_tool_path=os.path.join(get_base_path(), "tools/export.py"),
             model_name="_".join(self.target_config_yaml["yaml_file_name"].split("_")[:-1]),
             data_shape=" ".join(self.target_config_yaml["data_shape_nchw"][2:]),
             local_ckpt_path=os.path.join(self.target_mindir_folder, "model.ckpt"),
+            save_dir=self.target_mindir_folder,
             exported_name="model")
-        print(shell_command)
         os.system(shell_command)
         # args = ["python", os.path.join(get_base_path(), "tools/export.py"), "--model_name_or_config",
         #         "_".join(self.target_config_yaml["yaml_file_name"].split("_")[:-1]), "--data_shape"]
