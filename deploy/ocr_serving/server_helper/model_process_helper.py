@@ -27,11 +27,12 @@ class ModelProcessor:
 
     @property
     def preprocess_method(self):
-        transforms = create_transforms(self.yaml_config["preprocess"])
-        for transform in transforms:
+        transforms_list = self.yaml_config["preprocess"]
+        for transform in transforms_list:
             if "DecodeImage" in transform:
                 transform["DecodeImage"].update({"keep_ori": True})
             break
+        transforms = create_transforms(self.yaml_config["preprocess"])
         return transforms
 
     @property

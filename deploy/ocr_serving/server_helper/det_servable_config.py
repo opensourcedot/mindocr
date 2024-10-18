@@ -47,6 +47,6 @@ model = register.declare_model(model_file="model.mindir", model_format="MindIR",
 @register.register_method(output_names=["result"])
 def det_infer(image):
     x = register.add_stage(preprocess, image, outputs_count=1)
-    x = register.add_stage(model, x, outputs_count=1)
+    x = register.add_stage(model, x, outputs_count=2)
     x = register.add_stage(postprocess, x, outputs_count=1)
     return x
