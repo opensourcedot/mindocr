@@ -3,40 +3,25 @@ import sys
 from os.path import dirname
 
 import numpy as np
+from mindspore_serving.server import register
 
 from .model_process_helper import ModelProcessor
-from mindspore_serving.server import register
 
 current_file_path = os.path.abspath(__file__)
 mindocr_path = dirname(dirname(dirname(dirname(current_file_path))))
 if mindocr_path not in sys.path:
     sys.path.append(mindocr_path)
 
-from mindocr.data.transforms import run_transforms
-
 model_processor = ModelProcessor(os.path.join(dirname(current_file_path), "config.yaml"))
 
 
 # define preprocess and postprocess
 def preprocess(data_nparray: np.ndarray):
-    data = {"image": data_nparray, "image_ori": data_nparray.copy(), "image_shape": data_nparray.shape}
-    # the input is nparray format, so we don't need to decode
-    return run_transforms(data, model_processor.preprocess_method[1:])
+    return model_processor.preprocess_method([data_nparray])
 
 
 def postprocess(pred: dict):
-    shape_list = np.array(pred["shape_list"], dtype="float32")
-    shape_list = np.expand_dims(shape_list, axis=0)
-
-    output = model_processor.postprocess_method(pred, shape_list=shape_list)
-
-    if isinstance(output, dict):
-        polys = output["polys"][0]
-        scores = output["scores"][0]
-    else:
-        polys, scores = output[0]
-
-    return dict(polys=polys, scores=scores)
+    return model_processor.postprocess_method()
 
 
 # register model

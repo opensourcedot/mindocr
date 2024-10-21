@@ -28,9 +28,10 @@ def get_key_information_from_yaml(yaml_file_path: str) -> dict:
     with open(yaml_file_path, "r", encoding="utf-8") as f:
         result = yaml.load(f.read(), Loader=yaml.FullLoader)
         post_process = result["postprocess"] if "postprocess" in result.keys() else None
-        pre_process = result["eval"]["dataset"]["transform_pipeline"] if "eval" in result.keys() else None
+        eval = result["eval"] if "eval" in result.keys() else None
+        pre_process = result["eval"]["dataset"]["transform_pipeline"] if "predict" in result.keys() else None
         config_dict = {"postprocess": post_process, "preprocess": pre_process, "use_pretrained_mindir": True,
-                       "yaml_file_name": os.path.basename(yaml_file_path)}
+                       "yaml_file_name": os.path.basename(yaml_file_path), "eval": eval}
     return config_dict
 
 
