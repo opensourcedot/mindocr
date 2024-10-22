@@ -2,7 +2,7 @@ import os
 import sys
 from io import BytesIO
 from os.path import dirname
-from typing import Dict, List
+from typing import List
 
 import numpy as np
 from PIL import Image
@@ -25,10 +25,10 @@ def preprocess(data_nparray: np.ndarray) -> tuple:
     return result["net_inputs"], result["shape_list"]
 
 
-def postprocess(scores: np.ndarray, geo: np.ndarray, shape_list: np.ndarray) -> List[np.ndarray]:
-    polys = model_processor.postprocess_method((scores, geo), shape_list)["polys"][0]
+def postprocess(scores, geo, shape_list: np.ndarray) -> List[np.ndarray]:
+    polys = model_processor.postprocess_method(tuple((scores, geo)), shape_list)["polys"][0]
     polys = [np.array(x) for x in polys]
-    return [polys]
+    return polys
 
 
 # register model
@@ -37,7 +37,7 @@ model = register.declare_model(model_file="model.mindir", model_format="MindIR",
 
 def infer(net_inputs) -> tuple:
     scores, geo = model.call(net_inputs)
-    return scores, geo
+    return tuple([scores, geo])
 
 
 # register url
