@@ -19,6 +19,7 @@ if mindocr_path not in sys.path:
     sys.path.append(mindocr_path)
 
 from package_utils.path_utils import get_base_path
+from package_utils.export_utils import EXPORT_NAME_MAPPER
 
 SUPPORT_INFER_TYPE = ["mindir", "ms"]
 
@@ -165,7 +166,7 @@ class PackageHelper:
                          "--save_dir {save_dir} "
                          "--custom_exported_name {exported_name}").format(
             export_tool_path=os.path.join(get_base_path(), "tools/export.py"),
-            model_name="_".join(self.target_config_yaml["yaml_file_name"].split("_")[:-1]),
+            model_name=EXPORT_NAME_MAPPER[self.target_config_yaml["yaml_file_name"]],
             data_shape=" ".join(self.target_config_yaml["data_shape_nchw"][2:]),
             local_ckpt_path=os.path.join(self.target_mindir_folder, "model.ckpt"),
             save_dir=self.target_mindir_folder,
