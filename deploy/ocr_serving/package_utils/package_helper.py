@@ -208,6 +208,15 @@ class PackageHelper:
             os.remove(dst_path)
         shutil.copy(src_path, dst_path)
 
+    def copy_server_client_mytest_to_server_folders(self):
+        server_py_src = os.path.join(self.base_path, "deploy/ocr_serving/server_helper/serving_server.py")
+        client_py_src = os.path.join(self.base_path, "deploy/ocr_serving/server_helper/serving_client.py")
+        my_test_folder_src = os.path.join(self.base_path, "deploy/ocr_serving/mytest")
+        target_folder = os.path.join(self.base_path, "deploy/ocr_serving/server_folders/mytest")
+        shutil.copytree(my_test_folder_src, target_folder)
+        shutil.copy(server_py_src, os.path.join(self.base_path, "deploy/ocr_serving/server_folders"))
+        shutil.copy(client_py_src, os.path.join(self.base_path, "deploy/ocr_serving/server_folders"))
+
     def do_package(self):
         """
         main function
@@ -227,6 +236,10 @@ class PackageHelper:
 
         # 5. copy servable config to folder
         self.copy_servable_config()
+
+        # todo: step6 should only keep serving_server.py, serving_client.py and mytest are only designed for test.
+        # 6. copy test serving_server.py and serving_client.py and mytest folder to server_folders
+        self.copy_server_client_mytest_to_server_folders()
 
 
 if __name__ == "__main__":
