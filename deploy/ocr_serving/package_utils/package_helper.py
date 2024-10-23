@@ -25,11 +25,12 @@ SUPPORT_INFER_TYPE = ["mindir", "ms"]
 
 
 class PackageHelper:
-    def __init__(self, package_name: str, mindir_file_path: str = None):
+    def __init__(self, package_name: str, task_type: str, mindir_file_path: str = None):
         """
         Args:
             package_name: the model name we want to package
             mindir_file_path: custom mindir file path. default None
+            task_type: det\ rec \cls...
         """
         self.package_name = package_name
         self.custom_mindir_path = mindir_file_path
@@ -48,6 +49,7 @@ class PackageHelper:
         self.target_mindir_folder = None
         # target config yaml
         self.target_config_yaml = None
+        self.task_type = task_type
 
     def input_check(self):
         """
@@ -197,7 +199,10 @@ class PackageHelper:
         copy target xxx_servable_config.py to target folder
         Returns:
         """
-        src_path = os.path.join(self.base_path, "deploy/ocr_serving/server_helper/det_servable_config.py")
+        src_path = os.path.join(self.base_path,
+                                "deploy/ocr_serving/server_helper/{task_type}_{model}_servable_config.py".format(
+                                    task_type=self.task_type,
+                                    model=self.target_config_yaml["yaml_file_name"].split("_")[0]))
         dst_path = os.path.join(self.target_model_folder, "servable_config.py")
         if os.path.exists(dst_path):
             os.remove(dst_path)
@@ -228,8 +233,10 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("package_name",
                         help="for example: [east_mobilenetv3_icdar15].")
+    parser.add_argument("task_type",
+                        help="for example: det or rec or cls...")
     parser.add_argument("--mindir_file_path",
                         help="if you need to use your local mindir file, please specify this parameter.")
     args = parser.parse_args()
-    package_helper = PackageHelper(args.package_name, args.mindir_file_path)
+    package_helper = PackageHelper(args.package_name, args.task_type, args.mindir_file_path)
     package_helper.do_package()
