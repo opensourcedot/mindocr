@@ -108,7 +108,8 @@ class TaskConfigGenerator:
         self.__add_model_link_to_model_configs()
 
         # 6. combine these configs into one config.yaml
-        with open("all_configs.yaml", "w+", encoding="utf-8") as f:
+        with open(os.path.join(self.__mindocr_base_path, "deploy/ocr_serving/task_configs/all_configs.yaml"),
+                  "w+", encoding="utf-8") as f:
             yaml.dump_all(documents=self.__model_configs, stream=f, allow_unicode=True)
 
 

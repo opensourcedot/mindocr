@@ -23,7 +23,7 @@ def read_images():
     """Read images for directory test_image"""
     images_buffer = []
     image_files = []
-    for path, _, file_list in os.walk("./mytest/"):
+    for path, _, file_list in os.walk("mytest/"):
         for file_name in file_list[:5]:
             image_file = os.path.join(path, file_name)
             image_files.append(image_file)

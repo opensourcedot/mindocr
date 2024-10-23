@@ -25,12 +25,13 @@ SUPPORT_INFER_TYPE = ["mindir", "ms"]
 
 
 class PackageHelper:
-    def __init__(self, package_name: str, task_type: str, mindir_file_path: str = None):
+    def __init__(self, package_name: str, task_type: str, mindir_file_path: str = None, test_mode: bool = True):
         """
         Args:
             package_name: the model name we want to package
             mindir_file_path: custom mindir file path. default None
             task_type: det\ rec \cls...
+            test_mode: True if you need to do test
         """
         self.package_name = package_name
         self.custom_mindir_path = mindir_file_path
@@ -50,6 +51,7 @@ class PackageHelper:
         # target config yaml
         self.target_config_yaml = None
         self.task_type = task_type
+        self.test_mode = test_mode
 
     def input_check(self):
         """
@@ -208,13 +210,16 @@ class PackageHelper:
             os.remove(dst_path)
         shutil.copy(src_path, dst_path)
 
-    def copy_server_client_mytest_to_server_folders(self):
+    def copy_serving_server_to_folder(self):
         server_py_src = os.path.join(self.base_path, "deploy/ocr_serving/server_helper/serving_server.py")
-        client_py_src = os.path.join(self.base_path, "deploy/ocr_serving/server_helper/serving_client.py")
-        my_test_folder_src = os.path.join(self.base_path, "deploy/ocr_serving/mytest")
-        target_folder = os.path.join(self.base_path, "deploy/ocr_serving/server_folders/mytest")
-        shutil.copytree(my_test_folder_src, target_folder)
         shutil.copy(server_py_src, os.path.join(self.base_path, "deploy/ocr_serving/server_folders"))
+
+    def copy_test_files(self):
+        print("执行了")
+        client_py_src = os.path.join(self.base_path, "deploy/ocr_serving/test/serving_client.py")
+        my_test_folder_src = os.path.join(self.base_path, "deploy/ocr_serving/test/mytest")
+        target_folder = os.path.join(self.base_path, "deploy/ocr_serving/server_folders/mytest")
+        shutil.copytree(my_test_folder_src, target_folder, dirs_exist_ok=True)
         shutil.copy(client_py_src, os.path.join(self.base_path, "deploy/ocr_serving/server_folders"))
 
     def do_package(self):
@@ -237,9 +242,13 @@ class PackageHelper:
         # 5. copy servable config to folder
         self.copy_servable_config()
 
-        # todo: step6 should only keep serving_server.py, serving_client.py and mytest are only designed for test.
         # 6. copy test serving_server.py and serving_client.py and mytest folder to server_folders
-        self.copy_server_client_mytest_to_server_folders()
+        self.copy_serving_server_to_folder()
+
+        # 7. copy test_files
+        if self.test_mode:
+            print(self.test_mode)
+            self.copy_test_files()
 
 
 if __name__ == "__main__":
@@ -250,6 +259,10 @@ if __name__ == "__main__":
                         help="for example: det or rec or cls...")
     parser.add_argument("--mindir_file_path",
                         help="if you need to use your local mindir file, please specify this parameter.")
+    parser.add_argument("--test_mode",
+                        help="wheater to switch on test mode",
+                        default=True)
     args = parser.parse_args()
-    package_helper = PackageHelper(args.package_name, args.task_type, args.mindir_file_path)
+    print(args)
+    package_helper = PackageHelper(args.package_name, args.task_type, args.mindir_file_path, args.test_mode)
     package_helper.do_package()
