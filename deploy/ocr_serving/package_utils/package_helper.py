@@ -19,18 +19,17 @@ if mindocr_path not in sys.path:
     sys.path.append(mindocr_path)
 
 from package_utils.path_utils import get_base_path
-from package_utils.export_utils import EXPORT_NAME_MAPPER
+from package_utils.export_utils import EXPORT_NAME_MAPPER, ALL_TASK_TYPE_DICT
 
 SUPPORT_INFER_TYPE = ["mindir", "ms"]
 
 
 class PackageHelper:
-    def __init__(self, package_name: str, task_type: str, mindir_file_path: str = None, test_mode: bool = True):
+    def __init__(self, package_name: str, mindir_file_path: str = None, test_mode: bool = True):
         """
         Args:
             package_name: the model name we want to package
             mindir_file_path: custom mindir file path. default None
-            task_type: det\ rec \cls...
             test_mode: True if you need to do test
         """
         self.package_name = package_name
@@ -50,7 +49,6 @@ class PackageHelper:
         self.target_mindir_folder = None
         # target config yaml
         self.target_config_yaml = None
-        self.task_type = task_type
         self.test_mode = test_mode
 
     def input_check(self):
@@ -201,9 +199,13 @@ class PackageHelper:
         copy target xxx_servable_config.py to target folder
         Returns:
         """
+        task_type = ""
+        for task_type_name, task_type_set in ALL_TASK_TYPE_DICT.items():
+            if self.target_config_yaml["yaml_file_name"] in task_type_set:
+                task_type = task_type_name
         src_path = os.path.join(self.base_path,
                                 "deploy/ocr_serving/server_helper/{task_type}_{model}_servable_config.py".format(
-                                    task_type=self.task_type,
+                                    task_type=task_type,
                                     model=self.target_config_yaml["yaml_file_name"].split("_")[0]))
         dst_path = os.path.join(self.target_model_folder, "servable_config.py")
         if os.path.exists(dst_path):
@@ -215,7 +217,6 @@ class PackageHelper:
         shutil.copy(server_py_src, os.path.join(self.base_path, "deploy/ocr_serving/server_folders"))
 
     def copy_test_files(self):
-        print("执行了")
         client_py_src = os.path.join(self.base_path, "deploy/ocr_serving/test/serving_client.py")
         my_test_folder_src = os.path.join(self.base_path, "deploy/ocr_serving/test/mytest")
         target_folder = os.path.join(self.base_path, "deploy/ocr_serving/server_folders/mytest")
@@ -247,7 +248,6 @@ class PackageHelper:
 
         # 7. copy test_files
         if self.test_mode:
-            print(self.test_mode)
             self.copy_test_files()
 
 
@@ -255,14 +255,11 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("package_name",
                         help="for example: [east_mobilenetv3_icdar15].")
-    parser.add_argument("task_type",
-                        help="for example: det or rec or cls...")
     parser.add_argument("--mindir_file_path",
                         help="if you need to use your local mindir file, please specify this parameter.")
     parser.add_argument("--test_mode",
                         help="wheater to switch on test mode",
-                        default=True)
+                        action="store_true")
     args = parser.parse_args()
-    print(args)
-    package_helper = PackageHelper(args.package_name, args.task_type, args.mindir_file_path, args.test_mode)
+    package_helper = PackageHelper(args.package_name, args.mindir_file_path, args.test_mode)
     package_helper.do_package()
