@@ -3,6 +3,7 @@ import re
 import sys
 
 import yaml
+import pandas as pd
 
 current_file_path = os.path.abspath(__file__)
 mindocr_path = os.path.dirname(os.path.dirname(current_file_path))
@@ -12,8 +13,9 @@ if mindocr_path not in sys.path:
 
 from package_utils.path_utils import get_base_path, bfs_search_specific_type_file
 
-COMBINED_CONFIG_YAML_FILE_NAME = "combined_configs.yaml"
-MODELS_LINK_PATH = "docs/zh/inference/inference_quickstart.md"
+
+MODELS_LINK_PATH = "deploy/ocr_serving/task_configs/model_link_mapper.csv"
+OUTPUT_CONFIGS_SAVE_PATH = os.path.join(get_base_path(), "deploy/ocr_serving/task_configs/all_configs.yaml")
 
 
 def get_key_information_from_yaml(yaml_file_path: str) -> dict:
@@ -49,23 +51,11 @@ class TaskConfigGenerator:
         Returns:
         """
         path = os.path.join(self.__mindocr_base_path, MODELS_LINK_PATH)
-
-        with open(path, "r", encoding="utf-8") as f:
-            lines = f.readlines()
-            for line in lines:
-                # 正则表达式模式，用于匹配data shape (NCHW)、ckpt和yaml的下载链接
-                pattern = (r'\((\d+,\d+,\d+,\d+)\)\s+\|.*?\[yaml\]\((https://github\.com[^\)]+)\).*?\[ckpt\]\(('
-                           r'https://download\.mindspore\.cn[^\)]+)\).*?\[mindir\]\((https://download\.mindspore\.cn['
-                           r'^\)]+)\)')
-
-                # 使用正则表达式找到所有匹配的数据
-                matches = re.findall(pattern, line, re.DOTALL)
-
-                # 打印结果
-                for match in matches:
-                    info_dict = {"data_shape_nchw": [str(elem) for elem in match[0].split(",")],
-                                 "yaml_file_name": match[1].split(r"/")[-1], "ckpt_link": match[2]}
-                    self.__models_link.append(info_dict)
+        model_link_df = pd.read_csv(path)
+        for ind in model_link_df.index:
+            info_dict = model_link_df.loc[ind].to_dict()
+            info_dict["data_shape_nchw"] = info_dict["data_shape_nchw"][1:-1].split(",")
+            self.__models_link.append(info_dict)
 
     def __add_model_link_to_model_configs(self):
         """
@@ -108,8 +98,7 @@ class TaskConfigGenerator:
         self.__add_model_link_to_model_configs()
 
         # 6. combine these configs into one config.yaml
-        with open(os.path.join(self.__mindocr_base_path, "deploy/ocr_serving/task_configs/all_configs.yaml"),
-                  "w+", encoding="utf-8") as f:
+        with open(OUTPUT_CONFIGS_SAVE_PATH, "w+", encoding="utf-8") as f:
             yaml.dump_all(documents=self.__model_configs, stream=f, allow_unicode=True)
 
 

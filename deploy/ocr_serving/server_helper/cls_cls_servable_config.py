@@ -2,7 +2,7 @@ import os
 import sys
 from io import BytesIO
 from os.path import dirname
-from typing import List
+from typing import List, Dict
 
 import numpy as np
 from PIL import Image
@@ -22,28 +22,26 @@ model_processor = ModelProcessor(os.path.join(dirname(current_file_path), "confi
 def preprocess(data_nparray: np.ndarray) -> tuple:
     image = Image.open(BytesIO(data_nparray.tobytes()))
     result = model_processor.preprocess_method([np.array(image)])
-    return result["net_inputs"], result["shape_list"]
+    return result["net_inputs"]
 
 
-def postprocess(scores, geo, shape_list: np.ndarray) -> List[np.ndarray]:
-    polys = model_processor.postprocess_method(tuple((scores, geo)), shape_list)["polys"][0]
-    polys = [np.array(x) for x in polys]
-    return polys
+def postprocess(pred: np.ndarray) -> List[np.ndarray]:
+    return model_processor.postprocess_method(pred)["angles"]
 
 
 # register model
 model = register.declare_model(model_file="model.mindir", model_format="MindIR", with_batch_dim=False)
 
 
-def infer(net_inputs) -> tuple:
-    scores, geo = model.call(net_inputs)
-    return tuple([scores, geo])
+def infer(net_inputs) -> np.ndarray:
+    pred = model.call(net_inputs)
+    return pred
 
 
 # register url
 @register.register_method(output_names=["polys"])
 def det_infer(image):
-    net_inputs, shape_list = register.add_stage(preprocess, image, outputs_count=2)
-    scores, geo = register.add_stage(infer, net_inputs, outputs_count=2)
-    polys = register.add_stage(postprocess, scores, geo, shape_list, outputs_count=1)
+    net_inputs = register.add_stage(preprocess, image, outputs_count=1)
+    pred = register.add_stage(infer, net_inputs, outputs_count=1)
+    polys = register.add_stage(postprocess, pred, outputs_count=1)
     return polys

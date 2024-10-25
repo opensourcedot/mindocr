@@ -22,6 +22,8 @@ from package_utils.path_utils import get_base_path
 from package_utils.export_utils import EXPORT_NAME_MAPPER, ALL_TASK_TYPE_DICT
 
 SUPPORT_INFER_TYPE = ["mindir", "ms"]
+TARGET_SERVER_FOLDER = "deploy/ocr_serving/server_folders"
+ALL_CONFIGS_YAML_PATH = os.path.join(get_base_path(), "deploy/ocr_serving/task_configs/all_configs.yaml")
 
 
 class PackageHelper:
@@ -42,7 +44,7 @@ class PackageHelper:
         # target mofrl folder
         self.target_model_folder = None
         # target server folder
-        self.target_server_folder = "deploy/ocr_serving/server_folders"
+        self.target_server_folder = TARGET_SERVER_FOLDER
         # mindir file link
         self.mindir_file_link = None
         # target mindir file folder
@@ -75,7 +77,7 @@ class PackageHelper:
         build mindspore serving inference folder
         Returns:
         """
-        base_server_folder = os.path.join(self.base_path, "deploy/ocr_serving/server_folders")
+        base_server_folder = os.path.join(self.base_path, TARGET_SERVER_FOLDER)
 
         self.target_model_folder = os.path.join(self.base_path, self.target_server_folder, self.package_name)
         # build the base folder if not exists
@@ -94,7 +96,7 @@ class PackageHelper:
         get target config yaml from all_configs.yaml
         Returns:
         """
-        base_config_yaml_path = os.path.join(self.base_path, "deploy/ocr_serving/task_configs/all_configs.yaml")
+        base_config_yaml_path = ALL_CONFIGS_YAML_PATH
         target_config_yaml_path = os.path.join(self.target_model_folder, "config.yaml")
 
         matched = False
@@ -214,14 +216,14 @@ class PackageHelper:
 
     def copy_serving_server_to_folder(self):
         server_py_src = os.path.join(self.base_path, "deploy/ocr_serving/server_helper/serving_server.py")
-        shutil.copy(server_py_src, os.path.join(self.base_path, "deploy/ocr_serving/server_folders"))
+        shutil.copy(server_py_src, os.path.join(self.base_path, TARGET_SERVER_FOLDER))
 
     def copy_test_files(self):
         client_py_src = os.path.join(self.base_path, "deploy/ocr_serving/test/serving_client.py")
         my_test_folder_src = os.path.join(self.base_path, "deploy/ocr_serving/test/mytest")
-        target_folder = os.path.join(self.base_path, "deploy/ocr_serving/server_folders/mytest")
+        target_folder = os.path.join(self.base_path, TARGET_SERVER_FOLDER, "mytest")
         shutil.copytree(my_test_folder_src, target_folder, dirs_exist_ok=True)
-        shutil.copy(client_py_src, os.path.join(self.base_path, "deploy/ocr_serving/server_folders"))
+        shutil.copy(client_py_src, os.path.join(self.base_path, TARGET_SERVER_FOLDER))
 
     def do_package(self):
         """
@@ -254,7 +256,7 @@ class PackageHelper:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("package_name",
-                        help="for example: [east_mobilenetv3_icdar15].")
+                        help="for example: east_mobilenetv3_icdar15")
     parser.add_argument("--mindir_file_path",
                         help="if you need to use your local mindir file, please specify this parameter.")
     parser.add_argument("--test_mode",
