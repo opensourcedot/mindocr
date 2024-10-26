@@ -1,9 +1,8 @@
 import os
-import re
 import sys
 
-import yaml
 import pandas as pd
+import yaml
 
 current_file_path = os.path.abspath(__file__)
 mindocr_path = os.path.dirname(os.path.dirname(current_file_path))

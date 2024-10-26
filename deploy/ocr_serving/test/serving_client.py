@@ -33,7 +33,7 @@ def run_restful_classify_top1(model_name, restful_address):
     ip = "localhost"
     restful_port = int(restful_address.split(":")[-1])
     servable_name = model_name
-    method_name = "det_infer"
+    method_name = "infer"
     result = requests.post(f"http://{ip}:{restful_port}/model/{servable_name}:{method_name}", data=post_payload)
     result = json.loads(result.text)
     print(result)
