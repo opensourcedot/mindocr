@@ -1,6 +1,12 @@
 import os
 import sys
 from os.path import dirname
+from typing import Tuple
+from io import BytesIO
+
+import numpy as np
+from PIL import Image
+
 
 current_file_path = os.path.abspath(__file__)
 mindocr_path = dirname(dirname(dirname(dirname(dirname(current_file_path)))))
@@ -17,6 +23,11 @@ class ModelProcessor:
     @property
     def preprocess_method(self):
         return build_preprocess(self.related_yaml_path, False)
+
+    def preprocess(self, data_nparray: np.ndarray) -> Tuple:
+        image = Image.open(BytesIO(data_nparray.tobytes()))
+        result = self.preprocess_method([np.array(image)])
+        return result["net_inputs"]
 
     @property
     def postprocess_method(self):

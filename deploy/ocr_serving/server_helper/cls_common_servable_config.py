@@ -1,11 +1,9 @@
 import os
 import sys
-from io import BytesIO
 from os.path import dirname
-from typing import List, Dict
+from typing import List
 
 import numpy as np
-from PIL import Image
 from mindspore_serving.server import register
 
 from .model_process_helper import ModelProcessor
@@ -20,27 +18,25 @@ model_processor = ModelProcessor(os.path.join(dirname(current_file_path), "confi
 
 # define preprocess and postprocess
 def preprocess(data_nparray: np.ndarray) -> tuple:
-    image = Image.open(BytesIO(data_nparray.tobytes()))
-    result = model_processor.preprocess_method([np.array(image)])
-    return result["net_inputs"]
+    return model_processor.preprocess(data_nparray)
 
 
 def postprocess(pred: np.ndarray) -> List[np.ndarray]:
-    return model_processor.postprocess_method(pred)["texts"]
+    return model_processor.postprocess_method(pred)["angles"]
 
 
 # register model
 model = register.declare_model(model_file="model.mindir", model_format="MindIR", with_batch_dim=False)
 
 
-def infer(net_inputs) -> np.ndarray:
+def model_infer(net_inputs) -> np.ndarray:
     return model.call(net_inputs)
 
 
 # register url
-@register.register_method(output_names=["texts"])
-def det_infer(image):
+@register.register_method(output_names=["angles"])
+def infer(image):
     net_inputs = register.add_stage(preprocess, image, outputs_count=1)
-    output = register.add_stage(infer, net_inputs, outputs_count=1)
-    texts = register.add_stage(postprocess, output, outputs_count=1)
-    return texts
+    pred = register.add_stage(model_infer, net_inputs, outputs_count=1)
+    angles = register.add_stage(postprocess, pred, outputs_count=1)
+    return angles

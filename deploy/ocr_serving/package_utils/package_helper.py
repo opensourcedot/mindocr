@@ -19,7 +19,7 @@ if mindocr_path not in sys.path:
     sys.path.append(mindocr_path)
 
 from package_utils.path_utils import get_base_path
-from package_utils.export_utils import EXPORT_NAME_MAPPER, ALL_TASK_TYPE_DICT
+from package_utils.mappers import EXPORT_NAME_MAPPER, SERVABLE_CONFIGS_MAPPER
 
 SUPPORT_INFER_TYPE = ["mindir", "ms"]
 TARGET_SERVER_FOLDER = "deploy/ocr_serving/server_folders"
@@ -201,14 +201,8 @@ class PackageHelper:
         copy target xxx_servable_config.py to target folder
         Returns:
         """
-        task_type = ""
-        for task_type_name, task_type_set in ALL_TASK_TYPE_DICT.items():
-            if self.target_config_yaml["yaml_file_name"] in task_type_set:
-                task_type = task_type_name
-        src_path = os.path.join(self.base_path,
-                                "deploy/ocr_serving/server_helper/{task_type}_{model}_servable_config.py".format(
-                                    task_type=task_type,
-                                    model=self.target_config_yaml["yaml_file_name"].split("_")[0]))
+        src_path = os.path.join(self.base_path, "deploy/ocr_serving/server_helper/{}.py".format(
+                                    SERVABLE_CONFIGS_MAPPER[self.target_config_yaml["yaml_file_name"]]))
         dst_path = os.path.join(self.target_model_folder, "servable_config.py")
         if os.path.exists(dst_path):
             os.remove(dst_path)
