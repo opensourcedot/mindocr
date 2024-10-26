@@ -73,10 +73,10 @@ python task_config_generator.py
 
 ``` shel
 cd ..
-python package_utils/package_helper.py {模型名称} {任务类型}
+python package_utils/package_helper.py {模型名称} 
 ```
 
-目前 {模型名称} 理论上支持以下输入参数，{任务类型} 只支持 `det` 
+目前 {模型名称} 理论上支持以下输入参数
 
 ```txt
 db_mobilenetv3_icdar15,
