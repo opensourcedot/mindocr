@@ -8,6 +8,7 @@ import math
 import os
 import shutil
 import sys
+from typing import Dict
 
 import requests
 import yaml
@@ -108,6 +109,7 @@ class PackageHelper:
         for yaml_config in all_configs:
             if yaml_config["yaml_file_name"].replace(".yaml", "").lower() == self.package_name.lower():
                 matched = True
+                self.__change_target_shape(yaml_config)
                 # case 1: use custom mindir file
                 if self.use_custom_mindir:
                     yaml_config["use_pretrained_mindir"] = False
@@ -123,6 +125,15 @@ class PackageHelper:
 
         if not matched:
             raise Exception("model not matched in all_configs.yaml")
+
+    def __change_target_shape(self, yaml_config: Dict) -> Dict:
+        data_shape_nchw = yaml_config["data_shape_nchw"]
+        data_shape_nchw = [int(elem) for elem in data_shape_nchw][2:]
+        for i, method in enumerate(yaml_config["eval"]["dataset"]["transform_pipeline"]):
+            if "DetResize" in method:
+                yaml_config["eval"]["dataset"]["transform_pipeline"][i]["DetResize"]["target_size"] = data_shape_nchw
+                yaml_config["eval"]["dataset"]["transform_pipeline"][i]["DetResize"]["keep_ratio"] = False
+        return yaml_config
 
     def get_mindir_file(self):
         """
