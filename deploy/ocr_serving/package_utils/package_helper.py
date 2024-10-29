@@ -132,11 +132,11 @@ class PackageHelper:
         return yaml_config
 
     def __update_character_dict_path(self, yaml_config: Dict) -> Dict:
-        if "character_dict_path" in yaml_config["postprocess"]:
+        if "character_dict_path" in yaml_config["postprocess"] and yaml_config["postprocess"]["character_dict_path"]:
             yaml_config["postprocess"]["character_dict_path"] = os.path.join(self.base_path, yaml_config["postprocess"]["character_dict_path"])
         for i, method in enumerate(yaml_config["eval"]["dataset"]["transform_pipeline"]):
             for j, (method_name, method_params) in enumerate(method.items()):
-                if isinstance(method_params, dict) and "character_dict_path" in method_params:
+                if isinstance(method_params, dict) and "character_dict_path" in method_params and method_params["character_dict_path"]:
                     character_dict_path = yaml_config["eval"]["dataset"]["transform_pipeline"][i][method_name]["character_dict_path"]
                     yaml_config["eval"]["dataset"]["transform_pipeline"][i][method_name]["character_dict_path"] =\
                         os.path.join(self.base_path, character_dict_path)
