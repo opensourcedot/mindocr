@@ -1,3 +1,9 @@
+"""shell 传入需要正确的命名，名称范围： ['abinet', 'cls_mobilenet_v3_small_100_model', 'crnn_resnet34', 'crnn_resnet34_ch',
+'crnn_vgg7', 'dbnet_mobilenetv3', 'dbnet_ppocrv3', 'dbnet_resnet18', 'dbnet_resnet50', 'dbnet_resnet50_ch_en',
+'dbnetpp_resnet50', 'dbnetpp_resnet50_ch_en', 'east_mobilenetv3', 'east_resnet50', 'fcenet_resnet50',
+'layoutxlm_ser', 'master_resnet31', 'psenet_mobilenetv3', 'psenet_resnet152', 'psenet_resnet50', 'rare_resnet34',
+'rare_resnet34_ch', 'robustscanner_resnet31', 'svtr_ppocrv3_ch', 'svtr_tiny', 'svtr_tiny_ch', 'vi_layoutxlm_ser',
+'visionlan_resnet45']"""
 EXPORT_NAME_MAPPER = {
     "cls_mv3.yaml": "cls_mobilenet_v3_small_100_model",
     "abinet_resnet45_en.yaml": "abinet",
@@ -51,7 +57,7 @@ SERVABLE_CONFIGS_MAPPER = {
     "db_r18_synthtext.yaml": "det_db_servable_config",
     "db_r18_td500.yaml": "det_db_servable_config",
     "db_r18_totaltext.yaml": "det_db_servable_config",
-    # "dbpp_r50_icdar15.yaml": "dbnetpp_resnet50",  # todo: 检查这个
+    "dbpp_r50_icdar15.yaml": "det_db_servable_config",
     "db_r50_ctw1500.yaml": "det_db_servable_config",
     "db_r50_icdar15.yaml": "det_db_servable_config",
     "db_r50_mlt2017.yaml": "det_db_servable_config",

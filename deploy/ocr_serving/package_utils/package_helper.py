@@ -109,7 +109,7 @@ class PackageHelper:
         for yaml_config in all_configs:
             if yaml_config["yaml_file_name"].replace(".yaml", "").lower() == self.package_name.lower():
                 matched = True
-                self.__change_target_shape(yaml_config)
+                self._update_yaml_configs_for_special_situations(yaml_config)
                 # case 1: use custom mindir file
                 if self.use_custom_mindir:
                     yaml_config["use_pretrained_mindir"] = False
@@ -125,6 +125,22 @@ class PackageHelper:
 
         if not matched:
             raise Exception("model not matched in all_configs.yaml")
+
+    def _update_yaml_configs_for_special_situations(self, yaml_config: Dict):
+        yaml_config = self.__update_character_dict_path(yaml_config)
+        yaml_config = self.__change_target_shape(yaml_config)
+        return yaml_config
+
+    def __update_character_dict_path(self, yaml_config: Dict) -> Dict:
+        if "character_dict_path" in yaml_config["postprocess"]:
+            yaml_config["postprocess"]["character_dict_path"] = os.path.join(self.base_path, yaml_config["postprocess"]["character_dict_path"])
+        for i, method in enumerate(yaml_config["eval"]["dataset"]["transform_pipeline"]):
+            for j, (method_name, method_params) in enumerate(method.items()):
+                if isinstance(method_params, dict) and "character_dict_path" in method_params:
+                    character_dict_path = yaml_config["eval"]["dataset"]["transform_pipeline"][i][method_name]["character_dict_path"]
+                    yaml_config["eval"]["dataset"]["transform_pipeline"][i][method_name]["character_dict_path"] =\
+                        os.path.join(self.base_path, character_dict_path)
+        return yaml_config
 
     def __change_target_shape(self, yaml_config: Dict) -> Dict:
         data_shape_nchw = yaml_config["data_shape_nchw"]
