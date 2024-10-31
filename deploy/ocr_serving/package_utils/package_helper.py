@@ -28,12 +28,14 @@ ALL_CONFIGS_YAML_PATH = os.path.join(get_base_path(), "deploy/ocr_serving/task_c
 
 
 class PackageHelper:
-    def __init__(self, package_name: str, mindir_file_path: str = None, test_mode: bool = True):
+    def __init__(self, package_name: str, mindir_file_path: str = None,
+                 test_mode: bool = True, ch_detection: bool = False):
         """
         Args:
             package_name: the model name we want to package
             mindir_file_path: custom mindir file path. default None
             test_mode: True if you need to do test
+            ch_detection: weather chinese ocr detection
         """
         self.package_name = package_name
         self.custom_mindir_path = mindir_file_path
@@ -53,6 +55,7 @@ class PackageHelper:
         # target config yaml
         self.target_config_yaml = None
         self.test_mode = test_mode
+        self.ch_detection = ch_detection
 
     def input_check(self):
         """
@@ -283,6 +286,9 @@ if __name__ == "__main__":
     parser.add_argument("--test_mode",
                         help="wheater to switch on test mode",
                         action="store_true")
+    parser.add_argument("--ch_det",
+                        help="if you need to do chinese ocr detection, you should add this param.",
+                        action="store_true")
     args = parser.parse_args()
-    package_helper = PackageHelper(args.package_name, args.mindir_file_path, args.test_mode)
+    package_helper = PackageHelper(args.package_name, args.mindir_file_path, args.test_mode, args.ch_det)
     package_helper.do_package()
