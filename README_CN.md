@@ -1,7 +1,7 @@
 <!--start-->
 <div align="center" markdown>
 
-# MindOCR
+# test
 </div>
 
 <!--end-->
