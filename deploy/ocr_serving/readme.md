@@ -44,10 +44,10 @@ python
 
 ### 二、Clone mindocr 项目进行服务化部署
 
-1. Clone 我的个人仓 
+1. Clone mindocr 
 
 ```shell
-git clone https://github.com/Hsiayukoo/mindocr.git
+git clone https://github.com/opensourcedot/mindocr.git
 ```
 
 2. 安装相关依赖
@@ -73,34 +73,36 @@ python task_config_generator.py
 
 ``` shel
 cd ..
-python package_utils/package_helper.py {模型名称} 
+python package_utils/package_helper.py {模型名称} --test_mode # 加上 test_mode 会提供测试的脚本。
 ```
 
 目前 {模型名称} 理论上支持以下输入参数
 
-```txt
-db_mobilenetv3_icdar15,
-db_r18_ctw1500,
-db_r18_icdar15,
-db_r18_mlt2017,
-db_r18_synthtext,
-db_r18_td500,
-db_r18_totaltext,
-dbpp_r50_icdar15,
-db_r50_ctw1500,
-db_r50_icdar15,
-db_r50_mlt2017,
-db_r50_synthtext,
-db_r50_td500,
-db_r50_totaltext,
-east_mobilenetv3_icdar15,
-east_r50_icdar15.yaml,
-fce_icdar15.yaml,
-pse_mv3_icdar15,
-pse_r152_ctw1500,
-pse_r152_icdar15,
-pse_r50_icdar15,
-```
+
+-  DET 模型
+1. db_mobilenetv3_icdar15
+2. db_r18_icdar15
+3. db_r50_icdar15
+4. db_r50_icdar15-ch（失败；未区分中英文）
+5. dbpp_r50_icdar15
+6. dbpp_r50_icdar15-ch（失败；未区分中英文）
+7. east_r50_icdar15
+8. east_mobilenetv3_icdar15
+9. pse_r152_icdar15
+10. pse_r50_icdar15
+11. pse_mv3_icdar15
+12. fce_icdar15
+-  REC 模型
+13. crnn_vgg7
+14. crnn_resnet34
+15. crnn_resnet34_ch
+16. svtr_tiny
+17. rare_resnet34
+18. rare_resnet34_ch
+19. robustscanner_resnet31(失败)
+20. visionlan_resnet45_LA
+- CLS 模型
+21. cls_mv3
 
 6. 启动 server 服务
 
