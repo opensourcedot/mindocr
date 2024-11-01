@@ -35,7 +35,7 @@ class PackageException(Exception):
 
 class PackageHelper:
     def __init__(
-            self, package_name: str, mindir_file_path: str = None, test_mode: bool = True, ch_detection: bool = False
+        self, package_name: str, mindir_file_path: str = None, test_mode: bool = True, ch_detection: bool = False
     ):
         """
         Args:
@@ -214,9 +214,9 @@ class PackageHelper:
         # 2. convert ckpt to mindir
         shell_command = (
             "python {export_tool_path} --model_name_or_config {model_name} "
-             "--data_shape {data_shape} --local_ckpt_path {local_ckpt_path} "
-             "--save_dir {save_dir} "
-             "--custom_exported_name {exported_name}"
+            "--data_shape {data_shape} --local_ckpt_path {local_ckpt_path} "
+            "--save_dir {save_dir} "
+            "--custom_exported_name {exported_name}"
         ).format(
             export_tool_path=os.path.join(get_base_path(), "tools/export.py"),
             model_name=EXPORT_NAME_MAPPER[self.target_config_yaml["yaml_file_name"]],
@@ -303,8 +303,7 @@ class PackageHelper:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("package_name",
-                        help="for example: east_mobilenetv3_icdar15")
+    parser.add_argument("package_name", help="for example: east_mobilenetv3_icdar15")
     parser.add_argument(
         "--mindir_file_path", help="if you need to use your local mindir file, please specify this parameter."
     )

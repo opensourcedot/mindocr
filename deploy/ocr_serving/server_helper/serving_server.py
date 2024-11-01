@@ -2,6 +2,7 @@
 import argparse
 import os
 import sys
+
 from mindspore_serving import server
 
 

@@ -12,7 +12,6 @@ if mindocr_path not in sys.path:
 
 from package_utils.path_utils import bfs_search_specific_type_file, get_base_path
 
-
 MODELS_LINK_PATH = "deploy/ocr_serving/task_configs/model_link_mapper.csv"
 OUTPUT_CONFIGS_SAVE_PATH = os.path.join(get_base_path(), "deploy/ocr_serving/task_configs/all_configs.yaml")
 
