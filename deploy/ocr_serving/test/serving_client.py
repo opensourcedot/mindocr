@@ -21,8 +21,10 @@ def run_restful_classify_top1(model_name, restful_address):
     """RESTful Client for servable lenet and method classify_top1"""
     print("run_restful_classify_top1-----------")
     import base64
-    import requests
     import json
+
+    import requests
+
     instances = []
     images_buffer, image_files = read_images()
     for image in images_buffer:
@@ -41,9 +43,7 @@ def run_restful_classify_top1(model_name, restful_address):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("model_name",
-                        help="for example: east_mobilenetv3_icdar15")
-    parser.add_argument("--restful_address",
-                        default="127.0.0.1:1501")
+    parser.add_argument("model_name", help="for example: east_mobilenetv3_icdar15")
+    parser.add_argument("--restful_address", default="127.0.0.1:1501")
     args = parser.parse_args()
     run_restful_classify_top1(args.model_name, args.restful_address)

@@ -16,9 +16,7 @@ def start(model_name: str, restful_address: str):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("model_name",
-                        help="for example: east_mobilenetv3_icdar15")
-    parser.add_argument("--restful_address",
-                        default="127.0.0.1:1501")
+    parser.add_argument("model_name", help="for example: east_mobilenetv3_icdar15")
+    parser.add_argument("--restful_address", default="127.0.0.1:1501")
     args = parser.parse_args()
     start(args.model_name, args.restful_address)

@@ -121,7 +121,7 @@ def kie_exporter(save_dir, name, net, data_shape):
     )
 
 
-def export(model_name_or_config, data_shape, local_ckpt_path, save_dir, is_dynamic_shape, model_type,  **kwargs):
+def export(model_name_or_config, data_shape, local_ckpt_path, save_dir, is_dynamic_shape, model_type, **kwargs):
     ms.set_context(mode=ms.GRAPH_MODE)  # , device_target="Ascend")
     set_logger(name="mindocr")
 

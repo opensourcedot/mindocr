@@ -10,7 +10,7 @@ mindocr_path = os.path.dirname(os.path.dirname(current_file_path))
 if mindocr_path not in sys.path:
     sys.path.append(mindocr_path)
 
-from package_utils.path_utils import get_base_path, bfs_search_specific_type_file
+from package_utils.path_utils import bfs_search_specific_type_file, get_base_path
 
 
 MODELS_LINK_PATH = "deploy/ocr_serving/task_configs/model_link_mapper.csv"
@@ -31,8 +31,13 @@ def get_key_information_from_yaml(yaml_file_path: str) -> dict:
         post_process = result["postprocess"] if "postprocess" in result.keys() else None
         eval = result["eval"] if "eval" in result.keys() else None
         pre_process = result["eval"]["dataset"]["transform_pipeline"] if "predict" in result.keys() else None
-        config_dict = {"postprocess": post_process, "preprocess": pre_process, "use_pretrained_mindir": True,
-                       "yaml_file_name": os.path.basename(yaml_file_path), "eval": eval}
+        config_dict = {
+            "postprocess": post_process,
+            "preprocess": pre_process,
+            "use_pretrained_mindir": True,
+            "yaml_file_name": os.path.basename(yaml_file_path),
+            "eval": eval,
+        }
     return config_dict
 
 
