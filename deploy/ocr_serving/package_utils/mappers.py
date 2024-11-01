@@ -35,7 +35,7 @@ EXPORT_NAME_MAPPER = {
     "svtr_tiny_ch.yaml": "svtr_tiny_ch",
     "visionlan_resnet45_LA.yaml": "visionlan_resnet45",
     "visionlan_resnet45_LF_1.yaml": "visionlan_resnet45",
-    "visionlan_resnet45_LF_2.yaml": "visionlan_resnet45"
+    "visionlan_resnet45_LF_2.yaml": "visionlan_resnet45",
 }
 
 SERVABLE_CONFIGS_MAPPER = {
@@ -73,5 +73,5 @@ SERVABLE_CONFIGS_MAPPER = {
     "svtr_tiny_ch.yaml": "rec_common_servable_config",
     "visionlan_resnet45_LA.yaml": "rec_common_servable_config",
     "visionlan_resnet45_LF_1.yaml": "rec_common_servable_config",
-    "visionlan_resnet45_LF_2.yaml": "rec_common_servable_config"
+    "visionlan_resnet45_LF_2.yaml": "rec_common_servable_config",
 }

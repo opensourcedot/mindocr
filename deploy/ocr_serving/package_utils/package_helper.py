@@ -25,6 +25,12 @@ from package_utils.mappers import EXPORT_NAME_MAPPER, SERVABLE_CONFIGS_MAPPER
 SUPPORT_INFER_TYPE = ["mindir", "ms"]
 TARGET_SERVER_FOLDER = "deploy/ocr_serving/server_folders"
 ALL_CONFIGS_YAML_PATH = os.path.join(get_base_path(), "deploy/ocr_serving/task_configs/all_configs.yaml")
+CORRECT_RESPONSE_CODE = 2
+
+
+class PackageException(Exception):
+    def __init__(self, message="Package Error."):
+        super().__init__(message)
 
 
 class PackageHelper:
@@ -71,10 +77,10 @@ class PackageHelper:
             # check model type
             model_type = self.custom_mindir_path.split(".")[-1]
             if model_type not in SUPPORT_INFER_TYPE:
-                raise Exception("unsupport mindir file type :{}".format(model_type))
+                raise PackageException(f"unsupport mindir file type :{model_type}")
             # if chose to use custom mindir file
             if not os.path.exists(self.custom_mindir_path):
-                raise Exception("mindir file not exist at : {}".format(self.custom_mindir_path))
+                raise PackageException(f"mindir file not exist at : {self.custom_mindir_path}")
 
     def build_infer_server_folder(self):
         """
@@ -120,14 +126,14 @@ class PackageHelper:
                 # case 2: use official mindir file
                 else:
                     if not yaml_config["ckpt_link"]:
-                        raise Exception("No valid ckpt file to convert")
+                        raise PackageException("No valid ckpt file to convert")
                 with open(target_config_yaml_path, "w+", encoding="utf-8") as g:
                     yaml.dump(yaml_config, stream=g)
                 self.target_config_yaml = yaml_config
                 break
 
         if not matched:
-            raise Exception("model not matched in all_configs.yaml")
+            raise PackageException("model not matched in all_configs.yaml")
 
     def _update_yaml_configs_for_special_situations(self, yaml_config: Dict):
         yaml_config = self.__update_character_dict_path(yaml_config)
@@ -136,11 +142,17 @@ class PackageHelper:
 
     def __update_character_dict_path(self, yaml_config: Dict) -> Dict:
         if "character_dict_path" in yaml_config["postprocess"] and yaml_config["postprocess"]["character_dict_path"]:
-            yaml_config["postprocess"]["character_dict_path"] = os.path.join(self.base_path, yaml_config["postprocess"]["character_dict_path"])
+            yaml_config["postprocess"]["character_dict_path"] = os.path.join(
+                self.base_path, yaml_config["postprocess"]["character_dict_path"]
+            )
         for i, method in enumerate(yaml_config["eval"]["dataset"]["transform_pipeline"]):
-            for j, (method_name, method_params) in enumerate(method.items()):
-                if isinstance(method_params, dict) and "character_dict_path" in method_params and method_params["character_dict_path"]:
-                    character_dict_path = yaml_config["eval"]["dataset"]["transform_pipeline"][i][method_name]["character_dict_path"]
+            for _, (method_name, method_params) in enumerate(method.items()):
+                if (isinstance(method_params, dict)
+                    and "character_dict_path" in method_params
+                    and method_params["character_dict_path"]
+                ):
+                    character_dict_path =\
+                        yaml_config["eval"]["dataset"]["transform_pipeline"][i][method_name]["character_dict_path"]
                     yaml_config["eval"]["dataset"]["transform_pipeline"][i][method_name]["character_dict_path"] =\
                         os.path.join(self.base_path, character_dict_path)
         return yaml_config
@@ -167,10 +179,10 @@ class PackageHelper:
             if os.path.isdir(os.path.join(self.target_model_folder, dir)):
                 try:
                     dir_list.append(int(dir))
-                except:
+                except PackageException:
                     pass
         max_index = max(dir_list)
-        self.target_mindir_folder = os.path.join(self.target_model_folder, "{}".format(max_index + 1))
+        self.target_mindir_folder = os.path.join(self.target_model_folder, f"{max_index + 1}")
         os.mkdir(self.target_mindir_folder)
 
         # 2. get mindir file
@@ -186,9 +198,10 @@ class PackageHelper:
         """
         # 1. get ckpt file from official link
         response = requests.get(self.target_config_yaml["ckpt_link"])
-        if math.floor(response.status_code / 100) != 2:
-            raise Exception(
-                "download mindir official mindir file failed. with status code = {}".format(response.status_code))
+        if math.floor(response.status_code / 100) != CORRECT_RESPONSE_CODE:
+            raise PackageException(
+                f"download mindir official mindir file failed. with status code = {response.status_code}"
+            )
         else:
             target_ckpt_path = os.path.join(self.target_mindir_folder, "model.ckpt")
             with open(target_ckpt_path, "wb") as f:
