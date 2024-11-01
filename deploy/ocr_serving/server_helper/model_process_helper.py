@@ -7,7 +7,6 @@ from typing import Tuple
 import numpy as np
 from PIL import Image
 
-
 current_file_path = os.path.abspath(__file__)
 mindocr_path = dirname(dirname(dirname(dirname(dirname(current_file_path)))))
 if mindocr_path not in sys.path:
