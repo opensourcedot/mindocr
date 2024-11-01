@@ -34,8 +34,9 @@ class PackageException(Exception):
 
 
 class PackageHelper:
-    def __init__(self, package_name: str, mindir_file_path: str = None,
-                 test_mode: bool = True, ch_detection: bool = False):
+    def __init__(
+            self, package_name: str, mindir_file_path: str = None, test_mode: bool = True, ch_detection: bool = False
+    ):
         """
         Args:
             package_name: the model name we want to package
@@ -147,14 +148,17 @@ class PackageHelper:
             )
         for i, method in enumerate(yaml_config["eval"]["dataset"]["transform_pipeline"]):
             for _, (method_name, method_params) in enumerate(method.items()):
-                if (isinstance(method_params, dict)
+                if (
+                    isinstance(method_params, dict)
                     and "character_dict_path" in method_params
                     and method_params["character_dict_path"]
                 ):
-                    character_dict_path =\
-                        yaml_config["eval"]["dataset"]["transform_pipeline"][i][method_name]["character_dict_path"]
-                    yaml_config["eval"]["dataset"]["transform_pipeline"][i][method_name]["character_dict_path"] =\
-                        os.path.join(self.base_path, character_dict_path)
+                    character_dict_path = yaml_config["eval"]["dataset"]["transform_pipeline"][i][method_name][
+                        "character_dict_path"
+                    ]
+                    yaml_config["eval"]["dataset"]["transform_pipeline"][i][method_name][
+                        "character_dict_path"
+                    ] = os.path.join(self.base_path, character_dict_path)
         return yaml_config
 
     def __change_target_shape(self, yaml_config: Dict) -> Dict:
@@ -208,16 +212,19 @@ class PackageHelper:
                 f.write(response.content)
 
         # 2. convert ckpt to mindir
-        shell_command = ("python {export_tool_path} --model_name_or_config {model_name} "
-                         "--data_shape {data_shape} --local_ckpt_path {local_ckpt_path} "
-                         "--save_dir {save_dir} "
-                         "--custom_exported_name {exported_name}").format(
+        shell_command = (
+            "python {export_tool_path} --model_name_or_config {model_name} "
+             "--data_shape {data_shape} --local_ckpt_path {local_ckpt_path} "
+             "--save_dir {save_dir} "
+             "--custom_exported_name {exported_name}"
+        ).format(
             export_tool_path=os.path.join(get_base_path(), "tools/export.py"),
             model_name=EXPORT_NAME_MAPPER[self.target_config_yaml["yaml_file_name"]],
             data_shape=" ".join(self.target_config_yaml["data_shape_nchw"][2:]),
             local_ckpt_path=os.path.join(self.target_mindir_folder, "model.ckpt"),
             save_dir=self.target_mindir_folder,
-            exported_name="model")
+            exported_name="model",
+        )
         os.system(shell_command)
         os.remove(os.path.join(self.target_mindir_folder, "model.ckpt"))
 
@@ -244,8 +251,12 @@ class PackageHelper:
         copy target xxx_servable_config.py to target folder
         Returns:
         """
-        src_path = os.path.join(self.base_path, "deploy/ocr_serving/server_helper/{}.py".format(
-                                    SERVABLE_CONFIGS_MAPPER[self.target_config_yaml["yaml_file_name"]]))
+        src_path = os.path.join(
+            self.base_path,
+            "deploy/ocr_serving/server_helper/{}.py".format(
+                SERVABLE_CONFIGS_MAPPER[self.target_config_yaml["yaml_file_name"]]
+            ),
+        )
         dst_path = os.path.join(self.target_model_folder, "servable_config.py")
         if os.path.exists(dst_path):
             os.remove(dst_path)
@@ -294,14 +305,13 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("package_name",
                         help="for example: east_mobilenetv3_icdar15")
-    parser.add_argument("--mindir_file_path",
-                        help="if you need to use your local mindir file, please specify this parameter.")
-    parser.add_argument("--test_mode",
-                        help="wheater to switch on test mode",
-                        action="store_true")
-    parser.add_argument("--ch_det",
-                        help="if you need to do chinese ocr detection, you should add this param.",
-                        action="store_true")
+    parser.add_argument(
+        "--mindir_file_path", help="if you need to use your local mindir file, please specify this parameter."
+    )
+    parser.add_argument("--test_mode", help="wheater to switch on test mode", action="store_true")
+    parser.add_argument(
+        "--ch_det", help="if you need to do chinese ocr detection, you should add this param.", action="store_true"
+    )
     args = parser.parse_args()
     package_helper = PackageHelper(args.package_name, args.mindir_file_path, args.test_mode, args.ch_det)
     package_helper.do_package()
