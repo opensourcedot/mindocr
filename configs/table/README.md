@@ -160,3 +160,28 @@ To evaluate the accuracy of the trained model, you can use `eval.py`. Please set
 ``` shell
 python tools/eval.py --config configs/table/table_master.yaml
 ```
+
+### 3.6 Model Inference
+
+To perform inference using a pre-trained model, you can utilize `tools/infer/text/predict_structure.py` for inference and visualize the results.
+
+```
+python tools/infer/text/predict_structure.py --table_algorithm TABLE_MASTER --image_dir {dir of images or path of image}
+```
+
+Use the script to recognize the structure of table in `configs/table/example.png`. The results will be stored in the `./inference_results` folder by default. You can also customize the result storage path using the `--draw_img_save_dir` command line parameter.
+
+<p align="center">
+  <img src="example.png" width=1000 />
+</p>
+<p align="center">
+  <em> example.png </em>
+</p>
+识别结果如图，图片保存为`inference_results/example_structure.png`：
+
+<p align="center">
+  <img src="example_structure.png" width=1000 />
+</p>
+<p align="center">
+  <em> example_structure.png </em>
+</p>
