@@ -12,7 +12,7 @@ import numpy as np
 import cv2
 
 from predict_structure import StructureAnalyzer
-from matcher import TableMasterMatcher
+from utils import TableMasterMatcher
 from predict_system import TextSystem
 from config import parse_args
 from utils import get_image_paths
