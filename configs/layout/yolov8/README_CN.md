@@ -141,6 +141,13 @@ python tools/train.py --config configs/layout/yolov8/yolov8n.yaml
 python tools/eval.py --config configs/layout/yolov8/yolov8n.yaml
 ```
 
+### 3.4 模型在线推理
+
+若要使用yolov8进行在线推理，可以使用predict_layout.py。
+
+```shell
+python tools/infer/text/predict_layout.py --image_dir ./configs/layout/yolov8/images/yolo_test.jpg
+```
 
 ## 4. MindSpore Lite 推理
 

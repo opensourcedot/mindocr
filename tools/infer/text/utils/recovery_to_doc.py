@@ -5,7 +5,7 @@ from docx import Document, shared
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.enum.section import WD_SECTION
 from docx.oxml.ns import qn
-from table_process import HtmlToDocx
+from .table_process import HtmlToDocx
 
 
 def set_document_styles(doc: Document) -> None:

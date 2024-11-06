@@ -15,6 +15,7 @@ from .rec_robustscanner import *
 from .rec_svtr import *
 from .rec_visionlan import *
 from .table_master import *
+from .layout_yolov8 import *
 
 __all__ = []
 __all__.extend(builder.__all__)
