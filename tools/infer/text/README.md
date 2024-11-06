@@ -323,6 +323,19 @@ HDL Cholesterol (mg/dL),42 ± 11.1,46 ± 11.4
 **Notes:**
 1. For more argument illustrations and usage, please run `python tools/infer/text/predict_table.py -h` or view `tools/infer/text/config.py`
 
+## End-to-end Document Analysis and Converting Image to Docx
+
+To analyze a list of document and convert them into docx, please run the following:
+```shell
+python tools/infer/text/predict_e2e.py --image_dir ./configs/layout/yolov8/images/yolo_test.jpg \
+                                          --ocr True \
+                                          --layout True \
+                                          --table True \
+                                          --recovery True
+```
+
+After running, the inference results will be saved in `{args.draw_img_save_dir}`, where `--draw_img_save_dir` is the directory for saving  results and is set to `./inference_results` by default. Here are some results for examples.
+
 ## Argument List
 
 All CLI argument definition can be viewed via `python tools/infer/text/predict_system.py -h` or reading `tools/infer/text/config.py`.

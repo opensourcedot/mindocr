@@ -128,6 +128,14 @@ To evaluate the accuracy of the trained model, you can use `eval.py`. Please set
 python tools/eval.py --config configs/layout/yolov8/yolov8n.yaml
 ```
 
+### 3.4 Online Model Inference
+
+To use YOLOv8 for inference, you can use predict_layout.py.
+
+```shell
+python tools/infer/text/predict_layout.py --image_dir ./configs/layout/yolov8/images/yolo_test.jpg
+```
+
 ## 4. MindSpore Lite Inference
 
 To inference with MindSpot Lite on Ascend 310, please refer to the tutorial [MindOCR Inference](../../../docs/en/inference/inference_tutorial.md). In short, the whole process consists of the following steps:

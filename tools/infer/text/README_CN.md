@@ -315,6 +315,20 @@ HDL Cholesterol (mg/dL),42 ± 11.1,46 ± 11.4
 **注意事项：**
 1、如需更多参数说明和用法，请运行`python tools/infer/text/predict_table.py -h`或查看`tools/infer/text/config.py`
 
+## 端到端版面识别与版面恢复成文档
+
+要对输入图像或目录中的多个图像进行版面识别并将图像转换成文档，请运行：
+
+```shell
+python tools/infer/text/predict_e2e.py --image_dir ./configs/layout/yolov8/images/yolo_test.jpg \
+                                          --ocr True \
+                                          --layout True \
+                                          --table True \
+                                          --recovery True
+```
+
+运行后，推理结果保存在`{args.draw_img_save_dir}`中，其中`--draw_img_save_dir`是保存结果的目录，这是`./inference_results`的默认设置。下面是一些结果的例子。
+
 ## 参数列表
 
 所有CLI参数定义都可以通过`python tools/infer/text/predict_system.py -h`或`tools/infer/text/config.py`查看。
