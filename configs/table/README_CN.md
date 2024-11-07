@@ -155,3 +155,28 @@ mpirun --allow-run-as-root -n 8 python tools/train.py --config configs/table/tab
 ``` shell
 python tools/eval.py --config configs/table/table_master.yaml
 ```
+
+### 3.6 模型推理
+
+若要使用已训练的模型进行推理，可使用`tools/infer/text/predict_structure.py`进行推理并将结果进行可视化展示。
+
+```
+python tools/infer/text/predict_structure.py --table_algorithm TABLE_MASTER --image_dir {dir of images or path of image}
+```
+
+以`configs/table/example.png`为例，使用脚本识别表单的结构，结果将默认存放在`./inference_results`文件夹内，也可以通过`--draw_img_save_dir`命令行参数自定义结果存储路径。
+
+<p align="center">
+  <img src="example.png" width=1000 />
+</p>
+<p align="center">
+  <em> example.png </em>
+</p>
+识别结果如图，图片保存为`inference_results/example_structure.png`：
+
+<p align="center">
+  <img src="example_structure.png" width=1000 />
+</p>
+<p align="center">
+  <em> example_structure.png </em>
+</p>
