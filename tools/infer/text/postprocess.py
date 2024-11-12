@@ -81,6 +81,8 @@ class Postprocessor(object):
         elif task == "ser":
             class_path = "mindocr/utils/dict/class_list_xfun.txt"
             postproc_cfg = dict(name="VQASerTokenLayoutLMPostProcess", class_path=class_path)
+        elif task == "layout":
+            postproc_cfg = dict(name="YOLOv8Postprocess", conf_thres=0.5, iou_thres=0.7, conf_free=True)
 
         postproc_cfg.update(kwargs)
         self.task = task
@@ -141,4 +143,7 @@ class Postprocessor(object):
             output = self.postprocess(
                 pred, segment_offset_ids=kwargs.get("segment_offset_ids"), ocr_infos=kwargs.get("ocr_infos")
             )
+            return output
+        elif self.task == "layout":
+            output = self.postprocess(pred, img_shape=kwargs.get("img_shape"), meta_info=kwargs.get("meta_info"))
             return output
