@@ -183,7 +183,8 @@ def create_parser():
     parser.add_argument(
         "--cls_model_dir",
         type=str,
-        help="directory containing the classification model checkpoint best.ckpt, or path to a specific checkpoint file.",
+        help="directory containing the classification model checkpoint best.ckpt"
+        "or path to a specific checkpoint file.",
     )
 
     parser.add_argument(

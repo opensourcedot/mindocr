@@ -10,16 +10,11 @@ import sys
 from typing import List
 
 import numpy as np
-
-from postprocess import Postprocessor
-from preprocess import Preprocessor
-
 import mindspore as ms
 from mindspore import ops
 
-__dir__ = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, os.path.abspath(os.path.join(__dir__, "../../../")))
-
+from postprocess import Postprocessor
+from preprocess import Preprocessor
 from mindocr import build_model
 from mindocr.utils.logger import set_logger
 from mindocr.utils.visualize import show_imgs
