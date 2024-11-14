@@ -6,15 +6,15 @@ Example:
 """
 import logging
 import os
-import sys
 from typing import List
 
 import numpy as np
+from postprocess import Postprocessor
+from preprocess import Preprocessor
+
 import mindspore as ms
 from mindspore import ops
 
-from postprocess import Postprocessor
-from preprocess import Preprocessor
 from mindocr import build_model
 from mindocr.utils.logger import set_logger
 from mindocr.utils.visualize import show_imgs
@@ -254,6 +254,7 @@ def save_cls_res(cls_res_all, img_paths, batch_mode, include_score=True, save_pa
 
 if __name__ == "__main__":
     from time import time
+
     from config import parse_args
 
     # parse args
