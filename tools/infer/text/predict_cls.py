@@ -10,11 +10,12 @@ import sys
 from typing import List
 
 import numpy as np
-import mindspore as ms
-from mindspore import ops
 
 from postprocess import Postprocessor
 from preprocess import Preprocessor
+
+import mindspore as ms
+from mindspore import ops
 
 __dir__ = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.abspath(os.path.join(__dir__, "../../../")))
@@ -61,17 +62,10 @@ class TextClassifier(object):
 
         amp_level = args.cls_amp_level
         if amp_level != "O0" and args.cls_algorithm == "mv3":
-            logger.warning(
-                "The MV3 model supports only amp_level O0"
-            )
+            logger.warning("The MV3 model supports only amp_level O0")
             amp_level = "O0"
 
-        self.model = build_model(
-            model_name,
-            pretrained=pretrained,
-            ckpt_load_path=ckpt_load_path,
-            amp_level=amp_level
-        )
+        self.model = build_model(model_name, pretrained=pretrained, ckpt_load_path=ckpt_load_path, amp_level=amp_level)
         self.model.set_train(False)
 
         self.cast_pred_fp32 = amp_level != "O0"
@@ -90,9 +84,7 @@ class TextClassifier(object):
         )
 
         # build postprocess
-        self.postprocess = Postprocessor(
-            task="cls", algo=args.cls_algorithm
-        )
+        self.postprocess = Postprocessor(task="cls", algo=args.cls_algorithm)
 
         self.vis_dir = args.draw_img_save_dir
         os.makedirs(self.vis_dir, exist_ok=True)
@@ -112,9 +104,9 @@ class TextClassifier(object):
                 - score: prediction confidence
         """
 
-        assert isinstance(img_or_path_list, list), (
-            "Input for text classification must be list of images or image paths."
-        )
+        assert isinstance(
+            img_or_path_list, list
+        ), "Input for text classification must be list of images or image paths."
         logger.info(f"num images for cls: {len(img_or_path_list)}")
 
         if self.batch_mode:
@@ -156,9 +148,7 @@ class TextClassifier(object):
                 data = self.preprocess(img_or_path_list[j])
                 img_batch.append(data["image"])
                 if do_visualize:
-                    f_name = os.path.basename(
-                        data.get("img_path", f"crop_{j}.png")
-                    ).rsplit(".", 1)[0]
+                    f_name = os.path.basename(data.get("img_path", f"crop_{j}.png")).rsplit(".", 1)[0]
                     show_imgs(
                         [data["image"]],
                         title=f_name + "_cls_preprocessed",
@@ -170,11 +160,7 @@ class TextClassifier(object):
                     )
 
             # infer
-            img_batch = (
-                np.stack(img_batch)
-                if len(img_batch) > 1
-                else np.expand_dims(img_batch[0], axis=0)
-            )
+            img_batch = np.stack(img_batch) if len(img_batch) > 1 else np.expand_dims(img_batch[0], axis=0)
 
             net_pred = self.model(ms.Tensor(img_batch))
             if self.cast_pred_fp32:
@@ -207,9 +193,7 @@ class TextClassifier(object):
 
         # visualize preprocess result
         if do_visualize:
-            f_name = os.path.basename(
-                data.get("img_path", f"crop_{crop_idx}.png")
-            ).rsplit(".", 1)[0]
+            f_name = os.path.basename(data.get("img_path", f"crop_{crop_idx}.png")).rsplit(".", 1)[0]
             show_imgs(
                 [data["image"]],
                 title=f_name + "_cls_preprocessed",
@@ -266,7 +250,7 @@ def save_cls_res(cls_res_all, img_paths, batch_mode, include_score=True, save_pa
             img_pred = os.path.basename(img_paths[i]) + "\t" + cls_res[0] + "\n"
         lines.append(img_pred)
 
-    with open(save_path, "w", encoding='utf-8') as f_cls:
+    with open(save_path, "w", encoding="utf-8") as f_cls:
         f_cls.writelines(lines)
         f_cls.close()
 
@@ -294,10 +278,7 @@ if __name__ == "__main__":
     t = time() - start
 
     # save all results in a txt file
-    save_fp = os.path.join(
-        save_dir,
-        "cls_results.txt" if args.cls_batch_mode else "cls_results_serial.txt"
-    )
+    save_fp = os.path.join(save_dir, "cls_results.txt" if args.cls_batch_mode else "cls_results_serial.txt")
     save_cls_res(cls_res_all, img_paths, args.cls_batch_mode, save_path=save_fp)
 
     # log the result of Angle classification inference

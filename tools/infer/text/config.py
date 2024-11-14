@@ -192,7 +192,7 @@ def create_parser():
         default=True,
         help="Whether to run classification inference in batch-mode, which is faster but may degrade the accuracy "
         "due to padding or resizing to the same shape.",
-    ) 
+    )
     parser.add_argument("--cls_batch_num", type=int, default=8)
 
     return parser

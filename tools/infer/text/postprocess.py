@@ -82,7 +82,7 @@ class Postprocessor(object):
             class_path = "mindocr/utils/dict/class_list_xfun.txt"
             postproc_cfg = dict(name="VQASerTokenLayoutLMPostProcess", class_path=class_path)
         elif task == "cls":
-            postproc_cfg = dict(name="ClsPostprocess",label_list=['0', '180'])
+            postproc_cfg = dict(name="ClsPostprocess", label_list=["0", "180"])
 
         postproc_cfg.update(kwargs)
         self.task = task

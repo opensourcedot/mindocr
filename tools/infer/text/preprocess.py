@@ -191,12 +191,7 @@ class Preprocessor(object):
         elif task == "cls":
             pipeline = [
                 {"DecodeImage": {"img_mode": "BGR", "to_float32": False}},
-                {
-                    "Rotate90IfVertical": {
-                        "threshold": 2.0, 
-                        "direction": "counterclockwise"
-                    }
-                },
+                {"Rotate90IfVertical": {"threshold": 2.0, "direction": "counterclockwise"}},
                 {"RecResizeImg": {"image_shape": [48, 192], "padding": False}},
                 {
                     "NormalizeImage": {
