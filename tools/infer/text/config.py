@@ -166,7 +166,6 @@ def create_parser():
         "due to padding or resizing to the same shape.",
     )
     parser.add_argument("--kie_batch_num", type=int, default=8)
-    
     parser.add_argument(
         "--cls_mode",
         type=str2bool,

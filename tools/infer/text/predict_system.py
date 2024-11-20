@@ -13,16 +13,16 @@ import logging
 import os
 import sys
 from time import time
-from typing import Union, List
+from typing import List, Union
 
 import cv2
 import numpy as np
 from config import parse_args
+from postprocess import Postprocessor
 from predict_det import TextDetector
 from predict_rec import TextRecognizer
-from utils import crop_text_region, get_image_paths, img_rotate
-from postprocess import Postprocessor
 from preprocess import Preprocessor
+from utils import crop_text_region, get_image_paths, img_rotate
 
 import mindspore as ms
 from mindspore import ops
@@ -48,11 +48,7 @@ class TextClassifier(object):
             "MV3": "cls_mobilenet_v3_small_100_model",
         }
         self.batch_num = args.cls_batch_num
-        logger.info(
-            "classify in {} mode {}".format(
-                "batch", "batch_size: " + str(self.batch_num)
-            )
-        )
+        logger.info("classify in {} mode {}".format("batch", "batch_size: " + str(self.batch_num)))
 
         # build model for algorithm with pretrained weights or local checkpoint
         ckpt_dir = args.cls_model_dir
@@ -94,7 +90,6 @@ class TextClassifier(object):
         # build postprocess
         self.postprocess = Postprocessor(task="cls", algo=args.cls_algorithm)
 
-
     def __call__(self, img_or_path_list: list) -> List:
         """
         Run text classification serially for input images
@@ -122,7 +117,6 @@ class TextClassifier(object):
 
         return cls_res_all_crops
     
-
     def run_batch(self, img_or_path_list: list):
         """
         Run text angle classification serially for input images
@@ -202,7 +196,13 @@ class TextClassifier(object):
         return cls_res
 
 
-    def save_cls_res(self, cls_res_all, fn="img", save_path="./cls_results.txt", include_score=True, ):
+    def save_cls_res(
+        self,
+        cls_res_all,
+        fn="img",
+        save_path="./cls_results.txt",
+        include_score=True,
+    ):
         """
         Generate cls_results files that store the angle classification results.
 
@@ -297,10 +297,10 @@ class TextSystem(object):
 
             cls_count = 0
             for i, cls_res in enumerate(cls_res_all):
-                if cls_res[0] != '0':
+                if cls_res[0] != "0":
                     crops[i] = img_rotate(crops[i], -int(cls_res[0]))
                     cls_count = cls_count + 1
-            
+
             if self.save_cls_result:
                 save_fp = os.path.join(self.save_cls_dir, "cls_results.txt")
                 self.text_classification.save_cls_res(cls_res_all, fn=fn, save_path=save_fp)
