@@ -183,3 +183,19 @@ def get_ocr_result_paths(ocr_result_dir: str) -> List[str]:
             "Please check the `image_dir` arg value."
         )
     return sorted(ocr_result_path)
+
+
+def img_rotate(image, angle):
+    """
+    Args:
+        image: path to an ocr result or a directory containing multiple ocr result.
+
+    Returns:
+        List: list of ocr result in the directory and its subdirectories.
+    """
+    (h, w) = image.shape[:2]
+    center = (w / 2, h / 2)
+    M = cv2.getRotationMatrix2D(center, angle, 1.0)
+    rotated = cv2.warpAffine(image, M, (w, h))
+
+    return rotated
