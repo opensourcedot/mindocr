@@ -11,6 +11,7 @@ from tools.infer.text.utils import get_image_paths
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
+
 def test_cls_infer():
     args = parse_args()
     logger = logging.getLogger(__name__)

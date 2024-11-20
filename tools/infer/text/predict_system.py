@@ -116,7 +116,7 @@ class TextClassifier(object):
             cls_res_all_crops = self.run_single(img_or_path_list)
 
         return cls_res_all_crops
-    
+
     def run_batch(self, img_or_path_list: list):
         """
         Run text angle classification serially for input images
@@ -161,7 +161,7 @@ class TextClassifier(object):
             cls_res.extend(list(zip(batch_res["angles"], batch_res["scores"])))
 
         return cls_res
-    
+
     def run_single(self, img_or_path: str):
         """
         Text angle classification inference on a single image
@@ -194,7 +194,6 @@ class TextClassifier(object):
         cls_res = list(zip(cls_res_raw["angles"], cls_res_raw["scores"]))
 
         return cls_res
-
 
     def save_cls_res(
         self,
