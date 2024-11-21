@@ -1,3 +1,14 @@
+"""
+This is a test script for testing the TextClassifier class alone. Due to the directory reference
+structure, the test script cannot be run directly under the test directory.
+
+The test script runs tests based on the following process:
+1. Move the script to the 'tools\infer\text' directory
+2. Run the command line:
+    $ python tools/infer/text/test_cls.py  --image_dir {path_to_img} --cls_algorithm MV3
+
+In the example above, image_dir can be either the file directory of an image set or the address of a single image file
+"""
 import logging
 import os
 import sys

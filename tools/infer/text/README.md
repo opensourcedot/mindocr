@@ -240,16 +240,16 @@ Evaluation of the text spotting inference results on Ascend 910 with MindSpore 2
 
 ### Text direction classification
 
-If there are non-upright text characters in the image, they can be classified and corrected for orientation using a text direction classifier after the detection. If you run text direction classification and correction on an input image, please perform 
+If there are non-upright text characters in the image, they can be classified and corrected for orientation using a text direction classifier after the detection. If you run text direction classification and correction on an input image, please perform
 ```shell
 python tools/infer/text/predict_system.py --image_dir {path_to_img or dir_to_imgs} \
                                           --det_algorithm DB++  \
                                           --rec_algorithm CRNN  \
                                           --cls_mode True
 ```
-During execution, the text orientation classifier will classify the direction of the text detected in the image list and correct the direction of non-upright images. Setting `--save_cls_result` to `True` will save the text orientation classification results to `{args.crop_res_save_dir}/cls_results.txt`, where `{args.crop_res_save_dir}` is the directory to save the results. Here are some examples of the results. 
+During execution, the text orientation classifier will classify the direction of the text detected in the image list and correct the direction of non-upright images. Setting `--save_cls_result` to `True` will save the text orientation classification results to `{args.crop_res_save_dir}/cls_results.txt`, where `{args.crop_res_save_dir}` is the directory to save the results. Here are some examples of the results.
 
-- Text direction classification 
+- Text direction classification
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/zhangjunlongtech/Material/refs/heads/main/CRNN_t1.png" width=150 />
@@ -270,7 +270,7 @@ Classification Results:：
 word_01.png   0     1.0
 word_02.png   180   1.0
 ```
-You can set the direction classification algorithm by `--cls_algorithm`, and set the automatic mixed precision level and weight file for the text direction classifier by `--cls_amp_level` and `--cls_model_dir`. Currently, the supported text direction classification network is `mobilnet_v3`, which is configured with default weight files. The network is set to automatic mixed precision level `O0` by default, and direction classification support 0 and 180 degrees by default. We will support other direction classification in the future. 
+You can set the direction classification algorithm by `--cls_algorithm`, and set the automatic mixed precision level and weight file for the text direction classifier by `--cls_amp_level` and `--cls_model_dir`. Currently, the supported text direction classification network is `mobilnet_v3`, which is configured with default weight files. The network is set to automatic mixed precision level `O0` by default, and direction classification support 0 and 180 degrees by default. We will support other direction classification in the future.
 
 <center>
 
