@@ -41,6 +41,11 @@ logger = logging.getLogger("mindocr")
 class TextClassifier(object):
     """
     Infer model for text orientation classification
+    Example:
+        >>> args = parse_args()
+        >>> text_classification = TextClassifier(args)
+        >>> img_path = "path/to/image.jpg"
+        >>> cls_res_all = text_classification(image_path)
     """
 
     def __init__(self, args):
@@ -95,10 +100,9 @@ class TextClassifier(object):
         Run text classification serially for input images
 
         Args:
-            img_or_path_list: list of str for img path or np.array for RGB image
-            do_visualize: visualize preprocess and final result and save them
+            img_or_path_list: list or str for img path or np.array for RGB image
 
-        Return:
+        Returns:
             list of dict, each contains the follow keys for classification result.
             e.g. [{'angle': 180, 'score': 1.0}, {'angle': 0, 'score': 1.0}]
                 - angle: text angle
@@ -121,11 +125,10 @@ class TextClassifier(object):
         """
         Run text angle classification serially for input images
 
-            Args:
+        Args:
             img_or_path_list: list of str for img path or np.array for RGB image
-            do_visualize: visualize preprocess and final result and save them
 
-            Return:
+        Return:
             cls_res: list of tuple, where each tuple is  (angle, score)
             - text angle classification result for each input image in order.
                 where text is the predicted text string, scores is its confidence score.
@@ -171,8 +174,8 @@ class TextClassifier(object):
 
         Return:
             dict with keys:
-                - angle: text angle
-                - score: prediction confidence
+            - angle: text angle
+            - score: prediction confidence
         """
 
         # preprocess
@@ -207,12 +210,12 @@ class TextClassifier(object):
 
         Args:
             cls_res_all: list of dict, each contains the follow keys for classification result.
-            img_paths: list of str for img path
-            include_score: whether to write prediction confidence
+            fn: customize the prefix name for image information, default is "img".
             save_path: file storage path
+            include_score: whether to write prediction confidence
 
         Return:
-            lines: The content of Angle information written to the document
+            lines: the content of angle information written to the document
         """
 
         lines = []
@@ -300,14 +303,14 @@ class TextSystem(object):
                     crops[i] = img_rotate(crops[i], -int(cls_res[0]))
                     cls_count = cls_count + 1
 
+            logger.info(
+                f"The number of orientated images is {cls_count}/{len(cls_res_all)}"
+                f"\nCLS time: {time_profile['cls']}"
+            )
+
             if self.save_cls_result:
                 save_fp = os.path.join(self.save_cls_dir, "cls_results.txt")
                 self.text_classification.save_cls_res(cls_res_all, fn=fn, save_path=save_fp)
-
-            logger.info(
-                f"The number of images corrected by CLS is {cls_count}/{len(cls_res_all)}"
-                f"\nCLS time: {time_profile['cls']}"
-            )
 
         # recognize cropped images
         rs = time()

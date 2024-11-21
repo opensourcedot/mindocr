@@ -187,12 +187,16 @@ def get_ocr_result_paths(ocr_result_dir: str) -> List[str]:
 
 def img_rotate(image, angle):
     """
+    Rotate the incoming image at a specified angle.
+
     Args:
-        image: path to an ocr result or a directory containing multiple ocr result.
+        image: an encoded image that needs to be rotated.
+        angle: the target Angle at which the image is rotated
 
     Returns:
-        List: list of ocr result in the directory and its subdirectories.
+        rotated: the output image after rotation.
     """
+    
     (h, w) = image.shape[:2]
     center = (w / 2, h / 2)
     M = cv2.getRotationMatrix2D(center, angle, 1.0)
