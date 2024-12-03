@@ -37,6 +37,11 @@ rec:
     character_dict_path:
     use_space_char: False
 
+  SVTR:
+    name: "RecCTCLabelDecode"
+    character_dict_path:
+    use_space_char: False
+
   CRNN_CH:
     name: "RecCTCLabelDecode"
     character_dict_path: *rec_char_dict_path_ch
