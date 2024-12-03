@@ -6,11 +6,11 @@ import mindspore as ms
 import mindspore.ops as ops
 from mindspore.common import dtype as mstype
 
-from .utils import *
-from .modelengine import ModelEngine
 from ..utils.visualize import show_imgs
+from .modelengine import ModelEngine
+from .utils import *
 
-__all__=["RecModel"]
+__all__ = ["RecModel"]
 algo_to_model_name = {
     "CRNN": "crnn_resnet34",
     "RARE": "rare_resnet34",
@@ -41,29 +41,29 @@ class RecModel(ModelEngine):
         visualize_output: bool = False,
         warmup: bool = False,
         init_with_config_file: bool = False,
-        config_file_path: str = None
+        config_file_path: str = None,
     ):
         """
-        Initialize the DetModel with various parameters.  
-        Parameters:  
-            mode (int): 0 for graph mode, 1 for pynative mode.  
-            algo (str): detection algorithm. 
-            amp_level (str): Auto Mixed Precision level. This setting only works on GPU and Ascend.  
-            model_dir (str): directory containing the recognition model checkpoint best.ckpt, 
-                or path to a specific checkpoint file.  
-            rec_image_shape (str):C, H, W for target image shape. max_wh_ratio=W/H will be used to 
+        Initialize the DetModel with various parameters.
+        Parameters:
+            mode (int): 0 for graph mode, 1 for pynative mode.
+            algo (str): detection algorithm.
+            amp_level (str): Auto Mixed Precision level. This setting only works on GPU and Ascend.
+            model_dir (str): directory containing the recognition model checkpoint best.ckpt,
+                or path to a specific checkpoint file.
+            rec_image_shape (str):C, H, W for target image shape. max_wh_ratio=W/H will be used to
                 control the maximum width after aspect-ratio-kept resizing. Set W larger for longer text.
-            rec_batch_mode (bool): Whether to run recognition inference in batch-mode, which is 
+            rec_batch_mode (bool): Whether to run recognition inference in batch-mode, which is
                 faster but may degrade the accuracy due to padding or resizing to the same shape.
             rec_batch_num (int): None
             max_text_length (int): None
-            rec_char_dict_path (str): path to character dictionary. If None, will pick according 
+            rec_char_dict_path (str): path to character dictionary. If None, will pick according
                 to rec_algorithm and red_model_dir.
             use_space_char (bool): None
             vis_font_path (str): None
             drop_score (float): None
-            draw_img_save_dir (str): Dir to save visualization and detection/recogintion/system prediction results.  
-            visualize_output (bool): Whether to visualize results and save the visualized image. 
+            draw_img_save_dir (str): Dir to save visualization and detection/recogintion/system prediction results.
+            visualize_output (bool): Whether to visualize results and save the visualized image.
             warmup (bool): None
         """
         if init_with_config_file:
@@ -105,7 +105,7 @@ class RecModel(ModelEngine):
         self.cast_pred_fp32 = amp_level != "O0"
         if self.cast_pred_fp32:
             self.cast = ops.Cast()
-        
+
         self.vis_dir = draw_img_save_dir
         os.makedirs(self.vis_dir, exist_ok=True)
 

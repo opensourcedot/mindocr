@@ -33,7 +33,7 @@ result = casemodel.infer("path_to_img")
 - model_dir (str) : contains the directory that detects the model checkpoint `best-ckpt`, or the path to a specific checkpoint file.
 - det_limit_side_len (int) : edge length limit for image resizing.
 - det_limit_type (str) : indicates the limit type of image size. If minimum, the image will be resized by limiting the minimum side length to `limit_side_len`. If max, the image will be resized to `limit_side_len` by limiting the maximum value
-- det_box_type (tuple) : indicates the type of the box represented by the text area. 
+- det_box_type (tuple) : indicates the type of the box represented by the text area.
 - draw_img_save_dir (str) : A directory that holds visualization and detection/recognition/system prediction results.
 - save_crop_res (bool) : Indicates whether to save the clipped image from the text detection result.
 - crop_res_save_dir (str) : The directory where the cropped image is saved for the text box.

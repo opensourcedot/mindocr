@@ -32,27 +32,27 @@ det:
   DB_MV3: *det_default_config
 
 rec:
-  CRNN: 
+  CRNN:
     name: "RecCTCLabelDecode"
-    character_dict_path: 
+    character_dict_path:
     use_space_char: False
-  
+
   CRNN_CH:
     name: "RecCTCLabelDecode"
     character_dict_path: *rec_char_dict_path_ch
-    use_space_char: False  
+    use_space_char: False
 
   SVTR_PPOCRv3_CH:
     name: "CTCLabelDecode"
     character_dict_path: *rec_char_dict_path_ch
     use_space_char: True
-  
-  RARE: 
+
+  RARE:
     name: "RecAttnLabelDecode"
-    character_dict_path: 
+    character_dict_path:
     use_space_char: False
 
-  RARE_CH: 
+  RARE_CH:
     name: "RecAttnLabelDecode"
     character_dict_path: *rec_char_dict_path_ch
     use_space_char: False

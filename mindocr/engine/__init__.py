@@ -1,6 +1,6 @@
-from . import detmodel, recmodel, modelengine
-from .modelengine import *
+from . import detmodel, modelengine, recmodel
 from .detmodel import *
+from .modelengine import *
 from .recmodel import *
 
 __all__ = []

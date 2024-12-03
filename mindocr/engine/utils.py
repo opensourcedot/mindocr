@@ -3,10 +3,10 @@ import logging
 import os
 from pathlib import Path
 from typing import List
-from shapely.geometry import Polygon
 
 import cv2
 import numpy as np
+from shapely.geometry import Polygon
 
 _logger = logging.getLogger("mindocr")
 

@@ -12,7 +12,7 @@ det:
         keep_ori: True
         to_float32: False
     - DetResize:
-        target_size: 
+        target_size:
         keep_ratio: True
         limit_side_len: *det_limit_side_len
         limit_type: *det_limit_type
@@ -23,8 +23,8 @@ det:
         is_hwc: True
         mean: *IMAGENET_DEFAULT_MEAN
         std: *IMAGENET_DEFAULT_STD
-    - ToCHWImage: 
-  
+    - ToCHWImage:
+
   DB_PPOCRv3:
     - DecodeImage:
         img_mode: "RGB"
@@ -59,7 +59,7 @@ rec:
         padding: False
         norm_before_pad: False
     - ToCHWImage:
-  
+
   CRNN_CH:
     - DecodeImage:
         img_mode: "RGB"

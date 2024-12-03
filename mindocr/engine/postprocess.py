@@ -1,7 +1,8 @@
 import os
 import sys
-import yaml
+
 import numpy as np
+import yaml
 
 __dir__ = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.abspath(os.path.join(__dir__, "../../../")))
@@ -11,7 +12,6 @@ from mindocr.postprocess import build_postprocess
 
 class Postprocessor(object):
     def __init__(self, cfg_source="default", **kwargs):
-
         if cfg_source == "yaml":
             yaml_cfg = kwargs["yaml_postproc_cfg"]
             postproc_cfg = self._get_yaml_cfg(yaml_cfg)
@@ -77,28 +77,27 @@ class Postprocessor(object):
                 pred, segment_offset_ids=kwargs.get("segment_offset_ids"), ocr_infos=kwargs.get("ocr_infos")
             )
             return output
-    
+
     def _get_default_cfg(self, **kwargs):
 
         task = kwargs.get("task")
         algo = kwargs.get("algo")
 
-        if task=="det":
+        if task == "det":
             self.rescale_internally = True
             self.round = True
         config_name = "default_cfg/postprocess.yaml"
-        config_path = "{}/{}".format(__dir__, config_name) 
+        config_path = "{}/{}".format(__dir__, config_name)
 
         postproc_cfg = {}
         with open(config_path, "r") as f:
-            postproc_cfg = yaml.safe_load(f)[task][algo]      
+            postproc_cfg = yaml.safe_load(f)[task][algo]
 
         return postproc_cfg
 
     def _get_yaml_cfg(self, yaml_cfg: dict):
-
         return yaml_cfg
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     pre = Postprocessor()
