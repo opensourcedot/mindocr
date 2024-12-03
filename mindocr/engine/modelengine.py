@@ -12,7 +12,7 @@ class ModelEngine(object):
     def __init__(self, init_with_config_file=False, **kwargs):
         self.init_with_config_file = init_with_config_file
         if init_with_config_file:
-            assert kwargs["config_file_path"] is not None,"Init params by yaml, but the config_file_path is None"
+            assert kwargs["config_file_path"] is not None, "Init params by yaml, but the config_file_path is None"
             self.parse_config_from_yaml(kwargs["config_file_path"])
         else:
             self.kwargs = kwargs

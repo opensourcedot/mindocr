@@ -1,4 +1,5 @@
 import os
+
 import yaml
 
 from mindocr.data.transforms import create_transforms, run_transforms

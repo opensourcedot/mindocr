@@ -1,7 +1,7 @@
 import os
-import yaml
 
 import numpy as np
+import yaml
 
 from mindocr.postprocess import build_postprocess
 
