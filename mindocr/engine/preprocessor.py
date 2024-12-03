@@ -1,15 +1,9 @@
-import logging
 import os
-import sys
-
 import yaml
-
-__dir__ = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, os.path.abspath(os.path.join(__dir__, "../../../")))
 
 from mindocr.data.transforms import create_transforms, run_transforms
 
-_logger = logging.getLogger("mindocr")
+__dir__ = os.path.dirname(os.path.abspath(__file__))
 __all__ = ["Preprocessor"]
 
 

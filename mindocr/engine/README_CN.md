@@ -4,10 +4,10 @@
 ```
 python tools/infer/text/predict_system.py --image_dir {path_to_img or dir_to_imgs}  --det_algorithm DB++  --rec_algorithm CRNN
 ```
-该调用方式通常需要进入到仓库目录下，调用相应脚本运行。为便于更加方便进行在线推理，本模块提供了统一调用接口模块，用户可基于本模块进行方便而高效的在线推理。
+该调用方式通常需要进入到仓库目录下，调用相应脚本运行。为便于更加方便进行在线推理，本模块提供了统一调用接口模块ModelEngine，用户可基于本模块进行方便而高效的在线推理。
 
 ## 2. 在线推理接口
-本模块当前提供了文字检测任务在线推理接口`RecModel`，以及文字识别任务在线推理接口`DetModel`。用户可基于该接口直接调用默认配置模型，也可调整相关的参数进行在线推理。此外，该接口也支持调用配置文件进行在线推理，配置文件格式详细参见`yaml_configuration`文档。
+本模块当前提供了文字检测任务在线推理接口`DetModel`，以及文字识别任务在线推理接口`RecModel`。用户可基于该接口直接调用默认配置模型，也可调整相关的参数进行在线推理。此外，该接口也支持调用配置文件进行在线推理，配置文件格式详细参见`yaml_configuration`文档。
 
 ### 2.1 文字检测
 DetModel模块是ModelEngine关于文字检测模型的统一调用模块，该接口默认配置下使用方式为
@@ -40,14 +40,13 @@ result = casemodel.infer("path_to_img")
 RecModel模块是ModelEngine关于文字识别模型的统一调用模块，该接口默认配置下使用方式为
 
 ```python
-RecModel默认推理
 casemodel = RecModel(algo="CRNN")
 res = casemodel.infer(["path_to_img"])
 ```
 
 用户可基于该接口传入指定权重文件以及指定设置
 ```python
-casemodel = DetModel(algo="CRNN", model_dir="path_to_ckpt", mode=1)
+casemodel = RecModel(algo="CRNN", model_dir="path_to_ckpt", mode=1)
 result = casemodel.infer("path_to_img")
 ```
 

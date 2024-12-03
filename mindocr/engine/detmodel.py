@@ -1,10 +1,11 @@
 import os
 
 import numpy as np
+
 import mindspore as ms
 
 from .modelengine import ModelEngine
-from .utils import *
+from .utils import validate_det_res
 
 __all__ = ["DetModel"]
 algo_to_model_name = {
@@ -79,7 +80,6 @@ class DetModel(ModelEngine):
         self.warmup = warmup
 
         os.makedirs(self.draw_img_save_dir, exist_ok=True)
-
 
     def infer(self, img_or_path, **kwargs):
         self.model.set_train(mode=False)

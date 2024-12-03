@@ -1,13 +1,11 @@
 import os
-import sys
-
-import numpy as np
 import yaml
 
-__dir__ = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, os.path.abspath(os.path.join(__dir__, "../../../")))
+import numpy as np
 
 from mindocr.postprocess import build_postprocess
+
+__dir__ = os.path.dirname(os.path.abspath(__file__))
 
 
 class Postprocessor(object):
@@ -79,7 +77,6 @@ class Postprocessor(object):
             return output
 
     def _get_default_cfg(self, **kwargs):
-
         task = kwargs.get("task")
         algo = kwargs.get("algo")
 
@@ -99,5 +96,5 @@ class Postprocessor(object):
         return yaml_cfg
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     pre = Postprocessor()

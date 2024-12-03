@@ -9,7 +9,7 @@ This call method usually needs to enter the warehouse directory and invoke the c
 
 ## 2. Online inference interface
 
-This module currently provides an online inference interface `RecModel` for text detection tasks, and an online inference interface `DetModel` for text recognition tasks. Based on this interface, users can directly call the default configuration model, or adjust the relevant parameters for online inference. In addition, the interface also supports calling the configuration file for online inference, the configuration file format is detailed in the `yaml_configuration` document.
+This module currently provides an online inference interface `DetModel` for text detection tasks, and an online inference interface `RecModel` for text recognition tasks. Based on this interface, users can directly call the default configuration model, or adjust the relevant parameters for online inference. In addition, the interface also supports calling the configuration file for online inference, the configuration file format is detailed in the `yaml_configuration` document.
 
 ### 2.1 Text detection
 
@@ -50,7 +50,7 @@ res = casemodel.infer(["path_to_img"])
 
 Users can pass in a specified weight file and specify Settings based on this interface
 ```python
-casemodel = DetModel(algo="CRNN", model_dir="path_to_ckpt", mode=1)
+casemodel = RecModel(algo="CRNN", model_dir="path_to_ckpt", mode=1)
 result = casemodel.infer("path_to_img")
 ```
 

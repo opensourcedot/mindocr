@@ -1,14 +1,13 @@
-import logging
 import os
 
 import numpy as np
+
 import mindspore as ms
 import mindspore.ops as ops
 from mindspore.common import dtype as mstype
 
 from ..utils.visualize import show_imgs
 from .modelengine import ModelEngine
-from .utils import *
 
 __all__ = ["RecModel"]
 algo_to_model_name = {
@@ -19,7 +18,6 @@ algo_to_model_name = {
     "SVTR": "svtr_tiny",
     "SVTR_PPOCRv3_CH": "svtr_ppocrv3_ch",
 }
-logger = logging.getLogger("mindocr")
 
 
 class RecModel(ModelEngine):
@@ -67,20 +65,17 @@ class RecModel(ModelEngine):
             warmup (bool): None
         """
         if init_with_config_file:
-            super().__init__(
-                init_with_config_file = init_with_config_file,
-                config_file_path = config_file_path
-            )
+            super().__init__(init_with_config_file=init_with_config_file, config_file_path=config_file_path)
         else:
             model_name = algo_to_model_name[algo]
             super().__init__(
-                mode = mode,
-                task = "rec",
-                algo = algo,
-                amp_level = amp_level,
-                model_dir = model_dir,
-                model_name = model_name,
-                rec_batch_mode = rec_batch_mode
+                mode=mode,
+                task="rec",
+                algo=algo,
+                amp_level=amp_level,
+                model_dir=model_dir,
+                model_name=model_name,
+                rec_batch_mode=rec_batch_mode,
             )
             self.mode = mode
             self.algo = algo
@@ -142,7 +137,6 @@ class RecModel(ModelEngine):
         for idx in range(0, num_imgs, self.rec_batch_num):  # batch begin index i
             batch_begin = idx
             batch_end = min(idx + self.rec_batch_num, num_imgs)
-            logger.info(f"Rec img idx range: [{batch_begin}, {batch_end})")
 
             # preprocess
             img_batch = []
@@ -203,8 +197,6 @@ class RecModel(ModelEngine):
                 show=False,
                 save_path=os.path.join(self.vis_dir, fn + "_rec_preproc.png"),
             )
-        logger.info(f"Origin image shape: {data['image_ori'].shape}")
-        logger.info(f"Preprocessed image shape: {data['image'].shape}")
 
         # infer
         input_np = data["image"]
@@ -222,7 +214,5 @@ class RecModel(ModelEngine):
         rec_res = self.postprocess(net_pred)
 
         rec_res = (rec_res["texts"][0], rec_res["confs"][0])
-
-        logger.info(f"Crop {crop_idx} rec result: {rec_res}")
 
         return rec_res
