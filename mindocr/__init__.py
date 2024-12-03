@@ -5,6 +5,7 @@ from .metrics import *
 from .models import *
 from .postprocess import *
 from .utils import *
+from .engine import *
 from .version import __version__
 
 __all__ = []
@@ -14,3 +15,4 @@ __all__.extend(models.__all__)
 __all__.extend(postprocess.__all__)
 __all__.extend(metrics.__all__)
 __all__.extend(utils.__all__)
+__all__.extend(engine.__all__)

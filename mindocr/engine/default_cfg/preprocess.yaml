@@ -1,0 +1,126 @@
+public:
+  DEFAULT_CROP_PCT: &DEFAULT_CROP_PCT 0.875
+  IMAGENET_DEFAULT_MEAN: &IMAGENET_DEFAULT_MEAN [123.675, 116.28, 103.53]  # RGB [0.485 * 255, 0.456 * 255, 0.406 * 255]
+  IMAGENET_DEFAULT_STD: &IMAGENET_DEFAULT_STD [58.395, 57.120000000000005, 57.375]  # RGB [0.229 * 255, 0.224 * 255, 0.225 * 255]
+  det_limit_side_len: &det_limit_side_len 960
+  det_limit_type: &det_limit_type "max"
+
+det:
+  default: &det_default_config
+    - DecodeImage:
+        img_mode: "RGB"
+        keep_ori: True
+        to_float32: False
+    - DetResize:
+        target_size: 
+        keep_ratio: True
+        limit_side_len: *det_limit_side_len
+        limit_type: *det_limit_type
+        padding: False
+        force_divisable: True
+    - NormalizeImage:
+        bgr_to_rgb: False
+        is_hwc: True
+        mean: *IMAGENET_DEFAULT_MEAN
+        std: *IMAGENET_DEFAULT_STD
+    - ToCHWImage: 
+  
+  DB_PPOCRv3:
+    - DecodeImage:
+        img_mode: "RGB"
+        keep_ori: True
+        to_float32: False
+    - DetResize:
+        limit_side_len: 736
+        limit_type: "min"
+    - NormalizeImage:
+        bgr_to_rgb: True
+        is_hwc: True
+        mean: *IMAGENET_DEFAULT_MEAN
+        std: *IMAGENET_DEFAULT_STD
+    - ToCHWImage:
+
+  DB: *det_default_config
+  DB++: *det_default_config
+  DB_MV3: *det_default_config
+  PSE: *det_default_config
+
+
+rec:
+  CRNN:
+    - DecodeImage:
+        img_mode: "RGB"
+        keep_ori: True
+        to_float32: False
+    - RecResizeNormForInfer:
+        target_height: 32
+        target_width: 100
+        keep_ratio: False
+        padding: False
+        norm_before_pad: False
+    - ToCHWImage:
+  
+  CRNN_CH:
+    - DecodeImage:
+        img_mode: "RGB"
+        keep_ori: True
+        to_float32: False
+    - RecResizeNormForInfer:
+        target_height: 32
+        target_width: 320
+        keep_ratio: True
+        padding: True
+        norm_before_pad: False
+    - ToCHWImage:
+
+  RARE:
+    - DecodeImage:
+        img_mode: "RGB"
+        keep_ori: True
+        to_float32: False
+    - RecResizeNormForInfer:
+        target_height: 32
+        target_width: 100
+        keep_ratio: False
+        padding: False
+        norm_before_pad: False
+    - ToCHWImage:
+
+  RARE_CH:
+    - DecodeImage:
+        img_mode: "RGB"
+        keep_ori: True
+        to_float32: False
+    - RecResizeNormForInfer:
+        target_height: 32
+        target_width: 320
+        keep_ratio: True
+        padding: True
+        norm_before_pad: False
+    - ToCHWImage:
+
+  SVTR:
+    - DecodeImage:
+        img_mode: "RGB"
+        keep_ori: True
+        to_float32: False
+    - RecResizeNormForInfer:
+        target_height: 64
+        target_width: 256
+        keep_ratio: False
+        padding: False
+        norm_before_pad: False
+    - ToCHWImage:
+
+  SVTR_PPOCRv3_CH:
+    - DecodeImage:
+        img_mode: "RGB"
+        keep_ori: True
+        to_float32: False
+    - RecResizeNormForInfer:
+        target_height: 48
+        target_width: 320
+        keep_ratio: True
+        padding: True
+        norm_before_pad: False
+    - ToCHWImage:

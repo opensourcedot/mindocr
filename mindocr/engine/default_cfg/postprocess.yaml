@@ -1,0 +1,58 @@
+public:
+  rec_char_dict_path_en: &rec_char_dict_path_en mindocr/utils/dict/en_dict.txt
+  rec_char_dict_path_ch: &rec_char_dict_path_ch mindocr/utils/dict/ch_dict.txt
+
+det:
+  default: &det_default_config
+    name: "DBPostprocess"
+    box_type: "quad"
+    binary_thresh: 0.3
+    box_thresh: 0.6
+    max_candidates: 1000
+    expand_ratio: 1.5
+
+  DB_PPOCRv3:
+    name: "DBPostprocess"
+    box_type: "quad"
+    binary_thresh: 0.3
+    box_thresh: 0.7
+    max_candidates: 1000
+    expand_ratio: 1.5
+
+  PSE:
+    name: "PSEPostprocess"
+    box_type: "quad"
+    binary_thresh: 0.0
+    box_thresh: 0.85
+    min_area: 16
+    scale: 1
+
+  DB: *det_default_config
+  DB++: *det_default_config
+  DB_MV3: *det_default_config
+
+rec:
+  CRNN: 
+    name: "RecCTCLabelDecode"
+    character_dict_path: 
+    use_space_char: False
+  
+  CRNN_CH:
+    name: "RecCTCLabelDecode"
+    character_dict_path: *rec_char_dict_path_ch
+    use_space_char: False  
+
+  SVTR_PPOCRv3_CH:
+    name: "CTCLabelDecode"
+    character_dict_path: *rec_char_dict_path_ch
+    use_space_char: True
+  
+  RARE: 
+    name: "RecAttnLabelDecode"
+    character_dict_path: 
+    use_space_char: False
+
+  RARE_CH: 
+    name: "RecAttnLabelDecode"
+    character_dict_path: *rec_char_dict_path_ch
+    use_space_char: False
