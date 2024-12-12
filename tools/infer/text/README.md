@@ -387,7 +387,7 @@ After running, the inference results will be saved in `{args.draw_img_save_dir}/
 
 Example 1:
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/0cc501a8-5764-4b3a-8080-3dbc0f3ecb5e" width=480>
+  <img src="../../../configs/layout/yolov8/images/result.png" width=480>
 </p>
 <p align="center">
   <em> Visualization of layout analysis result on PMC4958442_00003.jpg</em>
@@ -436,7 +436,7 @@ After running, the inference results will be saved in `{args.draw_img_save_dir}/
 Example 1:
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/f1578fda-c5c7-46ba-b446-d0dc65edf2d7"/>
+  <img src="../../../configs/layout/yolov8/images/example_docx.png"/>
 </p>
 <p align="center">
   <em> PMC4958442_00003.jpg Converting into docx </em>

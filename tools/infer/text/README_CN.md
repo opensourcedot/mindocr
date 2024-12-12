@@ -428,7 +428,7 @@ python tools/infer/text/predict_table_e2e.py --image_dir {path_to_img or dir_to_
 示例1：
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/f1578fda-c5c7-46ba-b446-d0dc65edf2d7"/>
+  <img src="../../../configs/layout/yolov8/images/example_docx.png"/>
 </p>
 <p align="center">
   <em> PMC4958442_00003.jpg转换成docx文件的效果 </em>

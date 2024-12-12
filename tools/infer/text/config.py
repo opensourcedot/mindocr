@@ -172,6 +172,7 @@ def create_parser():
         "due to padding or resizing to the same shape.",
     )
     parser.add_argument("--kie_batch_num", type=int, default=8)
+
     parser.add_argument(
         "--table_algorithm",
         type=str,
@@ -210,7 +211,6 @@ def create_parser():
         default="",
         help="YAML config file specifying default arguments (default=" ")",
     )
-
     parser.add_argument(
         "--table_algorithm",
         type=str,
