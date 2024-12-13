@@ -12,15 +12,14 @@ from typing import Dict
 
 import requests
 import yaml
+from package_utils.mappers import EXPORT_NAME_MAPPER, SERVABLE_CONFIGS_MAPPER
+from package_utils.path_utils import get_base_path
 
 current_file_path = os.path.abspath(__file__)
 mindocr_path = os.path.dirname(os.path.dirname(current_file_path))
 
 if mindocr_path not in sys.path:
     sys.path.append(mindocr_path)
-
-from package_utils.path_utils import get_base_path
-from package_utils.mappers import EXPORT_NAME_MAPPER, SERVABLE_CONFIGS_MAPPER
 
 SUPPORT_INFER_TYPE = ["mindir", "ms"]
 TARGET_SERVER_FOLDER = "deploy/ocr_serving/server_folders"
