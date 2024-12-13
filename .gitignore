@@ -137,3 +137,6 @@ dmypy.json
 
 # mindspore compile related
 rank_*/
+inference_results/1_res.png
+inference_results/system_results.txt
+tools/infer/1.png
