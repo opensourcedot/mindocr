@@ -30,4 +30,4 @@ class ModelProcessor:
 
     @property
     def postprocess_method(self):
-        return build_postprocess(self.related_yaml_path)s
+        return build_postprocess(self.related_yaml_path)
