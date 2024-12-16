@@ -53,15 +53,19 @@ class DecodeImage:
             self.decoder = vision.Decode()
             self.cvt_color = vision.ConvertColor(vision.ConvertMode.COLOR_BGR2RGB)
 
-    def __call__(self, data):
+    def __call__(self, data: dict):
         if "img_path" in data:
             with open(data["img_path"], "rb") as f:
                 img = f.read()
         elif "img_lmdb" in data:
             img = data["img_lmdb"]
+        elif "np_format_img" in data:
+            img = data["np_format_img"]
         else:
             raise ValueError('"img_path" or "img_lmdb" must be in input data')
-        img = np.frombuffer(img, dtype="uint8")
+        
+        if "np_format_img" not in data:
+            img = np.frombuffer(img, dtype="uint8")
 
         if self.use_minddata:
             img = self.decoder(img)
