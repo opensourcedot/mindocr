@@ -137,4 +137,3 @@ dmypy.json
 
 # mindspore compile related
 rank_*/
-.gitignore
