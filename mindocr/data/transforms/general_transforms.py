@@ -66,7 +66,7 @@ class DecodeImage:
 
         if "np_format_img" not in data:
             img = np.frombuffer(img, dtype="uint8")
-            
+
         if self.use_minddata:
             img = self.decoder(img)
             if self.img_mode == "BGR":
