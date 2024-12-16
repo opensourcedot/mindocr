@@ -59,9 +59,13 @@ class DecodeImage:
                 img = f.read()
         elif "img_lmdb" in data:
             img = data["img_lmdb"]
+        elif "np_format_img" in data:
+            img = data["np_format_img"]
         else:
             raise ValueError('"img_path" or "img_lmdb" must be in input data')
-        img = np.frombuffer(img, dtype="uint8")
+
+        if "np_format_img" not in data:
+            img = np.frombuffer(img, dtype="uint8")
 
         if self.use_minddata:
             img = self.decoder(img)
@@ -123,7 +127,7 @@ class NormalizeImage:
             self.mean = np.array(self.mean).reshape(shape).astype("float32")
             self.std = np.array(self.std).reshape(shape).astype("float32")
 
-    def __call__(self, data):
+    def __call__(self, data: dict):
         img = data["image"]
         if isinstance(img, Image.Image):
             img = np.array(img)
