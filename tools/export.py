@@ -242,12 +242,7 @@ if __name__ == "__main__":
             Otherwise, export mindir by downloading online ckpt.",
     )
     parser.add_argument("--save_dir", type=str, default="", help="Directory to save the exported mindir file.")
-    parser.add_argument(
-        "--custom_exported_name",
-        type=str,
-        default="",
-        help="mindir name to save the exported mindir file"
-    )
+    parser.add_argument("--custom_exported_name", type=str, default="", help="mindir name to save the exported mindir file.")
     args = parser.parse_args()
     check_args(args)
     export(**vars(args))
