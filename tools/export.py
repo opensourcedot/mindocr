@@ -164,7 +164,7 @@ def export(model_name_or_config, data_shape, local_ckpt_path, save_dir, is_dynam
             name = kwargs["custom_exported_name"]
         kie_exporter(save_dir, name, net, data_shape)
         return
-    
+
     if "custom_exported_name" in kwargs:
         name = kwargs["custom_exported_name"]
     common_exporter(save_dir, name, net, data_shape, is_dynamic_shape, model_type)
