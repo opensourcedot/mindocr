@@ -63,7 +63,7 @@ class DecodeImage:
             img = data["np_format_img"]
         else:
             raise ValueError('"img_path" or "img_lmdb" must be in input data')
-        
+
         if "np_format_img" not in data:
             img = np.frombuffer(img, dtype="uint8")
 
