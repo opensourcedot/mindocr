@@ -7,12 +7,13 @@ from typing import Tuple
 import numpy as np
 from PIL import Image
 
+from deploy.py_infer.src.data_process.postprocess.builder import build_postprocess
+from deploy.py_infer.src.data_process.preprocess.builder import build_preprocess
+
 current_file_path = os.path.abspath(__file__)
 mindocr_path = dirname(dirname(dirname(dirname(dirname(current_file_path)))))
 if mindocr_path not in sys.path:
     sys.path.append(mindocr_path)
-from deploy.py_infer.src.data_process.postprocess.builder import build_postprocess
-from deploy.py_infer.src.data_process.preprocess.builder import build_preprocess
 
 
 class ModelProcessor:

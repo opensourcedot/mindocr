@@ -22,7 +22,7 @@ pip show mindspore
 >>> Location: /home/ma-user/anaconda3/envs/MindSpore/lib/python3.9/site-packages
 ```
 
-4. 基于本地的 mindspore 编译，这里的 mindspore_path 即 3 中的安装路径 
+4. 基于本地的 mindspore 编译，这里的 mindspore_path 即 3 中的安装路径
 
 ```shell
 bash build.sh -p ${mindspore_path}/lib -S on
@@ -44,7 +44,7 @@ python
 
 ### 二、Clone mindocr 项目进行服务化部署
 
-1. Clone mindocr 
+1. Clone mindocr
 
 ```shell
 git clone https://github.com/opensourcedot/mindocr.git
@@ -125,5 +125,3 @@ python serving_server.py db_mobilenetv3_icdar15 127.0.0.1:1500
 ```shell
 python serving_server.py {模型名称} {地址}
 ```
-
-

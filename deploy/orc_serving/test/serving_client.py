@@ -1,5 +1,4 @@
 """Client for lenet"""
-import argparse
 import os
 
 
