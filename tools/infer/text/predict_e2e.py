@@ -1,16 +1,19 @@
+import json
 import logging
 import os
+
 import cv2
-import json
 import numpy as np
-import mindspore as ms
-from mindspore import ops
-from mindocr import build_model
-from mindocr.utils.logger import set_logger
 from config import parse_args
 from postprocess import Postprocessor
 from preprocess import Preprocessor
-from utils import get_ckpt_file, get_image_paths, draw_e2e_res
+from utils import draw_e2e_res, get_ckpt_file, get_image_paths
+
+import mindspore as ms
+from mindspore import ops
+
+from mindocr import build_model
+from mindocr.utils.logger import set_logger
 
 # map algorithm name to model name (which can be checked by `mindocr.list_models()`)
 # NOTE: Modify it to add new model for inference.
@@ -95,6 +98,7 @@ class TextEnd2End(object):
         dt_boxes = self.filter_tag_det_res_only_clip(points, ori_im.shape)
         return dt_boxes, strs
 
+
 def save_res(boxes_all, text_scores_all, img_path, save_path):
     lines = []
     img_name = os.path.basename(img_path).rsplit(".", 1)[0]
@@ -117,6 +121,7 @@ def save_res(boxes_all, text_scores_all, img_path, save_path):
     with open(save_path, "w") as f:
         f.writelines(lines)
         f.close()
+
 
 def predict_rec_e2e(image_path):
     # parse args

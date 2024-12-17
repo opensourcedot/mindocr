@@ -56,12 +56,12 @@ metric:
   name: E2EMetric
   mode: B
   gt_mat_dir:  ./train_data/total_text/test/gt
-  character_dict_path: ./mindocr/utils/dict/ic15_dict.txt 
+  character_dict_path: ./mindocr/utils/dict/ic15_dict.txt
   main_indicator: f_score_e2e
 
 train:
   gradient_accumulation_steps: 2
-  clip_grad: True 
+  clip_grad: True
   clip_norm: 5.0
   ema: True
   ckpt_save_dir: './tmp_det'

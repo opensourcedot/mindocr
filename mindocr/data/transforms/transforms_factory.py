@@ -5,14 +5,14 @@ from typing import Dict, List
 
 from .det_east_transforms import *
 from .det_transforms import *
+from .e2e_transforms import *
 from .general_transforms import *
 from .layoutlm_transforms import *
+from .pgnet_transforms import *
 from .rec_abinet_transforms import *
 from .rec_transforms import *
 from .svtr_transform import *
 from .table_transform import *
-from .pgnet_transforms import *
-from .e2e_transforms import *
 
 SUPPORTED_TRANSFORMS = {
     "EASTProcessTrain": EASTProcessTrain,

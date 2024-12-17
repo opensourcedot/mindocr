@@ -1,5 +1,6 @@
 import mindspore as ms
-from mindocr.utils.e2e_utils.extract_textpoint import get_dict, generate_pivot_list_fast, restore_poly
+
+from mindocr.utils.e2e_utils.extract_textpoint import generate_pivot_list_fast, get_dict, restore_poly
 
 __all__ = ["PGPostProcess"]
 

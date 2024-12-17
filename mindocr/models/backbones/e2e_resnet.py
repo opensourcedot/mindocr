@@ -1,7 +1,7 @@
 from mindspore import nn
 
-from ._registry import register_backbone, register_backbone_class
 from ..utils import ConvNormLayer
+from ._registry import register_backbone, register_backbone_class
 
 __all__ = ['E2ePgResNet', 'pgnet_backbone']
 
@@ -9,36 +9,37 @@ __all__ = ['E2ePgResNet', 'pgnet_backbone']
 class Bottleneck(nn.Cell):
     """
     A wrapper of the original PGNet  described in
-    `"PGNet: Real-time Arbitrarily-Shaped Text Spotting with Point Gathering 
-    NetWork" <https://arxiv.org/abs/1905.02244>`_ 
+    `"PGNet: Real-time Arbitrarily-Shaped Text Spotting with Point Gathering
+    NetWork" <https://arxiv.org/abs/1905.02244>`_
     that extracts features maps from differentstages.
     Examples:
         Initializing PGNet for feature extraction:
         >>> model = E2ePgResNet(Bottleneck, [3, 4, 6, 3, 3])
     """
-    expansion = 4   
+    expansion = 4
+
     def __init__(self, in_channel, out_channel, stride=1, shortcut=True):
         super().__init__()
         self.conv0 = ConvNormLayer(
-            in_channels=in_channel, 
-            out_channels=out_channel, 
-            kernel_size=1, 
-            stride=1, 
+            in_channels=in_channel,
+            out_channels=out_channel,
+            kernel_size=1,
+            stride=1,
             act=True
         )
         self.conv1 = ConvNormLayer(
-            in_channels=out_channel, 
-            out_channels=out_channel, 
-            kernel_size=3, 
-            stride=stride, 
-            padding=1, 
-            pad_mode='pad', 
+            in_channels=out_channel,
+            out_channels=out_channel,
+            kernel_size=3,
+            stride=stride,
+            padding=1,
+            pad_mode='pad',
             act=True
         )
         self.conv2 = ConvNormLayer(
-            in_channels=out_channel, 
-            out_channels=out_channel*self.expansion, 
-            kernel_size=1, 
+            in_channels=out_channel,
+            out_channels=out_channel*self.expansion,
+            kernel_size=1,
             stride=1
         )
         self.relu = nn.ReLU()
@@ -65,6 +66,7 @@ class Bottleneck(nn.Cell):
 
         return out
 
+
 @register_backbone_class
 class E2ePgResNet(nn.Cell):
     def __init__(self, block, block_num, in_channels=3):
@@ -74,12 +76,12 @@ class E2ePgResNet(nn.Cell):
         self.out_channels = [3, 64]
 
         self.conv1_1 = ConvNormLayer(
-            in_channels, 
-            out_channels=64, 
-            kernel_size=7, 
-            stride=2, 
-            padding=3, 
-            pad_mode='pad', 
+            in_channels,
+            out_channels=64,
+            kernel_size=7,
+            stride=2,
+            padding=3,
+            pad_mode='pad',
             act=True
         )
         self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1, pad_mode='pad')
@@ -97,9 +99,9 @@ class E2ePgResNet(nn.Cell):
     def _make_layer(self, block, channel, block_idx, stride):
         layers = []
         layers.append(block(
-            in_channel=self.in_channels[block_idx], 
-            out_channel=channel, 
-            shortcut=False, 
+            in_channel=self.in_channels[block_idx],
+            out_channel=channel,
+            shortcut=False,
             stride=stride
         ))
         input_channels = channel * block.expansion
@@ -120,6 +122,7 @@ class E2ePgResNet(nn.Cell):
         x4 = self.layer4(x3)
         x5 = self.layer5(x4)
         return [x, x0, x1, x2, x3, x4, x5]
+
 
 @register_backbone
 def pgnet_backbone(pretrained: bool = False, **kwargs) -> E2ePgResNet:

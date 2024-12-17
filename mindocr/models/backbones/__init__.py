@@ -8,6 +8,7 @@ from .builder import *
 from .cls_mobilenet_v3 import *
 from .det_mobilenet import *
 from .det_resnet import *
+from .e2e_resnet import *
 from .layoutlmv3 import layoutlmv3
 from .layoutxlm import layoutxlm
 from .rec_abinet_backbone import *
@@ -19,7 +20,6 @@ from .rec_svtr_enhance import *
 from .rec_vgg import *
 from .table_master_resnet import *
 from .yolov8_backbone import yolov8_backbone
-from .e2e_resnet import *
 
 __all__ = []
 __all__.extend(builder.__all__)

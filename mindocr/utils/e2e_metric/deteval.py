@@ -1,17 +1,20 @@
-import sys
-import subprocess
 import importlib.util
+import subprocess
+import sys
+
 import numpy as np
 import scipy.io as io
 
-from mindocr.utils.e2e_metric.polygon_fast import iod, area_of_intersection, area
+from mindocr.utils.e2e_metric.polygon_fast import area, area_of_intersection, iod
+
 
 def check_install(module_name, install_name):
     spec = importlib.util.find_spec(module_name)
     if spec is None:
         print(f"Warnning! The {module_name} module is NOT installed")
         print(
-            f"Try install {module_name} module automatically. You can also try to install manually by pip install {install_name}."
+            f"Try install {module_name} module automatically. \
+                You can also try to install manually by pip install {install_name}."
         )
         python = sys.executable
         try:
@@ -25,8 +28,10 @@ def check_install(module_name, install_name):
     else:
         print(f"{module_name} has been installed.")
 
+
 def get_socre_A(gt_dir, pred_dict):
     allInputs = 1
+
     def input_reading_mod(pred_dict):
         """This helper reads input from txt files"""
         det = []
@@ -94,15 +99,12 @@ def get_socre_A(gt_dir, pred_dict):
         """
         sigma = inter_area / gt_area
         """
-        return np.round(
-            (area_of_intersection(det_x, det_y, gt_x, gt_y) / area(gt_x, gt_y)), 2
-        )
+        return np.round((area_of_intersection(det_x, det_y, gt_x, gt_y) / area(gt_x, gt_y)), 2)
+
     def tau_calculation(det_x, det_y, gt_x, gt_y):
         if area(det_x, det_y) == 0.0:
             return 0
-        return np.round(
-            (area_of_intersection(det_x, det_y, gt_x, gt_y) / area(det_x, det_y)), 2
-        )
+        return np.round((area_of_intersection(det_x, det_y, gt_x, gt_y) / area(det_x, det_y)), 2)
 
     for input_id in range(allInputs):
         if (
@@ -116,9 +118,7 @@ def get_socre_A(gt_dir, pred_dict):
         ):
             detections = input_reading_mod(pred_dict)
             groundtruths = gt_reading_mod(gt_dir)
-            detections = detection_filtering(
-                detections, groundtruths
-            )
+            detections = detection_filtering(detections, groundtruths)
             dc_id = []
             for i in range(len(groundtruths)):
                 if groundtruths[i][5] == "#":
@@ -147,12 +147,8 @@ def get_socre_A(gt_dir, pred_dict):
                         gt_y = list(map(int, np.squeeze(gt[3])))
                         gt_seq_str = str(gt[4].tolist()[0])
 
-                        local_sigma_table[gt_id, det_id] = sigma_calculation(
-                            det_x, det_y, gt_x, gt_y
-                        )
-                        local_tau_table[gt_id, det_id] = tau_calculation(
-                            det_x, det_y, gt_x, gt_y
-                        )
+                        local_sigma_table[gt_id, det_id] = sigma_calculation(det_x, det_y, gt_x, gt_y)
+                        local_tau_table[gt_id, det_id] = tau_calculation(det_x, det_y, gt_x, gt_y)
                         local_pred_str[det_id] = pred_seq_str
                         local_gt_str[gt_id] = gt_seq_str
 
@@ -216,16 +212,12 @@ def get_socre_B(gt_dir, img_id, pred_dict):
         """
         sigma = inter_area / gt_area
         """
-        return np.round(
-            (area_of_intersection(det_x, det_y, gt_x, gt_y) / area(gt_x, gt_y)), 2
-        )
+        return np.round((area_of_intersection(det_x, det_y, gt_x, gt_y) / area(gt_x, gt_y)), 2)
 
     def tau_calculation(det_x, det_y, gt_x, gt_y):
         if area(det_x, det_y) == 0.0:
             return 0
-        return np.round(
-            (area_of_intersection(det_x, det_y, gt_x, gt_y) / area(det_x, det_y)), 2
-        )
+        return np.round((area_of_intersection(det_x, det_y, gt_x, gt_y) / area(det_x, det_y)), 2)
 
     for input_id in range(allInputs):
         if (
@@ -239,9 +231,7 @@ def get_socre_B(gt_dir, img_id, pred_dict):
         ):
             detections = input_reading_mod(pred_dict)
             groundtruths = gt_reading_mod(gt_dir, img_id).tolist()
-            detections = detection_filtering(
-                detections, groundtruths
-            )
+            detections = detection_filtering(detections, groundtruths)
             dc_id = []
             for i in range(len(groundtruths)):
                 if groundtruths[i][5] == "#":
@@ -270,12 +260,8 @@ def get_socre_B(gt_dir, img_id, pred_dict):
                         gt_y = list(map(int, np.squeeze(gt[3])))
                         gt_seq_str = str(gt[4].tolist()[0])
 
-                        local_sigma_table[gt_id, det_id] = sigma_calculation(
-                            det_x, det_y, gt_x, gt_y
-                        )
-                        local_tau_table[gt_id, det_id] = tau_calculation(
-                            det_x, det_y, gt_x, gt_y
-                        )
+                        local_sigma_table[gt_id, det_id] = sigma_calculation(det_x, det_y, gt_x, gt_y)
+                        local_tau_table[gt_id, det_id] = tau_calculation(det_x, det_y, gt_x, gt_y)
                         local_pred_str[det_id] = pred_seq_str
                         local_gt_str[gt_id] = gt_seq_str
 
@@ -337,7 +323,7 @@ def get_score_C(gt_label, text, pred_bboxes):
 
                     try:
                         det_gt_iou = get_intersection(det_p, gt_p) / det_p.area()
-                    except:
+                    except ZeroDivisionError:
                         print(det_x, det_y, gt_p)
                     if det_gt_iou > threshold:
                         detections[det_id] = []
@@ -368,9 +354,7 @@ def get_score_C(gt_label, text, pred_bboxes):
 
     groundtruths = gt_reading_mod(gt_label, text)
 
-    detections = detection_filtering(
-        detections, groundtruths
-    )
+    detections = detection_filtering(detections, groundtruths)
 
     for idx in range(len(groundtruths) - 1, -1, -1):
         # NOTE: source code use 'orin' to indicate '#', here we use 'anno',
@@ -406,6 +390,7 @@ def get_score_C(gt_label, text, pred_bboxes):
     data["global_pred_str"] = ""
     data["global_gt_str"] = ""
     return data
+
 
 def combine_results(all_data, rec_flag=True):
     tr = 0.7
@@ -443,31 +428,19 @@ def combine_results(all_data, rec_flag=True):
     ):
         hit_str_num = 0
         for gt_id in range(num_gt):
-            gt_matching_qualified_sigma_candidates = np.where(
-                local_sigma_table[gt_id, :] > tr
-            )
-            gt_matching_num_qualified_sigma_candidates = (
-                gt_matching_qualified_sigma_candidates[0].shape[0]
-            )
-            gt_matching_qualified_tau_candidates = np.where(
-                local_tau_table[gt_id, :] > tp
-            )
-            gt_matching_num_qualified_tau_candidates = (
-                gt_matching_qualified_tau_candidates[0].shape[0]
-            )
+            gt_matching_qualified_sigma_candidates = np.where(local_sigma_table[gt_id, :] > tr)
+            gt_matching_num_qualified_sigma_candidates = gt_matching_qualified_sigma_candidates[0].shape[0]
+            gt_matching_qualified_tau_candidates = np.where(local_tau_table[gt_id, :] > tp)
+            gt_matching_num_qualified_tau_candidates = gt_matching_qualified_tau_candidates[0].shape[0]
 
             det_matching_qualified_sigma_candidates = np.where(
                 local_sigma_table[:, gt_matching_qualified_sigma_candidates[0]] > tr
             )
-            det_matching_num_qualified_sigma_candidates = (
-                det_matching_qualified_sigma_candidates[0].shape[0]
-            )
+            det_matching_num_qualified_sigma_candidates = det_matching_qualified_sigma_candidates[0].shape[0]
             det_matching_qualified_tau_candidates = np.where(
                 local_tau_table[:, gt_matching_qualified_tau_candidates[0]] > tp
             )
-            det_matching_num_qualified_tau_candidates = (
-                det_matching_qualified_tau_candidates[0].shape[0]
-            )
+            det_matching_num_qualified_tau_candidates = det_matching_qualified_tau_candidates[0].shape[0]
 
             if (
                 (gt_matching_num_qualified_sigma_candidates == 1)
@@ -525,10 +498,8 @@ def combine_results(all_data, rec_flag=True):
             num_non_zero_in_sigma = non_zero_in_sigma[0].shape[0]
 
             if num_non_zero_in_sigma >= k:
-                #search for all detections that overlaps with this groundtruth
-                qualified_tau_candidates = np.where(
-                    (local_tau_table[gt_id, :] >= tp) & (det_flag[0, :] == 0)
-                )
+                # search for all detections that overlaps with this groundtruth
+                qualified_tau_candidates = np.where((local_tau_table[gt_id, :] >= tp) & (det_flag[0, :] == 0))
                 num_qualified_tau_candidates = qualified_tau_candidates[0].shape[0]
 
                 if num_qualified_tau_candidates == 1:
@@ -537,22 +508,16 @@ def combine_results(all_data, rec_flag=True):
                     ):
                         # became an one-to-one case
                         global_accumulative_recall = global_accumulative_recall + 1.0
-                        global_accumulative_precision = (
-                            global_accumulative_precision + 1.0
-                        )
+                        global_accumulative_precision = global_accumulative_precision + 1.0
                         local_accumulative_recall = local_accumulative_recall + 1.0
-                        local_accumulative_precision = (
-                            local_accumulative_precision + 1.0
-                        )
+                        local_accumulative_precision = local_accumulative_precision + 1.0
 
                         gt_flag[0, gt_id] = 1
                         det_flag[0, qualified_tau_candidates] = 1
                         # recg start
                         if rec_flag:
                             gt_str_cur = global_gt_str[idy][gt_id]
-                            pred_str_cur = global_pred_str[idy][
-                                qualified_tau_candidates[0].tolist()[0]
-                            ]
+                            pred_str_cur = global_pred_str[idy][qualified_tau_candidates[0].tolist()[0]]
                             if pred_str_cur == gt_str_cur:
                                 hit_str_num += 1
                             else:
@@ -565,9 +530,7 @@ def combine_results(all_data, rec_flag=True):
                     # recg start
                     if rec_flag:
                         gt_str_cur = global_gt_str[idy][gt_id]
-                        pred_str_cur = global_pred_str[idy][
-                            qualified_tau_candidates[0].tolist()[0]
-                        ]
+                        pred_str_cur = global_pred_str[idy][qualified_tau_candidates[0].tolist()[0]]
                         if pred_str_cur == gt_str_cur:
                             hit_str_num += 1
                         else:
@@ -576,16 +539,10 @@ def combine_results(all_data, rec_flag=True):
                     # recg end
 
                     global_accumulative_recall = global_accumulative_recall + fsc_k
-                    global_accumulative_precision = (
-                        global_accumulative_precision
-                        + num_qualified_tau_candidates * fsc_k
-                    )
+                    global_accumulative_precision = global_accumulative_precision + num_qualified_tau_candidates * fsc_k
 
                     local_accumulative_recall = local_accumulative_recall + fsc_k
-                    local_accumulative_precision = (
-                        local_accumulative_precision
-                        + num_qualified_tau_candidates * fsc_k
-                    )
+                    local_accumulative_precision = local_accumulative_precision + num_qualified_tau_candidates * fsc_k
 
         return (
             local_accumulative_recall,
@@ -619,10 +576,7 @@ def combine_results(all_data, rec_flag=True):
             num_non_zero_in_tau = non_zero_in_tau[0].shape[0]
 
             if num_non_zero_in_tau >= k:
-                ####search for all detections that overlaps with this groundtruth
-                qualified_sigma_candidates = np.where(
-                    (local_sigma_table[:, det_id] >= tp) & (gt_flag[0, :] == 0)
-                )
+                qualified_sigma_candidates = np.where((local_sigma_table[:, det_id] >= tp) & (gt_flag[0, :] == 0))
                 num_qualified_sigma_candidates = qualified_sigma_candidates[0].shape[0]
 
                 if num_qualified_sigma_candidates == 1:
@@ -631,13 +585,9 @@ def combine_results(all_data, rec_flag=True):
                     ):
                         # became an one-to-one case
                         global_accumulative_recall = global_accumulative_recall + 1.0
-                        global_accumulative_precision = (
-                            global_accumulative_precision + 1.0
-                        )
+                        global_accumulative_precision = global_accumulative_precision + 1.0
                         local_accumulative_recall = local_accumulative_recall + 1.0
-                        local_accumulative_precision = (
-                            local_accumulative_precision + 1.0
-                        )
+                        local_accumulative_precision = local_accumulative_precision + 1.0
 
                         gt_flag[0, qualified_sigma_candidates] = 1
                         det_flag[0, det_id] = 1
@@ -678,18 +628,10 @@ def combine_results(all_data, rec_flag=True):
                                     hit_str_num += 1
                                     break
                     # recg end
-                    global_accumulative_recall = (
-                        global_accumulative_recall
-                        + num_qualified_sigma_candidates * fsc_k
-                    )
-                    global_accumulative_precision = (
-                        global_accumulative_precision + fsc_k
-                    )
+                    global_accumulative_recall = global_accumulative_recall + num_qualified_sigma_candidates * fsc_k
+                    global_accumulative_precision = global_accumulative_precision + fsc_k
 
-                    local_accumulative_recall = (
-                        local_accumulative_recall
-                        + num_qualified_sigma_candidates * fsc_k
-                    )
+                    local_accumulative_recall = local_accumulative_recall + num_qualified_sigma_candidates * fsc_k
                     local_accumulative_precision = local_accumulative_precision + fsc_k
         return (
             local_accumulative_recall,
@@ -715,7 +657,6 @@ def combine_results(all_data, rec_flag=True):
         local_accumulative_precision = 0
         gt_flag = np.zeros((1, num_gt))
         det_flag = np.zeros((1, num_det))
-
 
         (
             local_accumulative_recall,
