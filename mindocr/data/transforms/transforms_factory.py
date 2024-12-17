@@ -15,6 +15,8 @@ from .rec_abinet_transforms import *
 from .rec_transforms import *
 from .svtr_transform import *
 from .table_transform import *
+from .pgnet_transforms import *
+from .e2e_transforms import *
 
 __all__ = ["create_transforms", "run_transforms", "transforms_dbnet_icdar15"]
 _logger = logging.getLogger(__name__)

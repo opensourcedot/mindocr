@@ -10,6 +10,7 @@ from . import (  # rec_abinet_postprocess,
     rec_abinet_postprocess,
     rec_postprocess,
     table_postprocess,
+    e2e_pg_postprocess,
 )
 from .cls_postprocess import *
 from .det_db_postprocess import *
@@ -22,6 +23,7 @@ from .layout_postprocess import YOLOv8Postprocess
 from .rec_abinet_postprocess import *
 from .rec_postprocess import *
 from .table_postprocess import *
+from .e2e_pg_postprocess import *
 
 __all__ = ["build_postprocess"]
 
@@ -37,6 +39,7 @@ supported_postprocess = (
     + kie_re_postprocess.__all__
     + layout_postprocess.__all__
     + table_postprocess.__all__
+    + e2e_pg_postprocess.__all__
 )
 
 

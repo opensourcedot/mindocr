@@ -93,7 +93,19 @@ class Postprocessor(object):
             )
         elif task == "layout":
             postproc_cfg = dict(name="YOLOv8Postprocess", conf_thres=0.5, iou_thres=0.7, conf_free=True)
-
+        elif task == "e2e":
+            if algo.startswith("PG"):
+                postproc_cfg = dict(
+                    name="PGPostProcess",
+                    character_dict_path="mindocr/utils/dict/ic15_dict.txt",
+                    score_thresh=0.5,
+                    valid_set="totaltext",
+                    point_gather_mode="align",  # two mode: align and none, align mode is better than none mode
+                )
+            else:
+                raise ValueError(f"No postprocess config defined for {algo}. Please check the algorithm name.")
+            self.rescale_internally = True
+            self.round = True
         postproc_cfg.update(kwargs)
         self.task = task
         self.postprocess = build_postprocess(postproc_cfg)
@@ -160,3 +172,12 @@ class Postprocessor(object):
         elif self.task == "layout":
             output = self.postprocess(pred, img_shape=kwargs.get("img_shape"), meta_info=kwargs.get("meta_info"))
             return output
+        elif self.task == "e2e":
+            if self.rescale_internally:
+                shape_list = np.array(data["shape_list"], dtype="float32")
+                shape_list = np.expand_dims(shape_list, axis=0)
+            else:
+                shape_list = None
+            post_res = self.postprocess(pred, shape_list=shape_list)
+            return post_res["points"], post_res["texts"]
+

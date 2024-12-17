@@ -1,10 +1,11 @@
-from . import cls_metrics, det_metrics, kie_metrics, layout_metrics, rec_metrics, table_metrics
+from . import cls_metrics, det_metrics, kie_metrics, layout_metrics, rec_metrics, table_metrics, e2e_metrics
 from .cls_metrics import *
 from .det_metrics import *
 from .kie_metrics import VQAReTokenMetric, VQASerTokenMetric
 from .layout_metrics import YOLOv8Metric
 from .rec_metrics import *
 from .table_metrics import *
+from .e2e_metrics import *
 
 __all__ = ["build_metric"]
 
@@ -15,6 +16,7 @@ supported_metrics = (
     + layout_metrics.__all__
     + kie_metrics.__all__
     + table_metrics.__all__
+    + e2e_metrics.__all__
 )
 
 
