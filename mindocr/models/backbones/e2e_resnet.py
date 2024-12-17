@@ -4,6 +4,7 @@ from ..utils import ConvNormLayer
 from ._registry import register_backbone, register_backbone_class
 from .mindcv_models.resnet import default_cfgs
 from .mindcv_models.utils import load_pretrained
+
 __all__ = ['E2ePgResNet', 'pgnet_backbone']
 
 
