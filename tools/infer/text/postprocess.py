@@ -180,4 +180,3 @@ class Postprocessor(object):
                 shape_list = None
             post_res = self.postprocess(pred, shape_list=shape_list)
             return post_res["points"], post_res["texts"]
-

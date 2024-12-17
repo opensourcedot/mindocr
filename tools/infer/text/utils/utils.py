@@ -236,6 +236,7 @@ def get_dict_from_file(file_path: str) -> dict:
         lines = f.readlines()
     return {i + 1: line.decode("utf-8").strip("\n").strip("\r\n") for i, line in enumerate(lines)}
 
+
 def draw_e2e_res(dt_boxes, strs, img_path):
     src_im = cv2.imread(img_path)
     for box, str in zip(dt_boxes, strs):
@@ -251,4 +252,3 @@ def draw_e2e_res(dt_boxes, strs, img_path):
             thickness=1,
         )
     return src_im
-

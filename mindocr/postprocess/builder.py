@@ -4,26 +4,26 @@ from . import (  # rec_abinet_postprocess,
     det_east_postprocess,
     det_fce_postprocess,
     det_pse_postprocess,
+    e2e_pg_postprocess,
     kie_re_postprocess,
     kie_ser_postprocess,
     layout_postprocess,
     rec_abinet_postprocess,
     rec_postprocess,
     table_postprocess,
-    e2e_pg_postprocess,
 )
 from .cls_postprocess import *
 from .det_db_postprocess import *
 from .det_east_postprocess import *
 from .det_fce_postprocess import *
 from .det_pse_postprocess import *
+from .e2e_pg_postprocess import *
 from .kie_re_postprocess import VQAReTokenLayoutLMPostProcess
 from .kie_ser_postprocess import VQASerTokenLayoutLMPostProcess
 from .layout_postprocess import YOLOv8Postprocess
 from .rec_abinet_postprocess import *
 from .rec_postprocess import *
 from .table_postprocess import *
-from .e2e_pg_postprocess import *
 
 __all__ = ["build_postprocess"]
 

@@ -26,6 +26,7 @@ from .det_db_head import DBHead, DBHeadEnhance
 from .det_east_head import EASTHead
 from .det_fce_head import FCEHead
 from .det_pse_head import PSEHead
+from .e2e_head import PGNetHead
 from .kie_relationextraction_head import RelationExtractionHead
 from .kie_tokenclassification_head import TokenClassificationHead
 from .rec_abinet_head import ABINetHead
@@ -37,7 +38,6 @@ from .rec_robustscanner_head import RobustScannerHead
 from .rec_visionlan_head import VisionLANHead
 from .table_master_head import TableMasterHead
 from .yolov8_head import YOLOv8Head
-from .e2e_head import PGNetHead
 
 
 def build_head(head_name, **kwargs):

@@ -1,8 +1,10 @@
-import numpy as np
 import copy
+
+import numpy as np
 
 import mindspore as ms
 import mindspore.ops as ops
+
 
 def org_tcl_rois(batch_size, pos_lists, pos_masks, label_lists, tcl_bs):
     """ """
@@ -65,9 +67,7 @@ def pre_process(label_list, pos_list, pos_mask, max_text_length, max_text_nums, 
                 pos_list_t.append(pos_list[i][j])
                 pos_mask_t.append(pos_mask[i][j])
                 label_list_t.append(label_list[i][j])
-    pos_list, pos_mask, label_list = org_tcl_rois(
-        batch, pos_list_t, pos_mask_t, label_list_t, tcl_bs
-    )
+    pos_list, pos_mask, label_list = org_tcl_rois(batch, pos_list_t, pos_mask_t, label_list_t, tcl_bs)
     label = []
     tt = [label.tolist() for label in label_list]
     for i in range(tcl_bs):
@@ -85,5 +85,5 @@ def pre_process(label_list, pos_list, pos_mask, max_text_length, max_text_nums, 
     pos_list = ms.Tensor(pos_list)
     pos_mask = ms.Tensor(pos_mask)
     label_list = ops.squeeze(ms.Tensor(label_list), axis=2)
-    label_list = cast(label_list, ms.int32) 
+    label_list = cast(label_list, ms.int32)
     return pos_list, pos_mask, label_list, label

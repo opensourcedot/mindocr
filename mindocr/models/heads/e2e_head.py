@@ -51,7 +51,7 @@ class PGNetHead(nn.Cell):
         self.conv4 = nn.Conv2d(128, 2, kernel_size=3, stride=1, padding=1, pad_mode="pad")
 
     def construct(self, x):
-        #TCL Text Center Line
+        # TCL Text Center Line
         f_score = self.conv_f_score1(x)
         f_score = self.conv_f_score2(f_score)
         f_score = self.conv_f_score3(f_score)
@@ -72,7 +72,7 @@ class PGNetHead(nn.Cell):
         f_char = self.conv_f_char5(f_char)
         f_char = self.conv3(f_char)
 
-        #TDO  Text Direction Offset
+        # TDO  Text Direction Offset
         f_direction = self.conv_f_direc1(x)
         f_direction = self.conv_f_direc2(f_direction)
         f_direction = self.conv_f_direc3(f_direction)

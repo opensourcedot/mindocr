@@ -1,7 +1,7 @@
 import mindspore as ms
 from mindspore import nn
 
-from mindocr.utils.e2e_metric.deteval import get_socre_A, get_socre_B, combine_results
+from mindocr.utils.e2e_metric.deteval import combine_results, get_socre_A, get_socre_B
 from mindocr.utils.e2e_utils.extract_textpoint import get_dict
 
 __all__ = ["E2EMetric"]
@@ -23,10 +23,10 @@ class E2EMetric(nn.Metric):
         self.main_indicator = main_indicator
         self.clear()
         self.metric_names = [
-            "total_num_gt", 
+            "total_num_gt",
             "total_num_det",
-            "global_accumulative_recall", 
-            "hit_str_count", 
+            "global_accumulative_recall",
+            "hit_str_count",
             "recall",
             "precision",
             "f_score",
@@ -62,9 +62,7 @@ class E2EMetric(nn.Metric):
                 # prepare gt
                 gt_info_list = [
                     {"points": gt_polyon, "text": gt_str, "ignore": ignore_tag}
-                    for gt_polyon, gt_str, ignore_tag in zip(
-                        gt_polyons, gt_strs, ignore_tags
-                    )
+                    for gt_polyon, gt_str, ignore_tag in zip(gt_polyons, gt_strs, ignore_tags)
                 ]
                 # prepare det
                 e2e_info_list = [

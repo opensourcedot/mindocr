@@ -9,13 +9,25 @@ from .transforms.transforms_factory import create_transforms, run_transforms
 __all__ = ["PGDataset"]
 _logger = logging.getLogger(__name__)
 
+
 class PGDataset(BaseDataset):
     img_id_map = {
         "totaltext": 3,
         "icdar2015": 3,
     }
 
-    def __init__(self, is_train=True, data_dir=None, label_file=None, dataset=None, sample_ratio=1.0, need_reset=True, transform_pipeline=None, output_columns=None, **kwargs):
+    def __init__(
+        self,
+        is_train=True,
+        data_dir=None,
+        label_file=None,
+        dataset=None,
+        sample_ratio=1.0,
+        need_reset=True,
+        transform_pipeline=None,
+        output_columns=None,
+        **kwargs,
+    ):
         super().__init__(data_dir=data_dir, label_file=label_file, output_columns=output_columns)
         self.is_train = is_train
 

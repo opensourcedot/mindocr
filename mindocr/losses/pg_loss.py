@@ -1,8 +1,8 @@
 import numpy as np
 
 import mindspore as ms
-from mindspore import nn
 import mindspore.ops as ops
+from mindspore import nn
 
 from mindocr.losses.det_loss import DiceLoss
 from mindocr.utils.e2e_utils.extract_batchsize import pre_process
@@ -11,9 +11,7 @@ __all__ = ["PGLoss"]
 
 
 class PGLoss(nn.LossBase):
-    def __init__(
-        self, tcl_bs, max_text_length, max_text_nums, pad_num, eps=1e-6, **kwargs
-    ):
+    def __init__(self, tcl_bs, max_text_length, max_text_nums, pad_num, eps=1e-6, **kwargs):
         super(PGLoss, self).__init__()
         self.tcl_bs = tcl_bs
         self.max_text_nums = max_text_nums
@@ -23,9 +21,7 @@ class PGLoss(nn.LossBase):
         self.cast = ops.Cast()
 
     def border_loss(self, f_border, l_border, l_score, l_mask):
-        l_border_split, l_border_norm = ops.split(
-            l_border, (4, 1), axis=1
-        )
+        l_border_split, l_border_norm = ops.split(l_border, (4, 1), axis=1)
         f_border_split = f_border
         b, c, h, w = ops.shape(l_border_norm)
         l_border_norm_split = ops.broadcast_to(l_border_norm, (b, 4 * c, h, w))
@@ -38,9 +34,9 @@ class PGLoss(nn.LossBase):
         border_sign = abs_border_diff < 1.0
         border_sign = self.cast(border_sign, ms.float32)
         border_sign.stop_gradient = True
-        border_in_loss = 0.5 * abs_border_diff * abs_border_diff * border_sign + (
-            abs_border_diff - 0.5
-        ) * (1.0 - border_sign)
+        border_in_loss = 0.5 * abs_border_diff * abs_border_diff * border_sign + (abs_border_diff - 0.5) * (
+            1.0 - border_sign
+        )
         border_out_loss = l_border_norm_split * border_in_loss
         border_loss = ops.sum(border_out_loss * l_border_score * l_border_mask) / (
             ops.sum(l_border_score * l_border_mask) + 1e-5
@@ -48,14 +44,10 @@ class PGLoss(nn.LossBase):
         return border_loss
 
     def direction_loss(self, f_direction, l_direction, l_score, l_mask):
-        l_direction_split, l_direction_norm = ops.split(
-            l_direction, (2, 1), axis=1
-        )
+        l_direction_split, l_direction_norm = ops.split(l_direction, (2, 1), axis=1)
         f_direction_split = f_direction
         b, c, h, w = l_direction_norm.shape
-        l_direction_norm_split = ops.broadcast_to(
-            l_direction_norm, (b, 2 * c, h, w)
-        )
+        l_direction_norm_split = ops.broadcast_to(l_direction_norm, (b, 2 * c, h, w))
         b, c, h, w = ops.shape(l_score)
         l_direction_score = ops.broadcast_to(l_score, (b, 2 * c, h, w))
         b, c, h, w = ops.shape(l_mask)
@@ -65,14 +57,13 @@ class PGLoss(nn.LossBase):
         direction_sign = abs_direction_diff < 1.0
         direction_sign = self.cast(direction_sign, ms.int32)
         direction_sign.stop_gradient = True
-        direction_in_loss = (
-            0.5 * abs_direction_diff * abs_direction_diff * direction_sign
-            + (abs_direction_diff - 0.5) * (1.0 - direction_sign)
-        )
+        direction_in_loss = 0.5 * abs_direction_diff * abs_direction_diff * direction_sign + (
+            abs_direction_diff - 0.5
+        ) * (1.0 - direction_sign)
         direction_out_loss = l_direction_norm_split * direction_in_loss
-        direction_loss = ops.sum(
-            direction_out_loss * l_direction_score * l_direction_mask
-        ) / (ops.sum(l_direction_score * l_direction_mask) + 1e-5)
+        direction_loss = ops.sum(direction_out_loss * l_direction_score * l_direction_mask) / (
+            ops.sum(l_direction_score * l_direction_mask) + 1e-5
+        )
         return direction_loss
 
     def ctcloss(self, f_char, tcl_pos, tcl_mask, tcl_label, label_t):
@@ -80,13 +71,9 @@ class PGLoss(nn.LossBase):
         tcl_pos = ops.reshape(tcl_pos, (-1, 3))
         tcl_pos = self.cast(tcl_pos, ms.int64)
         f_tcl_char = ops.gather_nd(f_char, tcl_pos)
-        f_tcl_char = ops.reshape(
-            f_tcl_char, (-1, 64, self.pad_num + 1)
-        )
+        f_tcl_char = ops.reshape(f_tcl_char, (-1, 64, self.pad_num + 1))
 
-        f_tcl_char_fg, f_tcl_char_bg = ops.split(
-            f_tcl_char, (self.pad_num, 1), axis=2
-        )
+        f_tcl_char_fg, f_tcl_char_bg = ops.split(f_tcl_char, (self.pad_num, 1), axis=2)
         f_tcl_char_bg = f_tcl_char_bg * tcl_mask + (1.0 - tcl_mask) * 20.0
 
         b, c, len = ops.shape(tcl_mask)
@@ -101,11 +88,22 @@ class PGLoss(nn.LossBase):
         log_softmax = nn.LogSoftmax()
         f_tcl_char_ld = log_softmax(f_tcl_char_ld)
         ctc_loss = nn.CTCLoss(blank=self.pad_num, reduction="none", zero_infinity=False)
-        cost= ctc_loss(f_tcl_char_ld, tcl_label, input_lengths, label_t)
+        cost = ctc_loss(f_tcl_char_ld, tcl_label, input_lengths, label_t)
         mean_cost = ops.reduce_mean(cost)
         return mean_cost
 
-    def construct(self, predicts, tcl_maps, tcl_label_maps, border_maps, direction_maps, training_masks, label_list, pos_list, pos_mask):
+    def construct(
+        self,
+        predicts,
+        tcl_maps,
+        tcl_label_maps,
+        border_maps,
+        direction_maps,
+        training_masks,
+        label_list,
+        pos_list,
+        pos_mask,
+    ):
         pos_list, pos_mask, label_list, label_t = pre_process(
             label_list,
             pos_list,
@@ -123,9 +121,7 @@ class PGLoss(nn.LossBase):
         )
         score_loss = self.dice_loss(f_score, tcl_maps, training_masks)
         border_loss = self.border_loss(f_border, border_maps, tcl_maps, training_masks)
-        direction_loss = self.direction_loss(
-            f_direction, direction_maps, tcl_maps, training_masks
-        )
+        direction_loss = self.direction_loss(f_direction, direction_maps, tcl_maps, training_masks)
         ctc_loss = self.ctcloss(f_char, pos_list, pos_mask, label_list, label_t)
         loss_all = score_loss + border_loss + direction_loss + 5 * ctc_loss
         return loss_all

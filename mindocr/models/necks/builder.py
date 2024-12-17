@@ -14,6 +14,7 @@ supported_necks = [
     'Identity',
     'E2eFpn',
 ]
+from .e2e_neck import E2eFpn
 from .fpn import DBFPN, EASTFPN, FCEFPN, FPN, PSEFPN, RSEFPN
 from .identity import Identity
 from .img2seq import Img2Seq
@@ -21,7 +22,6 @@ from .master_encoder import MasterEncoder
 from .rnn import RNNEncoder
 from .select import Select
 from .yolov8_neck import YOLOv8Neck
-from .e2e_neck import E2eFpn
 
 
 def build_neck(neck_name, **kwargs):

@@ -1,5 +1,6 @@
 from mindspore import nn
 
+
 class ConvNormLayer(nn.Cell):
     def __init__(self, in_channels, out_channels, kernel_size, stride, padding=0, pad_mode='same', act=False):
         super().__init__()
