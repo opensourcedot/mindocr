@@ -2,7 +2,8 @@ from mindspore import nn
 
 from ..utils import ConvNormLayer
 from ._registry import register_backbone, register_backbone_class
-
+from .mindcv_models.resnet import default_cfgs
+from .mindcv_models.utils import load_pretrained
 __all__ = ['E2ePgResNet', 'pgnet_backbone']
 
 
@@ -126,11 +127,8 @@ class E2ePgResNet(nn.Cell):
 
 @register_backbone
 def pgnet_backbone(pretrained: bool = False, **kwargs) -> E2ePgResNet:
-    if pretrained is True:
-        raise NotImplementedError(
-            "The default pretrained checkpoint for `e2e_pgresnet` backbone \
-                does not exist."
-        )
-
     model = E2ePgResNet(block=Bottleneck, block_num=[3, 4, 6, 3, 3], **kwargs)
+    if pretrained:
+        default_cfg = default_cfgs["resnet50"]
+        load_pretrained(model, default_cfg)
     return model
