@@ -21,7 +21,9 @@ def create_parser():
     parser = argparse.ArgumentParser(description="Inference Config Args")
     # params for prediction engine
     parser.add_argument("--mode", type=int, default=0, help="0 for graph mode, 1 for pynative mode ")  # added
-
+    parser.add_argument("--det_model_config", type=str, help="path to det model yaml config")  # added
+    parser.add_argument("--rec_model_config", type=str, help="path to rec model yaml config")  # added
+    parser.add_argument("--e2e_model_config", type=str, help="path to rec model yaml config")  # added
     # params for text detector
     parser.add_argument("--image_dir", type=str, required=True, help="image path or image directory")
     # parser.add_argument("--page_num", type=int, default=0)
@@ -121,6 +123,39 @@ def create_parser():
     # parser.add_argument("--use_space_char", type=str2bool, default=True)
     parser.add_argument("--vis_font_path", type=str, default="docs/fonts/simfang.ttf")
     parser.add_argument("--drop_score", type=float, default=0.5)
+    # ======== End2End ========
+    parser.add_argument(
+        "--e2e_algorithm",
+        type=str,
+        default="PG",
+        choices=["PG"],
+        help="end2end detection & recognition algorithm.",
+    )  # determine the network architecture
+    parser.add_argument(
+        "--e2e_amp_level",
+        type=str,
+        default="O0",
+        choices=["O0", "O1", "O2", "O3"],
+        help="Auto Mixed Precision level. This setting only works on GPU and Ascend",
+    )  # added
+    parser.add_argument(
+        "--e2e_model_dir",
+        type=str,
+        default=None,
+        help="directory containing the model checkpoint best.ckpt, or path to a specific checkpoint file.",
+    )  # determine the network weights
+    parser.add_argument(
+        "--e2e_limit_side_len", type=int, default=768, help="side length limitation for image resizing"
+    )  # increase if need
+    parser.add_argument(
+        "--e2e_limit_type",
+        type=str,
+        default="max",
+        choices=["min", "max"],
+        help="limitation type for image resize. If min, images will be resized by limiting the minimum side length "
+        "to `limit_side_len` (prior to accuracy). If max, images will be resized by limiting the maximum side "
+        "length to `limit_side_len` (prior to speed). Default: max",
+    )
 
     parser.add_argument(
         "--draw_img_save_dir",

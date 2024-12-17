@@ -11,6 +11,8 @@ from .rec_abinet_transforms import *
 from .rec_transforms import *
 from .svtr_transform import *
 from .table_transform import *
+from .pgnet_transforms import *
+from .e2e_transforms import *
 
 SUPPORTED_TRANSFORMS = {
     "EASTProcessTrain": EASTProcessTrain,

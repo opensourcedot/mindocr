@@ -9,6 +9,7 @@ from . import (  # rec_abinet_postprocess,
     rec_abinet_postprocess,
     rec_postprocess,
     table_postprocess,
+    e2e_pg_postprocess,
 )
 from .cls_postprocess import *
 from .det_db_postprocess import *
@@ -20,27 +21,24 @@ from .layout_postprocess import *
 from .rec_abinet_postprocess import *
 from .rec_postprocess import *
 from .table_postprocess import *
+from .e2e_pg_postprocess import *
 
 __all__ = ["build_postprocess"]
 
-SUPPORTED_POSTPROCESS = {
-    "DBPostprocess": DBPostprocess,
-    "PSEPostprocess": PSEPostprocess,
-    "EASTPostprocess": EASTPostprocess,
-    "CTCLabelDecode": CTCLabelDecode,
-    "RecCTCLabelDecode": RecCTCLabelDecode,
-    "RecAttnLabelDecode": RecAttnLabelDecode,
-    "RecMasterLabelDecode": RecMasterLabelDecode,
-    "VisionLANPostProcess": VisionLANPostProcess,
-    "SARLabelDecode": SARLabelDecode,
-    "ClsPostprocess": ClsPostprocess,
-    "ABINetLabelDecode": ABINetLabelDecode,
-    "VQASerTokenLayoutLMPostProcess": VQASerTokenLayoutLMPostProcess,
-    "VQAReTokenLayoutLMPostProcess": VQAReTokenLayoutLMPostProcess,
-    "YOLOv8Postprocess": YOLOv8Postprocess,
-    "Layoutlmv3Postprocess": Layoutlmv3Postprocess,
-    "TableMasterLabelDecode": TableMasterLabelDecode,
-}
+supported_postprocess = (
+    det_db_postprocess.__all__
+    + det_pse_postprocess.__all__
+    + det_east_postprocess.__all__
+    + rec_postprocess.__all__
+    + cls_postprocess.__all__
+    + rec_abinet_postprocess.__all__
+    + det_fce_postprocess.__all__
+    + kie_ser_postprocess.__all__
+    + kie_re_postprocess.__all__
+    + layout_postprocess.__all__
+    + table_postprocess.__all__
+    + e2e_pg_postprocess.__all__
+)
 
 
 def build_postprocess(config: dict):
