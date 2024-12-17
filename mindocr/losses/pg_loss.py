@@ -89,8 +89,8 @@ class PGLoss(nn.LossBase):
         )
         f_tcl_char_bg = f_tcl_char_bg * tcl_mask + (1.0 - tcl_mask) * 20.0
 
-        b, c, l = ops.shape(tcl_mask)
-        tcl_mask_fg = ops.broadcast_to(tcl_mask, (b, c, self.pad_num * l))
+        b, c, len = ops.shape(tcl_mask)
+        tcl_mask_fg = ops.broadcast_to(tcl_mask, (b, c, self.pad_num * len))
         tcl_mask_fg.stop_gradient = True
 
         f_tcl_char_fg = f_tcl_char_fg * tcl_mask_fg + (1.0 - tcl_mask_fg) * (-20.0)

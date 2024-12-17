@@ -3,10 +3,8 @@ import os
 import cv2
 import json
 import numpy as np
-import yaml
 import mindspore as ms
 from mindspore import ops
-from addict import Dict
 from mindocr import build_model
 from mindocr.utils.logger import set_logger
 from config import parse_args
