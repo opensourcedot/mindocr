@@ -235,3 +235,20 @@ def get_dict_from_file(file_path: str) -> dict:
     with open(file_path, "rb") as f:
         lines = f.readlines()
     return {i + 1: line.decode("utf-8").strip("\n").strip("\r\n") for i, line in enumerate(lines)}
+
+
+def draw_e2e_res(dt_boxes, strs, img_path):
+    src_im = cv2.imread(img_path)
+    for box, str in zip(dt_boxes, strs):
+        box = box.astype(np.int32).reshape((-1, 1, 2))
+        cv2.polylines(src_im, [box], True, color=(255, 255, 0), thickness=2)
+        cv2.putText(
+            src_im,
+            str,
+            org=(int(box[0, 0, 0]), int(box[0, 0, 1])),
+            fontFace=cv2.FONT_HERSHEY_COMPLEX,
+            fontScale=0.7,
+            color=(0, 255, 0),
+            thickness=1,
+        )
+    return src_im

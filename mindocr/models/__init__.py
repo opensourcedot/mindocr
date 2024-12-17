@@ -6,6 +6,7 @@ from .det_dbnet import *
 from .det_east import *
 from .det_fcenet import *
 from .det_psenet import *
+from .e2e_pgnet import *
 from .kie_layoutxlm import *
 from .layout_yolov8 import *
 from .rec_abinet import *

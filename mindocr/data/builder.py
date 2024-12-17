@@ -8,6 +8,7 @@ from .constants import IMAGENET_DEFAULT_MEAN, IMAGENET_DEFAULT_STD
 from .det_dataset import DetDataset, SynthTextDataset
 from .kie_dataset import KieDataset
 from .layout_dataset import PublayNetDataset
+from .pgnet_dataset import PGDataset
 from .predict_dataset import PredictDataset
 from .rec_dataset import RecDataset
 from .rec_lmdb_dataset import LMDBDataset
@@ -26,6 +27,7 @@ supported_dataset_types = [
     "PublayNetDataset",
     "KieDataset",
     "PubTabDataset",
+    "PGDataset",
 ]
 
 
