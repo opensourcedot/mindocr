@@ -2,7 +2,6 @@ import logging
 import os
 import random
 from pathlib import Path
-from typing import List, Union
 
 from .det_dataset import BaseDataset
 from .transforms.transforms_factory import create_transforms, run_transforms

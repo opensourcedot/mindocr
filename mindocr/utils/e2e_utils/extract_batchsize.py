@@ -69,7 +69,7 @@ def pre_process(label_list, pos_list, pos_mask, max_text_length, max_text_nums, 
         batch, pos_list_t, pos_mask_t, label_list_t, tcl_bs
     )
     label = []
-    tt = [l.tolist() for l in label_list]
+    tt = [label.tolist() for label in label_list]
     for i in range(tcl_bs):
         k = 0
         for j in range(max_text_length):

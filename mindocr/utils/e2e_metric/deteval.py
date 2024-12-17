@@ -20,7 +20,7 @@ def check_install(module_name, install_name):
                 stdout=subprocess.DEVNULL,
             )
             print(f"The {module_name} module is now installed")
-        except subprocess.CalledProcessError as exc:
+        except subprocess.CalledProcessError:
             raise Exception(f"Install {module_name} failed, please install manually")
     else:
         print(f"{module_name} has been installed.")
@@ -79,7 +79,6 @@ def get_socre_A(gt_dir, pred_dict):
                 gt_x = list(map(int, np.squeeze(gt[1])))
                 gt_y = list(map(int, np.squeeze(gt[3])))
                 for det_id, detection in enumerate(detections):
-                    detection_orig = detection
                     detection = [float(x) for x in detection[0].split(",")]
                     detection = list(map(int, detection))
                     det_x = detection[0::2]
@@ -202,7 +201,6 @@ def get_socre_B(gt_dir, img_id, pred_dict):
                 gt_x = list(map(int, np.squeeze(gt[1])))
                 gt_y = list(map(int, np.squeeze(gt[3])))
                 for det_id, detection in enumerate(detections):
-                    detection_orig = detection
                     detection = [float(x) for x in detection[0].split(",")]
                     detection = list(map(int, detection))
                     det_x = detection[0::2]
@@ -430,7 +428,6 @@ def combine_results(all_data, rec_flag=True):
     total_num_gt = 0
     total_num_det = 0
     hit_str_count = 0
-    hit_count = 0
 
     def one_to_one(
         local_sigma_table,

@@ -46,8 +46,8 @@ def remove_blank(labels, blank=0):
 
 def insert_blank(labels, blank=0):
     new_labels = [blank]
-    for l in labels:
-        new_labels += [l, blank]
+    for label in labels:
+        new_labels += [label, blank]
     return new_labels
 
 def ctc_greedy_decoder(probs_seq, blank=95, keep_blank_in_idxs=True):
