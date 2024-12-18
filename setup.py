@@ -15,7 +15,7 @@ def read_requirements(fps):
 
 
 setup(
-    name="mindocr",
+    name="opensourcedot-mindocr",
     author="MindSpore Ecosystem",
     author_email="mindspore-ecosystem@example.com",
     url="https://github.com/mindspore-lab/mindocr",
