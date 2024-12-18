@@ -11,17 +11,17 @@ import sys
 from time import time
 
 import numpy as np
-from config import parse_args
-from postprocess import Postprocessor
-from preprocess import Preprocessor
-from utils import get_ckpt_file, get_image_paths
-
 import mindspore as ms
 import mindspore.ops as ops
 from mindspore.common import dtype as mstype
 
 __dir__ = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.abspath(os.path.join(__dir__, "../../../")))
+
+from tools.infer.text.config import parse_args
+from tools.infer.text.postprocess import Postprocessor
+from tools.infer.text.preprocess import Preprocessor
+from tools.infer.text.utils import get_ckpt_file, get_image_paths
 
 from mindocr import build_model
 from mindocr.utils.logger import set_logger
@@ -30,12 +30,7 @@ from mindocr.utils.visualize import show_imgs
 # map algorithm name to model name (which can be checked by `mindocr.list_models()`)
 # NOTE: Modify it to add new model for inference.
 algo_to_model_name = {
-    "CRNN": "crnn_resnet34",
-    "RARE": "rare_resnet34",
-    "CRNN_CH": "crnn_resnet34_ch",
-    "RARE_CH": "rare_resnet34_ch",
-    "SVTR": "svtr_tiny",
-    "SVTR_PPOCRv3_CH": "svtr_ppocrv3_ch",
+    "CAN": "can"
 }
 logger = logging.getLogger("mindocr")
 
@@ -44,7 +39,6 @@ class TextRecognizer(object):
     def __init__(self, args):
         self.batch_num = args.rec_batch_num
         self.batch_mode = args.rec_batch_mode
-        # self.batch_mode = args.rec_batch_mode and (self.batch_num > 1)
         logger.info(
             "recognize in {} mode {}".format(
                 "batch" if self.batch_mode else "serial",
@@ -79,8 +73,8 @@ class TextRecognizer(object):
             )
             amp_level = "O2"
         self.model = build_model(model_name, pretrained=pretrained, ckpt_load_path=ckpt_load_path, amp_level=amp_level)
-        self.model.set_train(False)
 
+        self.model.set_train(False)
         self.cast_pred_fp32 = amp_level != "O0"
         if self.cast_pred_fp32:
             self.cast = ops.Cast()
@@ -126,14 +120,7 @@ class TextRecognizer(object):
 
         assert isinstance(img_or_path_list, list), "Input for text recognition must be list of images or image paths."
         logger.info(f"num images for rec: {len(img_or_path_list)}")
-        if self.batch_mode:
-            rec_res_all_crops = self.run_batchwise(img_or_path_list, do_visualize)
-        else:
-            rec_res_all_crops = []
-            for i, img_or_path in enumerate(img_or_path_list):
-                rec_res = self.run_single(img_or_path, i, do_visualize)
-                rec_res_all_crops.append(rec_res)
-
+        rec_res_all_crops = self.run_batchwise(img_or_path_list, do_visualize)
         return rec_res_all_crops
 
     def run_batchwise(self, img_or_path_list: list, do_visualize=False):
@@ -157,14 +144,10 @@ class TextRecognizer(object):
             batch_begin = idx
             batch_end = min(idx + self.batch_num, num_imgs)
             logger.info(f"Rec img idx range: [{batch_begin}, {batch_end})")
-            # TODO: set max_wh_ratio to the maximum wh ratio of images in the batch. and update it for resize,
-            #  which may improve recognition accuracy in batch-mode
-            # especially for long text image. max_wh_ratio=max(max_wh_ratio, img_w / img_h).
-            # The short ones should be scaled with a.r. unchanged and padded to max width in batch.
 
             # preprocess
-            # TODO: run in parallel with multiprocessing
             img_batch = []
+            data = {}
             for j in range(batch_begin, batch_end):  # image index j
                 data = self.preprocess(img_or_path_list[j])
                 img_batch.append(data["image"])
@@ -182,8 +165,11 @@ class TextRecognizer(object):
 
             img_batch = np.stack(img_batch) if len(img_batch) > 1 else np.expand_dims(img_batch[0], axis=0)
 
-            # infer
-            net_pred = self.model(ms.Tensor(img_batch))
+            image_mask = ops.ones(img_batch.shape, ms.float32)
+            label = ops.ones((1, 36), ms.int64)
+            image = ms.Tensor(img_batch)
+            net_pred = self.model(image,image_mask,label)
+
             if self.cast_pred_fp32:
                 if isinstance(net_pred, list) or isinstance(net_pred, tuple):
                     net_pred = [self.cast(p, mstype.float32) for p in net_pred]
@@ -192,78 +178,16 @@ class TextRecognizer(object):
 
             # postprocess
             batch_res = self.postprocess(net_pred)
-            rec_res.extend(list(zip(batch_res["texts"], batch_res["confs"])))
-
-        return rec_res
-
-    def run_single(self, img_or_path, crop_idx=0, do_visualize=True):
-        """
-        Text recognition inference on a single image
-        Args:
-            img_or_path: str for image path or np.array for image rgb value
-
-        Return:
-            dict with keys:
-                - texts (str): preditive text string
-                - confs (int): confidence of the prediction
-        """
-        # preprocess
-        data = self.preprocess(img_or_path)
-
-        # visualize preprocess result
-        if do_visualize:
-            # show_imgs([data['image_ori']], is_bgr_img=False, title=f'origin_{i}')
-            fn = os.path.basename(data.get("img_path", f"crop_{crop_idx}.png")).rsplit(".", 1)[0]
-            show_imgs(
-                [data["image"]],
-                title=fn + "_rec_preprocessed",
-                mean_rgb=[127.0, 127.0, 127.0],
-                std_rgb=[127.0, 127.0, 127.0],
-                is_chw=True,
-                show=False,
-                save_path=os.path.join(self.vis_dir, fn + "_rec_preproc.png"),
-            )
-        logger.info(f"Origin image shape: {data['image_ori'].shape}")
-        logger.info(f"Preprocessed image shape: {data['image'].shape}")
-
-        # infer
-        input_np = data["image"]
-        if len(input_np.shape) == 3:
-            net_input = np.expand_dims(input_np, axis=0)
-
-        net_pred = self.model(ms.Tensor(net_input))
-        if self.cast_pred_fp32:
-            if isinstance(net_pred, list) or isinstance(net_pred, tuple):
-                net_pred = [self.cast(p, mstype.float32) for p in net_pred]
-            else:
-                net_pred = self.cast(net_pred, mstype.float32)
-
-        # postprocess
-        rec_res = self.postprocess(net_pred)
-        # if 'raw_chars' in rec_res:
-        #    rec_res.pop('raw_chars')
-
-        rec_res = (rec_res["texts"][0], rec_res["confs"][0])
-
-        logger.info(f"Crop {crop_idx} rec result: {rec_res}")
+            rec_res = batch_res["texts"]
 
         return rec_res
 
 
-def save_rec_res(rec_res_all, img_paths, include_score=False, save_path="./rec_results.txt"):
-    lines = []
-    for i, rec_res in enumerate(rec_res_all):
-        if include_score:
-            img_pred = os.path.basename(img_paths[i]) + "\t" + rec_res[0] + "\t" + rec_res[1] + "\n"
-        else:
-            img_pred = os.path.basename(img_paths[i]) + "\t" + rec_res[0] + "\n"
-        lines.append(img_pred)
-
-    with open(save_path, "w") as f:
-        f.writelines(lines)
-        f.close()
-
-    return lines
+def save_rec_res(rec_res_all, save_path="./rec_results.txt"):
+    with open(save_path, 'w') as file:
+        for item in rec_res_all:
+            file.write(item + '\n')
+        file.close()
 
 
 if __name__ == "__main__":
@@ -272,23 +196,18 @@ if __name__ == "__main__":
     set_logger(name="mindocr")
     save_dir = args.draw_img_save_dir
     img_paths = get_image_paths(args.image_dir)
-    # uncomment it to quick test the infer FPS
-    # img_paths = img_paths[:250]
 
     ms.set_context(mode=args.mode)
 
     # init detector
     text_recognize = TextRecognizer(args)
-
-    # TODO: warmup
-
-    # run for each image
     start = time()
     rec_res_all = text_recognize(img_paths, do_visualize=False)
     t = time() - start
+
     # save all results in a txt file
-    save_fp = os.path.join(save_dir, "rec_results.txt" if args.rec_batch_mode else "rec_results_serial.txt")
-    save_rec_res(rec_res_all, img_paths, save_path=save_fp)
+    save_fp = os.path.join(save_dir, "formula_results.txt")
+    save_rec_res(rec_res_all, save_path=save_fp)
     logger.info(f"All rec res: {rec_res_all}")
     logger.info(f"Done! Text recognition results saved in {save_dir}")
     logger.info(f"Time cost: {t}, FPS: {len(img_paths) / t}")
