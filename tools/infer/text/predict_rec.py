@@ -36,6 +36,7 @@ algo_to_model_name = {
     "RARE_CH": "rare_resnet34_ch",
     "SVTR": "svtr_tiny",
     "SVTR_PPOCRv3_CH": "svtr_ppocrv3_ch",
+    "CAN": "can",
 }
 logger = logging.getLogger("mindocr")
 
@@ -165,6 +166,7 @@ class TextRecognizer(object):
             # preprocess
             # TODO: run in parallel with multiprocessing
             img_batch = []
+            data = {}
             for j in range(batch_begin, batch_end):  # image index j
                 data = self.preprocess(img_or_path_list[j])
                 img_batch.append(data["image"])
@@ -183,7 +185,14 @@ class TextRecognizer(object):
             img_batch = np.stack(img_batch) if len(img_batch) > 1 else np.expand_dims(img_batch[0], axis=0)
 
             # infer
-            net_pred = self.model(ms.Tensor(img_batch))
+            if args.rec_algorithm.startswith("CAN"):
+                image_mask = ops.ones(img_batch.shape, ms.float32)
+                label = ops.ones((1, 36), ms.int64)
+                image = ms.Tensor(img_batch)
+                net_pred = self.model(image,image_mask,label)
+            else:
+                net_pred = self.model(ms.Tensor(img_batch))
+
             if self.cast_pred_fp32:
                 if isinstance(net_pred, list) or isinstance(net_pred, tuple):
                     net_pred = [self.cast(p, mstype.float32) for p in net_pred]
@@ -192,7 +201,11 @@ class TextRecognizer(object):
 
             # postprocess
             batch_res = self.postprocess(net_pred)
-            rec_res.extend(list(zip(batch_res["texts"], batch_res["confs"])))
+
+            if args.rec_algorithm.startswith("CAN"):
+                rec_res = batch_res["texts"]
+            else:
+                rec_res.extend(list(zip(batch_res["texts"], batch_res["confs"])))
 
         return rec_res
 

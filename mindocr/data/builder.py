@@ -13,6 +13,7 @@ from .predict_dataset import PredictDataset
 from .rec_dataset import RecDataset
 from .rec_lmdb_dataset import LMDBDataset
 from .table_pubtab_dataset import PubTabDataset
+from .utils.collate_fn import *
 
 __all__ = ["build_dataset"]
 _logger = logging.getLogger(__name__)
@@ -30,6 +31,9 @@ supported_dataset_types = [
     "PGDataset",
 ]
 
+supported_collator_types = [
+    "can_collator",
+]
 
 def build_dataset(
     dataset_config: dict,
@@ -203,16 +207,32 @@ def build_dataset(
             )
             drop_remainder = loader_config.get("drop_remainder", False)
 
-    dataloader = ds.batch(
-        batch_size,
-        drop_remainder=drop_remainder,
-        num_parallel_workers=min(
-            num_workers, 2
-        ),  # set small workers for lite computation. TODO: increase for batch-wise mapping
-        # input_columns=input_columns,
-        # output_columns=batch_column,
-        # per_batch_map=per_batch_map, # uncomment to use inner-batch transformation
-    )
+    collate_fn = None
+    if "collate_fn" in loader_config and loader_config["collate_fn"]:
+        assert loader_config["collate_fn"] in supported_collator_types, "Invalid collator name"
+        collate_fn = eval(loader_config["collate_fn"])
+        dataloader = ds.batch(
+            batch_size,
+            drop_remainder=drop_remainder,
+            num_parallel_workers=min(
+                num_workers, 2
+            ),  # set small workers for lite computation. TODO: increase for batch-wise mapping
+            # input_columns=["image","label"],
+            output_columns=loader_config["output_columns"],
+            per_batch_map=collate_fn, # uncomment to use inner-batch transformation
+        )
+
+    if collate_fn is None:
+        dataloader = ds.batch(
+            batch_size,
+            drop_remainder=drop_remainder,
+            num_parallel_workers=min(
+                num_workers, 2
+            ),  # set small workers for lite computation. TODO: increase for batch-wise mapping
+            # input_columns=input_columns,
+            # output_columns=batch_column,
+            # per_batch_map=per_batch_map, # uncomment to use inner-batch transformation
+        )
 
     return dataloader
 
