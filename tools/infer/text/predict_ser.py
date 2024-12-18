@@ -131,7 +131,7 @@ class SemanticEntityRecognition:
         boxes_all, text_scores_all = [], []
         for i, img_path in enumerate(img_path_list):
             logger.info(f"\nINFO: Infering [{i+1}/{len(img_path_list)}]: {img_path}")
-            boxes, text_scores, time_prof = self.ocr_system(img_path, do_visualize=args.visualize_output)
+            boxes, text_scores, time_prof = self.ocr_system(img_path, do_visualize=True)
             boxes_all.append(boxes)
             text_scores_all.append(text_scores)
 
@@ -311,11 +311,15 @@ class SemanticEntityRecognition:
         return results_ser, time_report
 
 
-if __name__ == "__main__":
+def predict_ser(image_path, save_dir):
     args = parse_args()
     set_logger(name="mindocr")
-    save_dir = args.draw_img_save_dir
-
+    args.det_algorithm = "DB_PPOCRv3"
+    args.rec_algorithm = "SVTR_PPOCRv3_CH"
+    args.rec_char_dict_path = "mindocr/utils/dict/ch_dict.txt"
+    args.ser_class_dict_path = "mindocr/utils/dict/class_list_xfun.txt"
+    args.draw_img_save_dir = save_dir
+    args.image_dir = image_path
     set_context(mode=args.mode)
 
     # init recognizer
@@ -332,10 +336,11 @@ if __name__ == "__main__":
     for ser_res in ser_res_all:
         img = draw_ser_results(ser_res["img_path"], ser_res["ser_output"])
         name, ext = os.path.splitext(os.path.basename(ser_res["img_path"]))
-        new_name = name + "_ser" + ext
-        new_path = os.path.join(save_dir, new_name)
-        cv2.imwrite(new_path, img)
-        logger.info(f"Save image: {new_path}")
+        # new_name = name + "_ser" + ext
+        # new_path = os.path.join(save_dir, new_name)
+        img_res_path = os.path.join(save_dir, "kie_ocr_res.png")
+        cv2.imwrite(img_res_path, img)
+        # logger.info(f"Save image: {new_path}")
     vis_time = time() - vis
     all_time = time() - start
     time_report["vis"] = vis_time

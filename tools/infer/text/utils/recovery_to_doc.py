@@ -83,7 +83,7 @@ def convert_info_docx(res: List[Dict], save_folder: str, doc_name: str) -> None:
             text_run.font.size = shared.Pt(10)
 
     # Save as DOCX file
-    docx_path = os.path.join(save_folder, f"{doc_name}_ocr.docx")
+    docx_path = os.path.join(save_folder, f"{doc_name}.docx")
     doc.save(docx_path)
 
 

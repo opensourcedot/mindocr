@@ -99,8 +99,12 @@ def to_csv(html_table, csv_path):
     df.to_csv(csv_path, index=False)
 
 
-def main():
+def predict_table(image_path, save_dir):
     args = parse_args()
+    args.image_dir = image_path
+    args.draw_img_save_dir = save_dir
+    args.det_algorithm = "DB_PPOCRv3"
+    args.rec_algorithm = "SVTR_PPOCRv3_CH"
     set_logger(name="mindocr")
     analyzer = TableAnalyzer(args)
     img_paths = get_image_paths(args.image_dir)
@@ -110,7 +114,7 @@ def main():
         pred_html, time_prof = analyzer(img_path, do_visualize=True)
         logger.info(f"Time profile: {time_prof}")
         img_name = os.path.basename(img_path).rsplit(".", 1)[0]
-        to_csv(pred_html, os.path.join(save_dir, f"{img_name}.csv"))
+        to_csv(pred_html, os.path.join(save_dir, f"table_reconization.csv"))
     logger.info(f"Done! All structure results are saved to {args.draw_img_save_dir}")
 
 

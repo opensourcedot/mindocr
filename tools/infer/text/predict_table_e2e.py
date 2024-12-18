@@ -218,18 +218,20 @@ def predict_table_e2e(
 
     if recovery:
         final_results = sorted_layout_boxes(final_results, w_ori)
-        convert_info_docx(final_results, save_folder, f"{img_name}_converted_docx")
+        convert_info_docx(final_results, save_folder, f"e2e")
 
     return final_results
 
 
-def main():
+def predict_e2e(image_path, save_folder):
     from mindocr.utils.logger import set_logger
 
     set_logger(name="mindocr")
 
     first_time = time.time()
     args = e2e_parse_args()
+    args.draw_img_save_dir = save_folder
+    args.image_dir = image_path
     save_folder = args.draw_img_save_dir
 
     save_folder, _ = os.path.splitext(save_folder)
@@ -260,6 +262,3 @@ def main():
     logger.info(f"Processing e2e total time: {time.time() - first_time:.2f}s")
     logger.info(f"Done! predict {len(img_paths)} e2e results saved in {save_folder}")
 
-
-if __name__ == "__main__":
-    main()

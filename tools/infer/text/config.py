@@ -25,7 +25,7 @@ def create_parser():
     parser.add_argument("--rec_model_config", type=str, help="path to rec model yaml config")  # added
     parser.add_argument("--e2e_model_config", type=str, help="path to rec model yaml config")  # added
     # params for text detector
-    parser.add_argument("--image_dir", type=str, required=True, help="image path or image directory")
+    parser.add_argument("--image_dir", type=str, required=False, help="image path or image directory")
     # parser.add_argument("--page_num", type=int, default=0)
     parser.add_argument(
         "--det_algorithm",

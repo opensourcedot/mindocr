@@ -123,13 +123,10 @@ def save_res(boxes_all, text_scores_all, img_path, save_path):
         f.close()
 
 
-def predict_rec_e2e(image_path):
+def predict_rec_e2e(image_path, save_dir):
     # parse args
     args = parse_args()
     set_logger(name="mindocr")
-    save_dir = "./inference_results"
-    if not os.path.exists(save_dir):
-        os.mkdir(save_dir)
     args.draw_img_save_dir = save_dir
     args.image_dir = image_path
     save_folder = args.draw_img_save_dir
@@ -145,6 +142,7 @@ def predict_rec_e2e(image_path):
     # init detector
     text_detect = TextEnd2End(args)
 
+    draw_img_save = "./inference_results"
     boxes_all, text_scores_all = [], []
     for i, img_path in enumerate(img_paths):
         logger.info(f"\nInfering [{i+1}/{len(img_paths)}]: {img_path}")
@@ -153,11 +151,6 @@ def predict_rec_e2e(image_path):
         text_scores_all.append(strs)
         save_res(boxes_all, text_scores_all, img_path, save_folder)
         src_im = draw_e2e_res(points, strs, img_path)
-        img_res_path = os.path.join(save_dir, "text_e2e_ocr_res.png")
+        img_name = os.path.basename(img_path).rsplit(".", 1)[0]
+        img_res_path = os.path.join(draw_img_save, "text_e2e_ocr_res.png")
         cv2.imwrite(img_res_path, src_im)
-
-
-if __name__ == "__main__":
-    args = parse_args()
-    image_path = args.image_dir
-    predict_rec_e2e(image_path)
