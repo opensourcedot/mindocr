@@ -7,10 +7,13 @@ Example:
 """
 import logging
 import os
-import sys
 from time import time
 
 import numpy as np
+from config import parse_args
+from postprocess import Postprocessor
+from preprocess import Preprocessor
+from utils import get_ckpt_file, get_image_paths
 
 import mindspore as ms
 import mindspore.ops as ops
@@ -19,10 +22,6 @@ from mindspore.common import dtype as mstype
 from mindocr import build_model
 from mindocr.utils.logger import set_logger
 from mindocr.utils.visualize import show_imgs
-from config import parse_args
-from postprocess import Postprocessor
-from preprocess import Preprocessor
-from utils import get_ckpt_file, get_image_paths
 
 # map algorithm name to model name (which can be checked by `mindocr.list_models()`)
 # NOTE: Modify it to add new model for inference.
