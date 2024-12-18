@@ -32,6 +32,7 @@ from .kie_relationextraction_head import RelationExtractionHead
 from .kie_tokenclassification_head import TokenClassificationHead
 from .rec_abinet_head import ABINetHead
 from .rec_attn_head import AttentionHead
+from .rec_can_head import CANHead
 from .rec_ctc_head import CTCHead
 from .rec_master_decoder import MasterDecoder
 from .rec_multi_head import MultiHead
@@ -39,7 +40,6 @@ from .rec_robustscanner_head import RobustScannerHead
 from .rec_visionlan_head import VisionLANHead
 from .table_master_head import TableMasterHead
 from .yolov8_head import YOLOv8Head
-from .rec_can_head import CANHead
 
 
 def build_head(head_name, **kwargs):
