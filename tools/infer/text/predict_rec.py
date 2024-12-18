@@ -189,7 +189,7 @@ class TextRecognizer(object):
                 image_mask = ops.ones(img_batch.shape, ms.float32)
                 label = ops.ones((1, 36), ms.int64)
                 image = ms.Tensor(img_batch)
-                net_pred = self.model(image,image_mask,label)
+                net_pred = self.model(image, image_mask, label)
             else:
                 net_pred = self.model(ms.Tensor(img_batch))
 

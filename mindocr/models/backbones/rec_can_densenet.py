@@ -2,14 +2,12 @@
 Rec_DenseNet model
 """
 import math
-import mindspore as ms
-import mindspore.mint.nn.functional as F
 
-from mindspore import nn
-from mindspore import ops
+import mindspore.mint.nn.functional as F
+from mindspore import nn, ops
+
 from ._registry import register_backbone, register_backbone_class
 
-# ms.set_context(pynative_synchronize=True)
 
 __all__ = ['DenseNet']
 
@@ -27,7 +25,6 @@ class Bottleneck(nn.Cell):
             has_bias=True,
             pad_mode='pad',
             padding=0,
-            # dtype=ms.float16,
         )
         self.bn2 = nn.BatchNorm2d(growth_rate)
         self.conv2 = nn.Conv2d(
@@ -37,7 +34,6 @@ class Bottleneck(nn.Cell):
             has_bias=True,
             pad_mode='pad',
             padding=1,
-            # dtype=ms.float16,
         )
         self.use_dropout = use_dropout
         self.dropout = nn.Dropout(p=0.2)
@@ -46,13 +42,11 @@ class Bottleneck(nn.Cell):
         out = self.conv1(x)
         out = self.bn1(out)
         out = F.relu(out)
-        # out = ops.relu(self.bn1(self.conv1(x)))
         if self.use_dropout:
             out = self.dropout(out)
         out = self.conv2(out)
         out = self.bn2(out)
         out = F.relu(out)
-        # out = ops.relu(self.bn2(self.conv2(out)))
         if self.use_dropout:
             out = self.dropout(out)
         out = ops.concat((x, out), 1)
@@ -113,7 +107,8 @@ class Transition(nn.Cell):
 
 @register_backbone_class
 class DenseNet(nn.Cell):
-    r"""The RecDenseNet model is the customized DenseNet backbone for
+    """
+    The RecDenseNet model is the customized DenseNet backbone for
     Handwritten Mathematical Expression Recognition.
     For example, in the CAN recognition algorithm, it is used in
     feature extraction to obtain a formula feature map.
@@ -142,6 +137,7 @@ class DenseNet(nn.Cell):
         >>> }
         >>> model = DenseNet(**params)
     """
+
     def __init__(self, growth_rate, reduction, bottleneck, use_dropout, input_channels):
         super().__init__()
         n_dense_blocks = 16
@@ -155,7 +151,6 @@ class DenseNet(nn.Cell):
             has_bias=False,
             pad_mode='pad',
             padding=3,
-            # dtype=ms.float16,
         )
         self.dense1 = self.make_dense(
             n_channels, growth_rate, n_dense_blocks, bottleneck, use_dropout
@@ -177,7 +172,7 @@ class DenseNet(nn.Cell):
             n_channels, growth_rate, n_dense_blocks, bottleneck, use_dropout
         )
         n_channels += n_dense_blocks * growth_rate
-        self.out_channels = [n_channels] #????不一样
+        self.out_channels = [n_channels]
 
     def construct(self, x):
         out = self.conv1(x)
@@ -200,13 +195,6 @@ class DenseNet(nn.Cell):
                 layers.append(SingleLayer(n_channels, growth_rate, use_dropout))
             n_channels += growth_rate
         return nn.SequentialCell(*layers)
-
-        # layers = []
-        # layer_constructor = Bottleneck if bottleneck else SingleLayer
-        # for _ in range(int(n_dense_blocks)):
-        #     layers.append(layer_constructor(n_channels, growth_rate, use_dropout))
-        #     n_channels += growth_rate
-        # return nn.SequentialCell(*layers)
 
 
 @register_backbone

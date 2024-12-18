@@ -9,13 +9,13 @@ from .e2e_pgnet import *
 from .kie_layoutxlm import *
 from .layout_yolov8 import *
 from .rec_abinet import *
+from .rec_can import *
 from .rec_crnn import *
 from .rec_master import *
 from .rec_rare import *
 from .rec_robustscanner import *
 from .rec_svtr import *
 from .rec_visionlan import *
-from .rec_can import *
 from .table_master import *
 
 __all__ = []

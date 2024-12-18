@@ -26,9 +26,9 @@ def can(pretrained=False, **kwargs):
             "backbone": {
                 "name": "rec_can_densenet",
                 "pretrained": False,
-                "growth_rate": 24, 
-                "reduction": 0.5, 
-                "bottleneck": True, 
+                "growth_rate": 24,
+                "reduction": 0.5,
+                "bottleneck": True,
                 "use_dropout": True,
                 "input_channels": 1,
                 },

@@ -102,7 +102,6 @@ class Preprocessor(object):
             else:
                 target_height = parsed_height
                 norm_before_pad = DEFAULT_NORM_BEFORE_PAD
- 
 
             # TODO: update max_wh_ratio for each batch
             # max_wh_ratio = parsed_width /  float(parsed_height)
@@ -169,24 +168,24 @@ class Preprocessor(object):
 
             if algo == "CAN":
                 pipeline = [
-                    {"DecodeImage": {
-                        "img_mode": "BGR",
-                        "channel_first": False,
+                    {
+                        "DecodeImage": {
+                            "img_mode": "BGR",
+                            "channel_first": False,
                         },
                     },
-                    {"CANImageNormalize": {
-                        "mean": [0,0,0],
-                        "std": [1,1,1],
-                        "order": 'hwc',
+                    {
+                        "CANImageNormalize": {
+                            "mean": [0, 0, 0],
+                            "std": [1, 1, 1],
+                            "order": "hwc",
                         },
                     },
-                    {"GrayImageChannelFormat": {
-                        "inverse": True
-                        },
+                    {
+                        "GrayImageChannelFormat": {"inverse": True},
                     },
-                    {"CANLabelEncode":{
-                        "is_train": False
-                        },
+                    {
+                        "CANLabelEncode": {"is_train": False},
                     },
                 ]
 

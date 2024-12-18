@@ -35,6 +35,7 @@ supported_collator_types = [
     "can_collator",
 ]
 
+
 def build_dataset(
     dataset_config: dict,
     loader_config: dict,
@@ -216,10 +217,9 @@ def build_dataset(
             drop_remainder=drop_remainder,
             num_parallel_workers=min(
                 num_workers, 2
-            ),  # set small workers for lite computation. TODO: increase for batch-wise mapping
-            # input_columns=["image","label"],
+            ),
             output_columns=loader_config["output_columns"],
-            per_batch_map=collate_fn, # uncomment to use inner-batch transformation
+            per_batch_map=collate_fn,
         )
 
     if collate_fn is None:

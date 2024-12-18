@@ -35,7 +35,7 @@ model:
     name: CANHead
     out_channels: 111
     ratio: 16
-    attdecoder: 
+    attdecoder:
       is_train: False #修改
       input_size: 256
       hidden_size: 256
@@ -44,7 +44,7 @@ model:
       dropout_ratio: 0.5
       word_num: 111
       counting_decoder_out_channel: 111
-      attention: 
+      attention:
         attention_dim: 512
         word_conv_kernel: 1
 
