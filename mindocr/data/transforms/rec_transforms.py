@@ -8,6 +8,7 @@ from typing import Any, Dict, List, Optional
 
 import cv2
 import numpy as np
+
 import mindspore as ms
 import mindspore.ops as ops
 
@@ -836,6 +837,7 @@ def resize_norm_img_sar(img, image_shape, width_downsample_ratio=0.25):
 
 class CANLabelEncode(object):
     """Convert between text-label and text-index"""
+
     def __init__(
         self,
         max_text_length=100,
@@ -852,10 +854,8 @@ class CANLabelEncode(object):
         self.task = task
 
         if character_dict_path is None:
-            if task=="train":
-                _logger.warning(
-                    "The character_dict_path is None, model can only recognize number and lower letters"
-                )
+            if task == "train":
+                _logger.warning("The character_dict_path is None, model can only recognize number and lower letters")
             self.character_str = "0123456789abcdefghijklmnopqrstuvwxyz"
             dict_character = list(self.character_str)
             self.lower = True

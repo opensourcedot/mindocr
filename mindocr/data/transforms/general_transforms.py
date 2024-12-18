@@ -320,6 +320,7 @@ class RandomHorizontalFlip:
 
         return data
 
+
 class CANImageNormalize(object):
     """normalize image such as substract mean, divide std"""
 
@@ -344,12 +345,14 @@ class CANImageNormalize(object):
         data["image"] = (img.astype("float32") * self.scale - self.mean) / self.std
         return data
 
+
 class GrayImageChannelFormat(object):
     """
     format gray scale image's channel: (3,h,w) -> (1,h,w)
     Args:
         inverse: inverse gray image
     """
+
     def __init__(self, inverse=False, **kwargs):
         self.inverse = inverse
 

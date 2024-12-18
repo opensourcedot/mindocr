@@ -682,4 +682,4 @@ class CANLabelDecode(BaseRecLabelDecode):
         if label is None:
             return {"texts": text}
         label = self.decode(label)
-        return  {"texts": text, "labels": label}
+        return {"texts": text, "labels": label}

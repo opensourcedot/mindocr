@@ -3,10 +3,7 @@ CAN_HEAD_MODULE
 """
 import math
 import mindspore as ms
-from mindspore import nn
-from mindspore import ops
-
-ms.set_context(mode=ms.PYNATIVE_MODE, pynative_synchronize=True)
+from mindspore import nn, ops
 
 
 class ChannelAtt(nn.Cell):
@@ -43,7 +40,6 @@ class CountingDecoder(nn.Cell):
                 pad_mode='pad',
                 padding=kernel_size // 2,
                 has_bias=False,
-                # dtype=ms.float16,
             ),
             nn.BatchNorm2d(512)
         ])
@@ -88,7 +84,6 @@ class Attention(nn.Cell):
             pad_mode='pad',
             padding=5,
             has_bias=False,
-            # dtype=ms.float16,
         )
         self.attention_weight = nn.Dense(512, self.attention_dim, has_bias=False)
         self.alpha_convert = nn.Dense(self.attention_dim, 1)
@@ -98,9 +93,8 @@ class Attention(nn.Cell):
     ):
         query = self.hidden_weight(hidden)
         alpha_sum_trans = self.attention_conv(alpha_sum)
-        # coverage_alpha = self.attention_weight(alpha_sum_trans.permute(0, 2, 3, 1))
         alpha_sum_trans_2 = ops.transpose(alpha_sum_trans,(0, 2, 3, 1))
-        coverage_alpha = self.attention_weight(alpha_sum_trans_2) 
+        coverage_alpha = self.attention_weight(alpha_sum_trans_2)
 
         query_expanded = ops.unsqueeze(ops.unsqueeze(query, 1), 2)
         alpha_score = ops.tanh(
@@ -247,9 +241,7 @@ class AttDecoder(nn.Cell):
 
         word = ops.ones((batch_size, 1), dtype=ms.int64)
         word = ops.squeeze(word, axis=1)
-        # print(num_steps)
         for i in range(num_steps):
-            # print(i)
             word_embedding = self.embedding(word)
             hidden = self.word_input_gru(word_embedding, hidden)
             word_context_vec, _, word_alpha_sum = self.word_attention(
@@ -260,8 +252,8 @@ class AttDecoder(nn.Cell):
                 images_mask
             )
 
-            current_state = self.word_state_weight(hidden)#差异
-            word_weight_embedding = self.word_embedding_weight(word_embedding)#差异
+            current_state = self.word_state_weight(hidden)
+            word_weight_embedding = self.word_embedding_weight(word_embedding)
             word_context_weighted = self.word_context_weight(word_context_vec)
 
             if self.dropout_prob:
@@ -289,7 +281,7 @@ class AttDecoder(nn.Cell):
                 word = ops.multiply(
                     word, labels[:, i]
                 )
-            
+
 
         return word_probs
 
@@ -303,7 +295,8 @@ class AttDecoder(nn.Cell):
 
 
 class CANHead(nn.Cell):
-    r"""The CAN model is an algorithm used to recognize
+    """
+    The CAN model is an algorithm used to recognize
     handwritten mathematical formulas.
     CAN Network is based on
     `"When Counting Meets HMER: Counting-Aware Network
@@ -326,15 +319,15 @@ class CANHead(nn.Cell):
             - "attention", the parameters needed to build an attention mechanism:
                 - "attention_dim": the dimension of the attention mechanism.
                 - "word_conv_kernel": the size of the lexical convolution kernel.
-                
-    Return: 
+
+    Return:
         "word_probs": word probability distribution.
         "counting_preds1": count prediction 1, the number of words
                 predicted by the 3*3 convolution kernel.
         "counting_preds2": count prediction 2, the number of words
                 predicted by the 5*5 convolution kernel.
         "counting_preds": the mean predicted by the above two counts.
-        
+
 
     Example:
         >>> # init a CANHead network
@@ -385,12 +378,6 @@ class CANHead(nn.Cell):
         counting_preds = (counting_preds1 + counting_preds2) / 2
 
         word_probs = self.decoder(cnn_features, labels, counting_preds, images_mask)
-        # print("can head output dtype")
-        # print(x.dtype)
-        # print(word_probs.dtype)
-        # print(counting_preds.dtype)
-        # print(counting_preds1.dtype)
-        # print(counting_preds2.dtype)
 
         preds=dict()
         preds["word_probs"]=word_probs
