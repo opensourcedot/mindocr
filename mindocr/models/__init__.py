@@ -16,6 +16,7 @@ from .rec_rare import *
 from .rec_robustscanner import *
 from .rec_svtr import *
 from .rec_visionlan import *
+from .rec_can import *
 from .table_master import *
 
 __all__ = []
