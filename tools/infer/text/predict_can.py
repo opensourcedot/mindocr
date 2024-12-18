@@ -11,27 +11,22 @@ import sys
 from time import time
 
 import numpy as np
+
 import mindspore as ms
 import mindspore.ops as ops
 from mindspore.common import dtype as mstype
 
-__dir__ = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, os.path.abspath(os.path.join(__dir__, "../../../")))
-
-from tools.infer.text.config import parse_args
-from tools.infer.text.postprocess import Postprocessor
-from tools.infer.text.preprocess import Preprocessor
-from tools.infer.text.utils import get_ckpt_file, get_image_paths
-
 from mindocr import build_model
 from mindocr.utils.logger import set_logger
 from mindocr.utils.visualize import show_imgs
+from config import parse_args
+from postprocess import Postprocessor
+from preprocess import Preprocessor
+from utils import get_ckpt_file, get_image_paths
 
 # map algorithm name to model name (which can be checked by `mindocr.list_models()`)
 # NOTE: Modify it to add new model for inference.
-algo_to_model_name = {
-    "CAN": "can"
-}
+algo_to_model_name = {"CAN": "can"}
 logger = logging.getLogger("mindocr")
 
 
@@ -168,7 +163,7 @@ class TextRecognizer(object):
             image_mask = ops.ones(img_batch.shape, ms.float32)
             label = ops.ones((1, 36), ms.int64)
             image = ms.Tensor(img_batch)
-            net_pred = self.model(image,image_mask,label)
+            net_pred = self.model(image, image_mask, label)
 
             if self.cast_pred_fp32:
                 if isinstance(net_pred, list) or isinstance(net_pred, tuple):
@@ -184,9 +179,9 @@ class TextRecognizer(object):
 
 
 def save_rec_res(rec_res_all, save_path="./rec_results.txt"):
-    with open(save_path, 'w') as file:
+    with open(save_path, "w") as file:
         for item in rec_res_all:
-            file.write(item + '\n')
+            file.write(item + "\n")
         file.close()
 
 
