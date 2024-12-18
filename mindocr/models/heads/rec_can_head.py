@@ -2,6 +2,7 @@
 CAN_HEAD_MODULE
 """
 import math
+
 import mindspore as ms
 from mindspore import nn, ops
 
@@ -93,7 +94,7 @@ class Attention(nn.Cell):
     ):
         query = self.hidden_weight(hidden)
         alpha_sum_trans = self.attention_conv(alpha_sum)
-        alpha_sum_trans_2 = ops.transpose(alpha_sum_trans,(0, 2, 3, 1))
+        alpha_sum_trans_2 = ops.transpose(alpha_sum_trans, (0, 2, 3, 1))
         coverage_alpha = self.attention_weight(alpha_sum_trans_2)
 
         query_expanded = ops.unsqueeze(ops.unsqueeze(query, 1), 2)
@@ -282,7 +283,6 @@ class AttDecoder(nn.Cell):
                     word, labels[:, i]
                 )
 
-
         return word_probs
 
     def init_hidden(self, features, feature_mask):
@@ -379,10 +379,10 @@ class CANHead(nn.Cell):
 
         word_probs = self.decoder(cnn_features, labels, counting_preds, images_mask)
 
-        preds=dict()
-        preds["word_probs"]=word_probs
-        preds["counting_preds"]=counting_preds
-        preds["counting_preds1"]=counting_preds1
-        preds["counting_preds2"]=counting_preds2
+        preds = dict()
+        preds["word_probs"] = word_probs
+        preds["counting_preds"] = counting_preds
+        preds["counting_preds1"] = counting_preds1
+        preds["counting_preds2"] = counting_preds2
 
         return preds

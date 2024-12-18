@@ -215,9 +215,7 @@ def build_dataset(
         dataloader = ds.batch(
             batch_size,
             drop_remainder=drop_remainder,
-            num_parallel_workers=min(
-                num_workers, 2
-            ),
+            num_parallel_workers=min(num_workers, 2),
             output_columns=loader_config["output_columns"],
             per_batch_map=collate_fn,
         )

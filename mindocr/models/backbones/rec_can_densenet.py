@@ -8,7 +8,6 @@ from mindspore import nn, ops
 
 from ._registry import register_backbone, register_backbone_class
 
-
 __all__ = ['DenseNet']
 
 

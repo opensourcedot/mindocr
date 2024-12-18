@@ -3,7 +3,7 @@ import numpy as np
 
 __all__ = [
     "can_collator",
-    ]
+]
 
 
 def can_collator(batch_image, batch_label, BatchInfo):
@@ -28,7 +28,7 @@ def can_collator(batch_image, batch_label, BatchInfo):
         max_width = item[0].shape[2] if item[0].shape[2] > max_width else max_width
         max_length = len(item[1]) if len(item[1]) > max_length else max_length
         proper_items.append(item)
-    
+
     images = np.zeros((len(proper_items), channel, max_height, max_width), dtype="float32")
     image_masks = np.zeros((len(proper_items), 1, max_height, max_width), dtype="float32")
     labels = np.zeros((len(proper_items), max_length), dtype="int32")
