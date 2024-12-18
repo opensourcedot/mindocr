@@ -18,6 +18,8 @@ __all__ = [
     "RandomColorAdjust",
     "RandomRotate",
     "RandomHorizontalFlip",
+    "CANImageNormalize",
+    "GrayImageChannelFormat",
 ]
 
 
@@ -316,4 +318,50 @@ class RandomHorizontalFlip:
                 # TODO: assign a new starting point located in the top left
                 data["polys"] = data["polys"][:, ::-1, :]  # preserve the original order (e.g. clockwise)
 
+        return data
+
+class CANImageNormalize(object):
+    """normalize image such as substract mean, divide std"""
+
+    def __init__(self, scale=None, mean=None, std=None, order="chw", **kwargs):
+        if isinstance(scale, str):
+            scale = eval(scale)
+        self.scale = np.float32(scale if scale is not None else 1.0 / 255.0)
+        mean = mean if mean is not None else [0.485, 0.456, 0.406]
+        std = std if std is not None else [0.229, 0.224, 0.225]
+
+        shape = (3, 1, 1) if order == "chw" else (1, 1, 3)
+        self.mean = np.array(mean).reshape(shape).astype("float32")
+        self.std = np.array(std).reshape(shape).astype("float32")
+
+    def __call__(self, data):
+        img = data["image"]
+        from PIL import Image
+
+        if isinstance(img, Image.Image):
+            img = np.array(img)
+        assert isinstance(img, np.ndarray), "invalid input 'img' in NormalizeImage"
+        data["image"] = (img.astype("float32") * self.scale - self.mean) / self.std
+        return data
+
+class GrayImageChannelFormat(object):
+    """
+    format gray scale image's channel: (3,h,w) -> (1,h,w)
+    Args:
+        inverse: inverse gray image
+    """
+    def __init__(self, inverse=False, **kwargs):
+        self.inverse = inverse
+
+    def __call__(self, data):
+        img = data["image"]
+        img_single_channel = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        img_expanded = np.expand_dims(img_single_channel, 0)
+
+        if self.inverse:
+            data["image"] = np.abs(img_expanded - 1)
+        else:
+            data["image"] = img_expanded
+
+        data["src_image"] = img
         return data
