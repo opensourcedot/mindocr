@@ -220,7 +220,14 @@ class Preprocessor(object):
             pipeline = [
                 {"DecodeImage": {"img_mode": "BGR", "to_float32": False}},
                 {"E2EResizeForTest": {"max_side_len": limit_side_len, "dataset": "totaltext"}},
-                {"NormalizeImage": {"bgr_to_rgb": False, "is_hwc": True, "mean": IMAGENET_DEFAULT_MEAN, "std": IMAGENET_DEFAULT_STD}},
+                {
+                    "NormalizeImage": {
+                        "bgr_to_rgb": False,
+                        "is_hwc": True,
+                        "mean": IMAGENET_DEFAULT_MEAN,
+                        "std": IMAGENET_DEFAULT_STD,
+                    }
+                },
                 {"ToCHWImage": None},
             ]
 
