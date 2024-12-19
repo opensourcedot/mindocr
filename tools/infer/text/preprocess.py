@@ -238,6 +238,22 @@ class Preprocessor(object):
                 image_norm(scale=255.0),
                 image_transpose(bgr2rgb=True, hwc2chw=True),
             ]
+        elif task == "e2e":
+            limit_side_len = kwargs.get("e2e_limit_side_len", 768)
+            limit_type = kwargs.get("e2e_limit_type", "max")
+            pipeline = [
+                {"DecodeImage": {"img_mode": "BGR", "to_float32": False}},
+                {"E2EResizeForTest": {"max_side_len": limit_side_len, "dataset": "totaltext"}},
+                {
+                    "NormalizeImage": {
+                        "bgr_to_rgb": False,
+                        "is_hwc": True,
+                        "mean": IMAGENET_DEFAULT_MEAN,
+                        "std": IMAGENET_DEFAULT_STD,
+                    }
+                },
+                {"ToCHWImage": None},
+            ]
 
         self.pipeline = pipeline
         self.transforms = create_transforms(pipeline)
