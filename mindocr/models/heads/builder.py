@@ -19,6 +19,7 @@ supported_heads = [
     'MultiHead',
     'TableMasterHead',
     'PGNetHead',
+    'CANHead',
 ]
 from .cls_head import MobileNetV3Head
 from .conv_head import ConvHead
@@ -31,6 +32,7 @@ from .kie_relationextraction_head import RelationExtractionHead
 from .kie_tokenclassification_head import TokenClassificationHead
 from .rec_abinet_head import ABINetHead
 from .rec_attn_head import AttentionHead
+from .rec_can_head import CANHead
 from .rec_ctc_head import CTCHead
 from .rec_master_decoder import MasterDecoder
 from .rec_multi_head import MultiHead

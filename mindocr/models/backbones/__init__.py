@@ -12,6 +12,7 @@ from .e2e_resnet import *
 from .layoutlmv3 import layoutlmv3
 from .layoutxlm import layoutxlm
 from .rec_abinet_backbone import *
+from .rec_can_densenet import *
 from .rec_master import *
 from .rec_resnet import *
 from .rec_resnet45 import *

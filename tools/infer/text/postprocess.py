@@ -75,6 +75,12 @@ class Postprocessor(object):
                     character_dict_path=rec_char_dict_path,
                     use_space_char=False,
                 )
+            elif algo.startswith("CAN"):
+                postproc_cfg = dict(
+                    name="CANLabelDecode",
+                    character_dict_path="mindocr/utils/dict/latex_symbol_dict.txt",
+                    use_space_char=False,
+                )
 
             else:
                 raise ValueError(f"No postprocess config defined for {algo}. Please check the algorithm name.")
