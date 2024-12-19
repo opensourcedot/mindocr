@@ -14,13 +14,8 @@ class PGNetHead(nn.Cell):
     Returns:
        Tensor: The output predict of f_score, f_boder, f_char, f_direction.
     """
-    def __init__(self, in_channels: int, **kwargs):
+    def __init__(self, in_channels: int, character_length: int = 37, **kwargs):
         super().__init__()
-        character_dict_path = "./mindocr/utils/dict/ic15_dict.txt"
-        with open(character_dict_path, "rb") as fin:
-            lines = fin.readlines()
-            character_length = len(lines) + 1
-
         self.relu = nn.ReLU()
 
         self.conv_f_score1 = ConvNormLayer(in_channels, 64, kernel_size=1, stride=1, act=True)
