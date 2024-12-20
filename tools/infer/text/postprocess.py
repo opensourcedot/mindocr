@@ -112,6 +112,9 @@ class Postprocessor(object):
                 raise ValueError(f"No postprocess config defined for {algo}. Please check the algorithm name.")
             self.rescale_internally = True
             self.round = True
+        elif task == "cls":
+            postproc_cfg = dict(name="ClsPostprocess", label_list=["0", "180"])
+
         postproc_cfg.update(kwargs)
         self.task = task
         self.postprocess = build_postprocess(postproc_cfg)
@@ -186,3 +189,6 @@ class Postprocessor(object):
                 shape_list = None
             post_res = self.postprocess(pred, shape_list=shape_list)
             return post_res["points"], post_res["texts"]
+        elif self.task == "cls":
+            output = self.postprocess(pred)
+            return output
