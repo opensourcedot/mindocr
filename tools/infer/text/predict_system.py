@@ -98,10 +98,8 @@ class TextClassifier(object):
     def __call__(self, img_or_path_list: list) -> List:
         """
         Run text classification serially for input images
-
         Args:
             img_or_path_list: list or str for img path or np.array for RGB image
-
         Returns:
             list of dict, each contains the follow keys for classification result.
             e.g. [{'angle': 180, 'score': 1.0}, {'angle': 0, 'score': 1.0}]
@@ -124,10 +122,8 @@ class TextClassifier(object):
     def run_batch(self, img_or_path_list: list):
         """
         Run text angle classification serially for input images
-
         Args:
             img_or_path_list: list of str for img path or np.array for RGB image
-
         Return:
             cls_res: list of tuple, where each tuple is  (angle, score)
             - text angle classification result for each input image in order.
@@ -168,10 +164,8 @@ class TextClassifier(object):
     def run_single(self, img_or_path: str):
         """
         Text angle classification inference on a single image
-
         Args:
             img_or_path: str for image path or np.array for image RGB value
-
         Return:
             dict with keys:
             - angle: text angle
@@ -207,13 +201,11 @@ class TextClassifier(object):
     ):
         """
         Generate cls_results files that store the angle classification results.
-
         Args:
             cls_res_all: list of dict, each contains the follow keys for classification result.
             fn: customize the prefix name for image information, default is "img".
             save_path: file storage path
             include_score: whether to write prediction confidence
-
         Return:
             lines: the content of angle information written to the document
         """

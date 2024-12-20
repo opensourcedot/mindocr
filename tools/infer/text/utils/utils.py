@@ -271,3 +271,21 @@ def draw_e2e_res(dt_boxes, strs, img_path):
             thickness=1,
         )
     return src_im
+
+
+def img_rotate(image, angle):
+    """
+    Rotate the incoming image at a specified angle.
+    Args:
+        image: an encoded image that needs to be rotated.
+        angle: the target Angle at which the image is rotated
+    Returns:
+        rotated: the output image after rotation.
+    """
+
+    (h, w) = image.shape[:2]
+    center = (w / 2, h / 2)
+    M = cv2.getRotationMatrix2D(center, angle, 1.0)
+    rotated = cv2.warpAffine(image, M, (w, h))
+
+    return rotated
