@@ -62,7 +62,10 @@ def _parse_options(opts: list):
             "=" in opt_str
         ), "Invalid option {}. A valid option must be in the format of {{key_name}}={{value}}".format(opt_str)
         k, v = opt_str.strip().split("=")
-        options[k] = yaml.load(v, Loader=yaml.Loader)
+        try:
+            options[k] = yaml.load(v, Loader=yaml.SafeLoader)
+        except yaml.YAMLError as e:
+            raise ValueError(f"Failed to parse value for key '{k}': {str(e)}") from e
     # print('Parsed options: ', options)
 
     return options

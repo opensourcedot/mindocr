@@ -23,18 +23,24 @@ from .table_postprocess import *
 
 __all__ = ["build_postprocess"]
 
-supported_postprocess = (
-    det_db_postprocess.__all__
-    + det_pse_postprocess.__all__
-    + det_east_postprocess.__all__
-    + rec_postprocess.__all__
-    + cls_postprocess.__all__
-    + rec_abinet_postprocess.__all__
-    + kie_ser_postprocess.__all__
-    + kie_re_postprocess.__all__
-    + layout_postprocess.__all__
-    + table_postprocess.__all__
-)
+SUPPORTED_POSTPROCESS = {
+    "DBPostprocess": DBPostprocess,
+    "PSEPostprocess": PSEPostprocess,
+    "EASTPostprocess": EASTPostprocess,
+    "CTCLabelDecode": CTCLabelDecode,
+    "RecCTCLabelDecode": RecCTCLabelDecode,
+    "RecAttnLabelDecode": RecAttnLabelDecode,
+    "RecMasterLabelDecode": RecMasterLabelDecode,
+    "VisionLANPostProcess": VisionLANPostProcess,
+    "SARLabelDecode": SARLabelDecode,
+    "ClsPostprocess": ClsPostprocess,
+    "ABINetLabelDecode": ABINetLabelDecode,
+    "VQASerTokenLayoutLMPostProcess": VQASerTokenLayoutLMPostProcess,
+    "VQAReTokenLayoutLMPostProcess": VQAReTokenLayoutLMPostProcess,
+    "YOLOv8Postprocess": YOLOv8Postprocess,
+    "Layoutlmv3Postprocess": Layoutlmv3Postprocess,
+    "TableMasterLabelDecode": TableMasterLabelDecode,
+}
 
 
 def build_postprocess(config: dict):
@@ -57,11 +63,11 @@ def build_postprocess(config: dict):
         >>> postprocess
     """
     proc = config.pop("name")
-    if proc in supported_postprocess:
-        postprocessor = eval(proc)(**config)
-    elif proc is None:
+    if proc is None:
         return None
+    if proc in SUPPORTED_POSTPROCESS:
+        postprocessor = SUPPORTED_POSTPROCESS[proc](**config)
     else:
-        raise ValueError(f"Invalid postprocess name {proc}, support postprocess are {supported_postprocess}")
+        raise ValueError(f"Invalid postprocess name {proc}, support postprocess are {SUPPORTED_POSTPROCESS.keys()}")
 
     return postprocessor

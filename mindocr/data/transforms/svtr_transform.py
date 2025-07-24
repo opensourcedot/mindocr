@@ -546,10 +546,19 @@ class MultiLabelEncode(BaseRecLabelEncode):
 
         self.ctc_encode = CTCLabelEncodeForSVTR(max_text_length, character_dict_path, use_space_char, **kwargs)
         self.gtc_encode_type = gtc_encode
+        # Pls explicitly specify the supported gtc_encode classes and obtain the class objects through dictionaries.
+        supported_gtc_encode = {}
         if gtc_encode is None:
             self.gtc_encode = SARLabelEncodeForSVTR(max_text_length, character_dict_path, use_space_char, **kwargs)
         else:
-            self.gtc_encode = eval(gtc_encode)(max_text_length, character_dict_path, use_space_char, **kwargs)
+            # Mindocr currently does not have a module that requires a custom `gtc_encode` input parameter, and will not
+            # enter this branch at present. If it is supported later, please directly obtain the class reference through
+            # a specific dict, and do not use the `eval` function.
+            if gtc_encode not in supported_gtc_encode:
+                raise ValueError(f"Get unsupported gtc_encode {gtc_encode}")
+            self.gtc_encode = supported_gtc_encode[gtc_encode](
+                max_text_length, character_dict_path, use_space_char, **kwargs
+            )
 
     def __call__(self, data):
         data_ctc = copy.deepcopy(data)
@@ -925,7 +934,7 @@ class BaseDataAugmentation(object):
         jitter_prob=0.4,
         blur_prob=0.4,
         hsv_aug_prob=0.4,
-        **kwargs
+        **kwargs,
     ):
         self.crop_prob = crop_prob
         self.reverse_prob = reverse_prob
@@ -973,7 +982,7 @@ class RecAug(object):
         jitter_prob=0.4,
         blur_prob=0.4,
         hsv_aug_prob=0.4,
-        **kwargs
+        **kwargs,
     ):
         self.tia_prob = tia_prob
         self.bda = BaseDataAugmentation(crop_prob, reverse_prob, noise_prob, jitter_prob, blur_prob, hsv_aug_prob)
@@ -1078,7 +1087,7 @@ class RecResizeImgForSVTR(object):
         character_dict_path=".mindocr/utils/dict/ch_dict.txt",
         padding=True,
         width_downsample_ratio=0.125,
-        **kwargs
+        **kwargs,
     ):
         self.image_shape = image_shape
         self.infer_mode = infer_mode

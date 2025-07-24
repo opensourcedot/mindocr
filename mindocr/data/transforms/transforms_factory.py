@@ -1,10 +1,7 @@
 """
 Create and run transformations from a config or predefined transformation pipeline
 """
-import logging
 from typing import Dict, List
-
-import numpy as np
 
 from .det_east_transforms import *
 from .det_transforms import *
@@ -14,6 +11,63 @@ from .rec_abinet_transforms import *
 from .rec_transforms import *
 from .svtr_transform import *
 from .table_transform import *
+
+SUPPORTED_TRANSFORMS = {
+    "EASTProcessTrain": EASTProcessTrain,
+    "DetLabelEncode": DetLabelEncode,
+    "BorderMap": BorderMap,
+    "ShrinkBinaryMap": ShrinkBinaryMap,
+    "expand_poly": expand_poly,
+    "PSEGtDecode": PSEGtDecode,
+    "ValidatePolygons": ValidatePolygons,
+    "RandomCropWithBBox": RandomCropWithBBox,
+    "RandomCropWithMask": RandomCropWithMask,
+    "DetResize": DetResize,
+    "DecodeImage": DecodeImage,
+    "NormalizeImage": NormalizeImage,
+    "ToCHWImage": ToCHWImage,
+    "PackLoaderInputs": PackLoaderInputs,
+    "RandomScale": RandomScale,
+    "RandomColorAdjust": RandomColorAdjust,
+    "RandomRotate": RandomRotate,
+    "RandomHorizontalFlip": RandomHorizontalFlip,
+    "LayoutResize": LayoutResize,
+    "ImageStridePad": ImageStridePad,
+    "VQATokenLabelEncode": VQATokenLabelEncode,
+    "VQATokenPad": VQATokenPad,
+    "VQASerTokenChunk": VQASerTokenChunk,
+    "VQAReTokenRelation": VQAReTokenRelation,
+    "VQAReTokenChunk": VQAReTokenChunk,
+    "TensorizeEntitiesRelations": TensorizeEntitiesRelations,
+    "ABINetTransforms": ABINetTransforms,
+    "ABINetRecAug": ABINetRecAug,
+    "ABINetEval": ABINetEval,
+    "ABINetEvalTransforms": ABINetEvalTransforms,
+    "RecCTCLabelEncode": RecCTCLabelEncode,
+    "RecAttnLabelEncode": RecAttnLabelEncode,
+    "RecMasterLabelEncode": RecMasterLabelEncode,
+    "VisionLANLabelEncode": VisionLANLabelEncode,
+    "RecResizeImg": RecResizeImg,
+    "RecResizeNormForInfer": RecResizeNormForInfer,
+    "SVTRRecResizeImg": SVTRRecResizeImg,
+    "Rotate90IfVertical": Rotate90IfVertical,
+    "ClsLabelEncode": ClsLabelEncode,
+    "SARLabelEncode": SARLabelEncode,
+    "RobustScannerRecResizeImg": RobustScannerRecResizeImg,
+    "SVTRRecAug": SVTRRecAug,
+    "MultiLabelEncode": MultiLabelEncode,
+    "RecConAug": RecConAug,
+    "RecAug": RecAug,
+    "RecResizeImgForSVTR": RecResizeImgForSVTR,
+    "BaseRecLabelEncode": BaseRecLabelEncode,
+    "AttnLabelEncode": AttnLabelEncode,
+    "TableLabelEncode": TableLabelEncode,
+    "TableMasterLabelEncode": TableMasterLabelEncode,
+    "ResizeTableImage": ResizeTableImage,
+    "PaddingTableImage": PaddingTableImage,
+    "TableBoxEncode": TableBoxEncode,
+    "TableImageNorm": TableImageNorm,
+}
 
 __all__ = ["create_transforms", "run_transforms", "transforms_dbnet_icdar15"]
 _logger = logging.getLogger(__name__)
@@ -45,9 +99,9 @@ def create_transforms(transform_pipeline: List, global_config: Dict = None):
             param = {} if transform_config[trans_name] is None else transform_config[trans_name]
             if global_config is not None:
                 param.update(global_config)
-            # TODO: assert undefined transform class
-
-            transform = eval(trans_name)(**param)
+            # For security reasons, we no longer use the eval function to dynamically obtain class objects.
+            # If you need to add a new transform class, please explicitly add it to the ``SUPPORTED_TRANSFORMS`` dict.
+            transform = SUPPORTED_TRANSFORMS[trans_name](**param)
             transforms.append(transform)
         elif callable(transform_config):
             transforms.append(transform_config)

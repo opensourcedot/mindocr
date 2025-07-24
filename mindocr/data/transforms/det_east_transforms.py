@@ -1,3 +1,5 @@
+import ast
+import json
 import math
 
 import cv2
@@ -414,8 +416,17 @@ class EASTProcessTrain:
         """
         vertices_list = []
         labels_list = []
-        data_labels = eval(data_labels)
-        for data_label in data_labels:
+        try:
+            parsed_data = json.loads(data_labels)
+        except json.JSONDecodeError:
+            try:
+                parsed_data = ast.literal_eval(data_labels)
+            except (ValueError, SyntaxError) as e:
+                raise ValueError(f"Invalid data format: {str(e)}") from e
+
+        if not isinstance(parsed_data, list):
+            raise ValueError("Data labels should be a list")
+        for data_label in parsed_data:
             vertices = data_label["points"]
             vertices = [item for point in vertices for item in point]
             vertices_list.append(vertices)
